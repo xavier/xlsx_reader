@@ -2,8 +2,22 @@ defmodule XlsxReader.RelationshipsParser do
   @behaviour Saxy.Handler
 
   def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, [])
+    Saxy.parse_string(xml, __MODULE__, %{
+      shared_strings: %{},
+      styles: %{},
+      themes: %{},
+      sheets: %{}
+    })
   end
+
+  @namespace "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+
+  @types %{
+    "#{@namespace}/sharedStrings" => :shared_strings,
+    "#{@namespace}/styles" => :styles,
+    "#{@namespace}/theme" => :themes,
+    "#{@namespace}/worksheet" => :sheets
+  }
 
   @impl Saxy.Handler
   def handle_event(:start_document, _prolog, state) do
@@ -17,17 +31,18 @@ defmodule XlsxReader.RelationshipsParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"Relationship", attributes}, state) do
-    {:ok, [map_relationship_attributes(attributes) | state]}
+    with %{id: id, target: target, type: type} <- extract_relationship_attributes(attributes),
+         {:ok, key} <- Map.fetch(@types, type) do
+      {:ok, Map.update!(state, key, fn rels -> Map.put_new(rels, id, target) end)}
+    else
+      _ ->
+        {:ok, state}
+    end
   end
 
   @impl Saxy.Handler
   def handle_event(:start_element, _element, state) do
     {:ok, state}
-  end
-
-  @impl Saxy.Handler
-  def handle_event(:end_element, "Relationships", state) do
-    {:ok, Enum.reverse(state)}
   end
 
   @impl Saxy.Handler
@@ -48,7 +63,7 @@ defmodule XlsxReader.RelationshipsParser do
     "Type" => :type
   }
 
-  defp map_relationship_attributes(attributes) do
+  defp extract_relationship_attributes(attributes) do
     Enum.reduce(attributes, %{}, fn {name, value}, acc ->
       case Map.fetch(@attributes_mapping, name) do
         {:ok, key} ->

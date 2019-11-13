@@ -5,6 +5,9 @@ defmodule XlsxReader.Unzip do
     with {:ok, zip} <- source(zip_handle),
          {:ok, entries} <- :zip.list_dir(zip) do
       {:ok, collect_files(entries)}
+    else
+      error ->
+        translate_zip_error(error)
     end
   end
 
@@ -14,10 +17,10 @@ defmodule XlsxReader.Unzip do
       {:ok, contents}
     else
       {:ok, []} ->
-        {:error, "file #{inspect(file)} not found"}
+        {:error, "file #{inspect(file)} not found in archive"}
 
       error ->
-        error
+        translate_zip_error(error)
     end
   end
 
@@ -47,5 +50,13 @@ defmodule XlsxReader.Unzip do
 
   def extract_options(file) do
     [{:file_list, [String.to_charlist(file)]}, :memory]
+  end
+
+  defp translate_zip_error({:error, :einval}) do
+    {:error, "invalid zip file"}
+  end
+
+  defp translate_zip_error({:error, :enoent}) do
+    {:error, "file not found"}
   end
 end

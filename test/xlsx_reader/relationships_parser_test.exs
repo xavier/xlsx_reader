@@ -6,33 +6,21 @@ defmodule XlsxReader.RelationshipsParserTest do
   test "parses workbook.xml.rels" do
     workbook_xml_rels = TestFixtures.read!("package/xl/_rels/workbook.xml.rels")
 
-    expected = [
-      %{
-        id: "rId1",
-        target: "sharedStrings.xml",
-        type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings"
+    expected = %{
+      shared_strings: %{
+        "rId1" => "sharedStrings.xml"
       },
-      %{
-        id: "rId2",
-        target: "styles.xml",
-        type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
+      styles: %{
+        "rId2" => "styles.xml"
       },
-      %{
-        id: "rId3",
-        target: "theme/theme1.xml",
-        type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme"
+      themes: %{
+        "rId3" => "theme/theme1.xml"
       },
-      %{
-        id: "rId4",
-        target: "worksheets/sheet1.xml",
-        type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"
-      },
-      %{
-        id: "rId5",
-        target: "worksheets/sheet2.xml",
-        type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"
+      sheets: %{
+        "rId4" => "worksheets/sheet1.xml",
+        "rId5" => "worksheets/sheet2.xml"
       }
-    ]
+    }
 
     assert {:ok, expected} == RelationshipsParser.parse(workbook_xml_rels)
   end
