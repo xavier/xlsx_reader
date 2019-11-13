@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <numFmts count="1">
+    <numFmt formatCode="General" numFmtId="0"/>
+  </numFmts>
+  <fonts count="3">
+    <font>
+      <sz val="10"/>
+      <color indexed="8"/>
+      <name val="Helvetica Neue"/>
+    </font>
+    <font>
+      <sz val="12"/>
+      <color indexed="8"/>
+      <name val="Helvetica Neue"/>
+    </font>
+    <font>
+      <b val="1"/>
+      <sz val="10"/>
+      <color indexed="8"/>
+      <name val="Helvetica Neue"/>
+    </font>
+  </fonts>
+  <fills count="4">
+    <fill>
+      <patternFill patternType="none"/>
+    </fill>
+    <fill>
+      <patternFill patternType="gray125"/>
+    </fill>
+    <fill>
+      <patternFill patternType="solid">
+        <fgColor indexed="9"/>
+        <bgColor auto="1"/>
+      </patternFill>
+    </fill>
+    <fill>
+      <patternFill patternType="solid">
+        <fgColor indexed="12"/>
+        <bgColor auto="1"/>
+      </patternFill>
+    </fill>
+  </fills>
+  <borders count="8">
+    <border>
+      <left/>
+      <right/>
+      <top/>
+      <bottom/>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="10"/>
+      </left>
+      <right style="thin">
+        <color indexed="10"/>
+      </right>
+      <top style="thin">
+        <color indexed="10"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="11"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="10"/>
+      </left>
+      <right style="thin">
+        <color indexed="11"/>
+      </right>
+      <top style="thin">
+        <color indexed="11"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="10"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="11"/>
+      </left>
+      <right style="thin">
+        <color indexed="10"/>
+      </right>
+      <top style="thin">
+        <color indexed="11"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="10"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="10"/>
+      </left>
+      <right style="thin">
+        <color indexed="10"/>
+      </right>
+      <top style="thin">
+        <color indexed="11"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="10"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="10"/>
+      </left>
+      <right style="thin">
+        <color indexed="11"/>
+      </right>
+      <top style="thin">
+        <color indexed="10"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="10"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="11"/>
+      </left>
+      <right style="thin">
+        <color indexed="10"/>
+      </right>
+      <top style="thin">
+        <color indexed="10"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="10"/>
+      </bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left style="thin">
+        <color indexed="10"/>
+      </left>
+      <right style="thin">
+        <color indexed="10"/>
+      </right>
+      <top style="thin">
+        <color indexed="10"/>
+      </top>
+      <bottom style="thin">
+        <color indexed="10"/>
+      </bottom>
+      <diagonal/>
+    </border>
+  </borders>
+  <cellStyleXfs count="1">
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+  </cellStyleXfs>
+  <cellXfs count="18">
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" fontId="1" numFmtId="0">
+      <alignment horizontal="center" vertical="center"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="1" fillId="2" fontId="2" numFmtId="49">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="2" fillId="3" fontId="2" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="4" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="1" fillId="2" fontId="2" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="2" fillId="3" fontId="2" numFmtId="49">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fontId="0" numFmtId="49">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="4" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="6" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="7" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+  </cellXfs>
+  <cellStyles count="1">
+    <cellStyle builtinId="0" name="Normal" xfId="0"/>
+  </cellStyles>
+  <dxfs count="0"/>
+  <tableStyles count="0"/>
+  <colors>
+    <indexedColors>
+      <rgbColor rgb="ff000000"/>
+      <rgbColor rgb="ffffffff"/>
+      <rgbColor rgb="ffff0000"/>
+      <rgbColor rgb="ff00ff00"/>
+      <rgbColor rgb="ff0000ff"/>
+      <rgbColor rgb="ffffff00"/>
+      <rgbColor rgb="ffff00ff"/>
+      <rgbColor rgb="ff00ffff"/>
+      <rgbColor rgb="ff000000"/>
+      <rgbColor rgb="ffbdc0bf"/>
+      <rgbColor rgb="ffa5a5a5"/>
+      <rgbColor rgb="ff3f3f3f"/>
+      <rgbColor rgb="ffdbdbdb"/>
+    </indexedColors>
+  </colors>
+</styleSheet>
