@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <numFmts count="1">
+  <numFmts count="6">
     <numFmt formatCode="General" numFmtId="0"/>
+    <numFmt formatCode="dd/mm/yyyy" numFmtId="59"/>
+    <numFmt formatCode="dd/mm/yyyy hh:mm" numFmtId="60"/>
+    <numFmt formatCode="hh:mm" numFmtId="61"/>
+    <numFmt formatCode="0.0%" numFmtId="62"/>
+    <numFmt formatCode="[$CHF] 0.00" numFmtId="63"/>
   </numFmts>
   <fonts count="3">
     <font>
@@ -160,15 +165,12 @@
       <alignment vertical="top" wrapText="1"/>
     </xf>
   </cellStyleXfs>
-  <cellXfs count="18">
+  <cellXfs count="26">
     <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
     <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" fontId="1" numFmtId="0">
-      <alignment horizontal="center" vertical="center"/>
     </xf>
     <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="1" fillId="2" fontId="2" numFmtId="49">
       <alignment vertical="top" wrapText="1"/>
@@ -213,6 +215,33 @@
       <alignment vertical="top" wrapText="1"/>
     </xf>
     <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="7" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fontId="0" numFmtId="59">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="49">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="60">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="61">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="62">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="63">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="49">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="9">
       <alignment vertical="top" wrapText="1"/>
     </xf>
   </cellXfs>

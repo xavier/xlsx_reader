@@ -32,7 +32,6 @@ defmodule XlsxReader.PackageTest do
     test "loads a sheet by name", %{package: package} do
       assert {:ok,
               [
-                ["Table 1", "", "" | _],
                 ["A", "B", "C" | _],
                 ["1", "2", "3" | _],
                 ["2", "4", "6" | _]
@@ -41,7 +40,6 @@ defmodule XlsxReader.PackageTest do
 
       assert {:ok,
               [
-                ["Table 1", "" | _],
                 ["", "" | _],
                 ["some ", "test" | _]
                 | _
@@ -58,8 +56,9 @@ defmodule XlsxReader.PackageTest do
 
     test "load all sheets", %{package: package} do
       assert [
-               {"Sheet 1", [["Table 1", "", "" | _], ["A", "B", "C" | _] | _]},
-               {"Sheet 2", [["Table 1", "" | _], ["", "" | _] | _]}
+               {"Sheet 1", [["A", "B", "C" | _] | _]},
+               {"Sheet 2", [["", "" | _] | _]},
+               {"Sheet 3", _}
              ] = Package.load_sheets(package)
     end
   end

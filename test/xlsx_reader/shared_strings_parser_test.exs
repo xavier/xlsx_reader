@@ -7,7 +7,6 @@ defmodule XlsxReader.SharedStringsParserTest do
     shared_strings_xml = TestFixtures.read!("package/xl/sharedStrings.xml")
 
     expected = [
-      "Table 1",
       "A",
       "B",
       "C",
@@ -16,7 +15,16 @@ defmodule XlsxReader.SharedStringsParserTest do
       "F",
       "G",
       "some ",
-      "test"
+      "test",
+      "date",
+      "datetime",
+      "time",
+      "percentage",
+      "money chf",
+      "money usd",
+      "9999,99 USD",
+      "ticked",
+      "not ticked"
     ]
 
     assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)

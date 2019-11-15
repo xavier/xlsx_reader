@@ -18,7 +18,8 @@ defmodule XlsxReader.RelationshipsParserTest do
       },
       sheets: %{
         "rId4" => "worksheets/sheet1.xml",
-        "rId5" => "worksheets/sheet2.xml"
+        "rId5" => "worksheets/sheet2.xml",
+        "rId6" => "worksheets/sheet3.xml"
       }
     }
 

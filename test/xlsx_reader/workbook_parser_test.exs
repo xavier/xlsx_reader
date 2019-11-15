@@ -8,7 +8,8 @@ defmodule XlsxReader.WorkbookParserTest do
 
     expected = [
       %{name: "Sheet 1", rid: "rId4", sheet_id: "1"},
-      %{name: "Sheet 2", rid: "rId5", sheet_id: "2"}
+      %{name: "Sheet 2", rid: "rId5", sheet_id: "2"},
+      %{name: "Sheet 3", rid: "rId6", sheet_id: "3"}
     ]
 
     assert {:ok, expected} == WorkbookParser.parse(workbook_xml)

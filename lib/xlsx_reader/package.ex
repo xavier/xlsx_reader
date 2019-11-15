@@ -6,6 +6,7 @@ defmodule XlsxReader.Package do
     Unzip,
     RelationshipsParser,
     SharedStringsParser,
+    StylesParser,
     WorkbookParser,
     WorksheetParser
   }
@@ -21,10 +22,12 @@ defmodule XlsxReader.Package do
           workbook: %{
             sheets: sheets,
             rels: workbook_rels,
-            shared_strings: nil
+            shared_strings: nil,
+            styles: nil
           }
         }
         |> load_shared_strings
+        |> load_styles
 
       {:ok, package}
     end
@@ -91,7 +94,7 @@ defmodule XlsxReader.Package do
   end
 
   defp load_shared_strings(package) do
-    with {:ok, file} <- shared_strings_file(package),
+    with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
          {:ok, xml} <- Unzip.extract(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
       %{package | workbook: Map.put(package.workbook, :shared_strings, shared_strings)}
@@ -101,18 +104,23 @@ defmodule XlsxReader.Package do
     end
   end
 
-  defp shared_strings_file(package) do
-    case map_size(package.workbook.rels.shared_strings) do
-      1 ->
-        path =
-          package.workbook.rels.shared_strings
-          |> Map.values()
-          |> List.first()
-          |> xl_path()
+  defp load_styles(package) do
+    with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
+         {:ok, xml} <- Unzip.extract(package.zip_handle, file),
+         {:ok, shared_strings} <- StylesParser.parse(xml) do
+      %{package | workbook: Map.put(package.workbook, :styles, shared_strings)}
+    else
+      :no_shared_strings ->
+        package
+    end
+  end
 
-        {:ok, path}
+  defp single_rel_target(rels) do
+    case Map.values(rels) do
+      [target] ->
+        {:ok, xl_path(target)}
 
-      0 ->
+      [] ->
         :no_shared_strings
 
       _ ->
@@ -122,7 +130,7 @@ defmodule XlsxReader.Package do
 
   def load_worksheet_xml(package, file) do
     with {:ok, xml} <- Unzip.extract(package.zip_handle, file) do
-      WorksheetParser.parse(xml, package.workbook.shared_strings)
+      WorksheetParser.parse(xml, package.workbook)
     end
   end
 

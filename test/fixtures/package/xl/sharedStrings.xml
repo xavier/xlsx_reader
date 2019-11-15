@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sst uniqueCount="10" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <si>
-    <t>Table 1</t>
-  </si>
+<sst uniqueCount="18" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
   <si>
     <t>A</t>
   </si>
@@ -29,5 +26,32 @@
   </si>
   <si>
     <t>test</t>
+  </si>
+  <si>
+    <t>date</t>
+  </si>
+  <si>
+    <t>datetime</t>
+  </si>
+  <si>
+    <t>time</t>
+  </si>
+  <si>
+    <t>percentage</t>
+  </si>
+  <si>
+    <t>money chf</t>
+  </si>
+  <si>
+    <t>money usd</t>
+  </si>
+  <si>
+    <t>9999,99 USD</t>
+  </si>
+  <si>
+    <t>ticked</t>
+  </si>
+  <si>
+    <t>not ticked</t>
   </si>
 </sst>

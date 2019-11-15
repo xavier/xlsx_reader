@@ -1,9 +1,11 @@
 defmodule XlsxReader.WorksheetParser do
   @behaviour Saxy.Handler
 
-  def parse(xml, shared_strings) do
+  alias XlsxReader.Conversion
+
+  def parse(xml, workbook) do
     Saxy.parse_string(xml, __MODULE__, %{
-      shared_strings: shared_strings,
+      workbook: workbook,
       rows: [],
       row: nil,
       cell_ref: nil,
@@ -24,7 +26,7 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, {"row", attributes}, state) do
+  def handle_event(:start_element, {"row", _attributes}, state) do
     {:ok, %{state | row: []}}
   end
 
@@ -97,7 +99,7 @@ defmodule XlsxReader.WorksheetParser do
 
   @attributes_mapping %{
     "r" => :cell_ref,
-    # "s" => :cell_style,
+    "s" => :cell_style,
     "t" => :cell_type
   }
 
@@ -114,14 +116,41 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   defp format_current_cell_value(state) do
-    case {state.cell_type, state.value} do
-      {"s", value} ->
-        Enum.at(state.shared_strings, String.to_integer(value))
+    style_type = Enum.at(state.workbook.styles.style_types, String.to_integer(state.cell_style))
 
-      {nil, value} ->
+    case {state.cell_type, style_type, state.value} do
+      {_, _, nil} ->
+        ""
+
+      {"s", _, value} ->
+        Enum.at(state.workbook.shared_strings, String.to_integer(value))
+
+      {_, :percentage, value} ->
+        {:ok, number} = Conversion.to_number(value)
+        number * 100
+
+      {nil, :date, value} ->
+        {:ok, date} = Conversion.to_date(value)
+        date
+
+      {nil, :time, value} ->
+        {:ok, date_time} = Conversion.to_date_time(value)
+        date_time
+
+      {nil, :date_time, value} ->
+        {:ok, date_time} = Conversion.to_date_time(value)
+        date_time
+
+      {"b", _, "1"} ->
+        true
+
+      {"b", _, "0"} ->
+        false
+
+      {nil, _, value} ->
         to_string(value)
 
-      {_, value} ->
+      {_, _, value} ->
         to_string(value)
     end
   end
