@@ -6,11 +6,16 @@ defmodule XlsxReader.WorkbookParserTest do
   test "parses workbook.xml" do
     workbook_xml = TestFixtures.read!("package/xl/workbook.xml")
 
-    expected = [
-      %{name: "Sheet 1", rid: "rId4", sheet_id: "1"},
-      %{name: "Sheet 2", rid: "rId5", sheet_id: "2"},
-      %{name: "Sheet 3", rid: "rId6", sheet_id: "3"}
-    ]
+    expected = %XlsxReader.Workbook{
+      sheets: [
+        %XlsxReader.Sheet{name: "Sheet 1", rid: "rId4", sheet_id: "1"},
+        %XlsxReader.Sheet{name: "Sheet 2", rid: "rId5", sheet_id: "2"},
+        %XlsxReader.Sheet{name: "Sheet 3", rid: "rId6", sheet_id: "3"}
+      ],
+      rels: nil,
+      shared_strings: nil,
+      style_types: nil
+    }
 
     assert {:ok, expected} == WorkbookParser.parse(workbook_xml)
   end

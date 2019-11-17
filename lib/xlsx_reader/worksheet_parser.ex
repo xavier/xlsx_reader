@@ -3,16 +3,18 @@ defmodule XlsxReader.WorksheetParser do
 
   alias XlsxReader.Conversion
 
+  defmodule State do
+    defstruct workbook: nil,
+              rows: [],
+              row: nil,
+              cell_ref: nil,
+              cell_type: nil,
+              value_type: nil,
+              value: nil
+  end
+
   def parse(xml, workbook) do
-    Saxy.parse_string(xml, __MODULE__, %{
-      workbook: workbook,
-      rows: [],
-      row: nil,
-      cell_ref: nil,
-      cell_type: nil,
-      value_type: nil,
-      value: nil
-    })
+    Saxy.parse_string(xml, __MODULE__, %State{workbook: workbook})
   end
 
   @impl Saxy.Handler
@@ -108,7 +110,7 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   defp format_current_cell_value(state) do
-    style_type = Enum.at(state.workbook.styles.style_types, String.to_integer(state.cell_style))
+    style_type = Enum.at(state.workbook.style_types, String.to_integer(state.cell_style))
 
     case {state.cell_type, style_type, state.value} do
       {_, _, nil} ->

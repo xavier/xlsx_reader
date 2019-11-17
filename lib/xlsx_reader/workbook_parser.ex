@@ -2,7 +2,7 @@ defmodule XlsxReader.WorkbookParser do
   @behaviour Saxy.Handler
 
   def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, [])
+    Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{})
   end
 
   @impl Saxy.Handler
@@ -17,7 +17,7 @@ defmodule XlsxReader.WorkbookParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"sheet", attributes}, state) do
-    {:ok, [map_sheet_attributes(attributes) | state]}
+    {:ok, %{state | sheets: [build_sheet(attributes) | state.sheets]}}
   end
 
   @impl Saxy.Handler
@@ -27,7 +27,7 @@ defmodule XlsxReader.WorkbookParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "sheets", state) do
-    {:ok, Enum.reverse(state)}
+    {:ok, %{state | sheets: Enum.reverse(state.sheets)}}
   end
 
   @impl Saxy.Handler
@@ -42,21 +42,25 @@ defmodule XlsxReader.WorkbookParser do
 
   ##
 
-  @attributes_mapping %{
+  @sheet_attributes %{
     "name" => :name,
     "r:id" => :rid,
     "sheetId" => :sheet_id
   }
 
-  defp map_sheet_attributes(attributes) do
-    Enum.reduce(attributes, %{}, fn {name, value}, acc ->
-      case Map.fetch(@attributes_mapping, name) do
-        {:ok, key} ->
-          Map.put(acc, key, value)
+  defp build_sheet(attributes) do
+    Enum.reduce(
+      attributes,
+      %XlsxReader.Sheet{},
+      fn {name, value}, sheet ->
+        case Map.fetch(@sheet_attributes, name) do
+          {:ok, key} ->
+            %{sheet | key => value}
 
-        :error ->
-          acc
+          :error ->
+            sheet
+        end
       end
-    end)
+    )
   end
 end

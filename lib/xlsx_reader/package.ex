@@ -1,30 +1,25 @@
 defmodule XlsxReader.Package do
   @enforce_keys [:zip_handle]
-  defstruct zip_handle: nil, files: [], workbook: nil
+  defstruct zip_handle: nil, workbook: nil
 
   alias XlsxReader.{
     Unzip,
     RelationshipsParser,
     SharedStringsParser,
     StylesParser,
+    Workbook,
     WorkbookParser,
     WorksheetParser
   }
 
   def open(zip_handle) do
-    with {:ok, files} <- list_contents(zip_handle),
-         {:ok, sheets} <- load_workbook_xml(zip_handle),
+    with :ok <- check_contents(zip_handle),
+         {:ok, workbook} <- load_workbook_xml(zip_handle),
          {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle) do
       package =
         %__MODULE__{
           zip_handle: zip_handle,
-          files: files,
-          workbook: %{
-            sheets: sheets,
-            rels: workbook_rels,
-            shared_strings: nil,
-            styles: nil
-          }
+          workbook: %{workbook | rels: workbook_rels}
         }
         |> load_shared_strings
         |> load_styles
@@ -75,13 +70,11 @@ defmodule XlsxReader.Package do
     @workbook_xml_rels
   ]
 
-  def list_contents(zip_handle) do
+  def check_contents(zip_handle) do
     with {:ok, files} <- Unzip.list(zip_handle) do
-      if Enum.all?(@required_files, &Enum.member?(files, &1)) do
-        {:ok, files}
-      else
-        {:error, "invalid xlsx file"}
-      end
+      if Enum.all?(@required_files, &Enum.member?(files, &1)),
+        do: :ok,
+        else: {:error, "invalid xlsx file"}
     end
   end
 
@@ -111,8 +104,8 @@ defmodule XlsxReader.Package do
   defp load_styles(package) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
          {:ok, xml} <- Unzip.extract(package.zip_handle, file),
-         {:ok, shared_strings} <- StylesParser.parse(xml) do
-      %{package | workbook: Map.put(package.workbook, :styles, shared_strings)}
+         {:ok, style_types} <- StylesParser.parse(xml) do
+      %{package | workbook: %{package.workbook | style_types: style_types}}
     else
       :no_shared_strings ->
         package

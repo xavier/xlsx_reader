@@ -1,7 +1,7 @@
 defmodule XlsxReader.WorksheetParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.{WorksheetParser, SharedStringsParser, StylesParser}
+  alias XlsxReader.{WorksheetParser, Workbook, SharedStringsParser, StylesParser}
 
   setup do
     {:ok, shared_strings} =
@@ -9,14 +9,14 @@ defmodule XlsxReader.WorksheetParserTest do
       |> TestFixtures.read!()
       |> SharedStringsParser.parse()
 
-    {:ok, styles} =
+    {:ok, style_types} =
       "package/xl/styles.xml"
       |> TestFixtures.read!()
       |> StylesParser.parse()
 
-    workbook = %{
+    workbook = %Workbook{
       shared_strings: shared_strings,
-      styles: styles
+      style_types: style_types
     }
 
     {:ok, workbook: workbook}

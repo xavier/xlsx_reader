@@ -3,8 +3,13 @@ defmodule XlsxReader.StylesParser do
 
   alias XlsxReader.Styles
 
+  defmodule State do
+    @moduledoc false
+    defstruct collect_xf: false, style_types: [], custom_formats: %{}
+  end
+
   def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, %{collect_xf: false, style_types: [], custom_formats: %{}})
+    Saxy.parse_string(xml, __MODULE__, %State{})
   end
 
   @impl Saxy.Handler
@@ -14,7 +19,7 @@ defmodule XlsxReader.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:end_document, _data, state) do
-    {:ok, Map.take(state, [:style_types, :custom_formats])}
+    {:ok, state.style_types}
   end
 
   @impl Saxy.Handler
@@ -25,7 +30,7 @@ defmodule XlsxReader.StylesParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, {"cellXfs", attributes}, state) do
+  def handle_event(:start_element, {"cellXfs", _attributes}, state) do
     {:ok, %{state | collect_xf: true}}
   end
 
