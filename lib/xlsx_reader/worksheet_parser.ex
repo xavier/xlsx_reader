@@ -124,15 +124,15 @@ defmodule XlsxReader.WorksheetParser do
         number * 100
 
       {nil, :date, value} ->
-        {:ok, date} = Conversion.to_date(value)
+        {:ok, date} = Conversion.to_date(value, state.workbook.base_date)
         date
 
       {nil, :time, value} ->
-        {:ok, date_time} = Conversion.to_date_time(value)
+        {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
       {nil, :date_time, value} ->
-        {:ok, date_time} = Conversion.to_date_time(value)
+        {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
       {"b", _, "1"} ->

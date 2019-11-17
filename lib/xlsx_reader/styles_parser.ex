@@ -1,7 +1,7 @@
 defmodule XlsxReader.StylesParser do
   @behaviour Saxy.Handler
 
-  alias XlsxReader.Styles
+  alias XlsxReader.{Styles, ParserUtils}
 
   defmodule State do
     @moduledoc false
@@ -24,8 +24,8 @@ defmodule XlsxReader.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"numFmt", attributes}, state) do
-    num_fmt_id = get_attribute(attributes, "numFmtId")
-    format_code = get_attribute(attributes, "formatCode")
+    num_fmt_id = ParserUtils.get_attribute(attributes, "numFmtId")
+    format_code = ParserUtils.get_attribute(attributes, "formatCode")
     {:ok, %{state | custom_formats: Map.put(state.custom_formats, num_fmt_id, format_code)}}
   end
 
@@ -36,7 +36,7 @@ defmodule XlsxReader.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"xf", attributes}, %{collect_xf: true} = state) do
-    num_fmt_id = get_attribute(attributes, "numFmtId")
+    num_fmt_id = ParserUtils.get_attribute(attributes, "numFmtId")
 
     {:ok,
      %{
@@ -71,11 +71,4 @@ defmodule XlsxReader.StylesParser do
   def handle_event(:characters, _chars, state) do
     {:ok, state}
   end
-
-  ##
-
-  defp get_attribute(attributes, name, default \\ nil)
-  defp get_attribute([], _name, default), do: default
-  defp get_attribute([{name, value} | _], name, _default), do: value
-  defp get_attribute([_ | rest], name, default), do: get_attribute(rest, name, default)
 end

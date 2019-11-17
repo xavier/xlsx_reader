@@ -1,7 +1,7 @@
 defmodule XlsxReader.WorksheetParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.{WorksheetParser, Workbook, SharedStringsParser, StylesParser}
+  alias XlsxReader.{WorksheetParser, Workbook, SharedStringsParser, StylesParser, Conversion}
 
   setup do
     {:ok, shared_strings} =
@@ -16,7 +16,8 @@ defmodule XlsxReader.WorksheetParserTest do
 
     workbook = %Workbook{
       shared_strings: shared_strings,
-      style_types: style_types
+      style_types: style_types,
+      base_date: Conversion.base_date(1900)
     }
 
     {:ok, workbook: workbook}

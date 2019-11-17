@@ -4,5 +4,6 @@ defmodule XlsxReader.Workbook do
   defstruct sheets: [],
             rels: nil,
             shared_strings: nil,
-            style_types: nil
+            style_types: nil,
+            base_date: nil
 end

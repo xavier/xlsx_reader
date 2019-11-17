@@ -5,6 +5,8 @@ defmodule XlsxReader.Conversion do
 
   """
 
+  @type date_system :: 1900 | 1904
+
   @doc """
 
   Converts a string to an integer or float
@@ -92,10 +94,15 @@ defmodule XlsxReader.Conversion do
   end
 
   # This is why we can't have nice things: http://www.cpearson.com/excel/datetime.htm
-  @date_system_1900 ~D[1899-12-30]
+  @base_date_system_1900 ~D[1899-12-30]
+  @base_date_system_1904 ~D[1904-01-01]
 
-  # TODO support 1904 mode
-  # @date_system_1904 ~D[1904-01-01]
+  @doc """
+  Returns the base date for the given date system
+  """
+  @spec base_date(date_system()) :: Date.t()
+  def base_date(1900), do: @base_date_system_1900
+  def base_date(1904), do: @base_date_system_1904
 
   @doc """
 
@@ -117,7 +124,7 @@ defmodule XlsxReader.Conversion do
 
   """
   @spec to_date(String.t(), Date.t()) :: {:ok, Date.t()} | :error
-  def to_date(string, base_date \\ @date_system_1900) do
+  def to_date(string, base_date \\ @base_date_system_1900) do
     with {:ok, days, _fraction_of_24} when days > 0.0 <- split_serial_date(string) do
       {:ok, Date.add(base_date, days)}
     else
@@ -149,7 +156,7 @@ defmodule XlsxReader.Conversion do
 
   """
   @spec to_date_time(String.t(), Date.t()) :: {:ok, NaiveDateTime.t()} | :error
-  def to_date_time(string, base_date \\ @date_system_1900) do
+  def to_date_time(string, base_date \\ @base_date_system_1900) do
     with {:ok, days, fraction_of_24} when days > 0.0 <- split_serial_date(string),
          date <- Date.add(base_date, days),
          {:ok, time} <- fraction_of_24_to_time(fraction_of_24) do

@@ -14,7 +14,8 @@ defmodule XlsxReader.WorkbookParserTest do
       ],
       rels: nil,
       shared_strings: nil,
-      style_types: nil
+      style_types: nil,
+      base_date: ~D[1899-12-30]
     }
 
     assert {:ok, expected} == WorkbookParser.parse(workbook_xml)
