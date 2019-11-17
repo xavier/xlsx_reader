@@ -5,30 +5,33 @@ defmodule XlsxReader.UnzipTest do
 
   describe "list/1" do
     test "lists the contents of a zip file" do
-      zip_handle = {:path, TestFixtures.path("test.zip")}
+      zip_handle = Unzip.handle(TestFixtures.path("test.zip"), :path)
 
       assert {:ok, ["dir/subdir/file3.bin", "file1.txt", "file2.dat"]} = Unzip.list(zip_handle)
     end
 
     test "lists the contents of a zip buffer" do
-      zip_handle = {:binary, TestFixtures.read!("test.zip")}
+      zip_handle = Unzip.handle(TestFixtures.read!("test.zip"), :binary)
 
       assert {:ok, ["dir/subdir/file3.bin", "file1.txt", "file2.dat"]} = Unzip.list(zip_handle)
     end
 
     test "invalid zip file" do
-      assert {:error, "invalid zip file"} =
-               Unzip.list({:path, TestFixtures.path("not_a_zip.zip")})
+      zip_handle = Unzip.handle(TestFixtures.path("not_a_zip.zip"), :path)
+
+      assert {:error, "invalid zip file"} = Unzip.list(zip_handle)
     end
 
     test "zip file not found" do
-      assert {:error, "file not found"} = Unzip.list({:path, "__does_not_exist__"})
+      zip_handle = Unzip.handle("__does_not_exist__", :path)
+
+      assert {:error, "file not found"} = Unzip.list(zip_handle)
     end
   end
 
   describe "extract/2" do
     test "extracts a file from a zip file" do
-      zip_handle = {:path, TestFixtures.path("test.zip")}
+      zip_handle = Unzip.handle(TestFixtures.path("test.zip"), :path)
 
       assert {:ok, "Contents of file1\n"} = Unzip.extract(zip_handle, "file1.txt")
       assert {:ok, "Contents of file2\n"} = Unzip.extract(zip_handle, "file2.dat")
@@ -39,7 +42,7 @@ defmodule XlsxReader.UnzipTest do
     end
 
     test "extracts a file from zip buffer" do
-      zip_handle = {:path, TestFixtures.path("test.zip")}
+      zip_handle = Unzip.handle(TestFixtures.path("test.zip"), :path)
 
       assert {:ok, "Contents of file1\n"} = Unzip.extract(zip_handle, "file1.txt")
       assert {:ok, "Contents of file2\n"} = Unzip.extract(zip_handle, "file2.dat")
@@ -50,12 +53,13 @@ defmodule XlsxReader.UnzipTest do
     end
 
     test "invalid zip file" do
-      zip_handle = {:path, TestFixtures.path("not_a_zip.zip")}
+      zip_handle = Unzip.handle(TestFixtures.path("not_a_zip.zip"), :path)
+
       assert {:error, "invalid zip file"} = Unzip.extract(zip_handle, "file1.txt")
     end
 
     test "zip file not found" do
-      zip_handle = {:path, "__does_not_exist__"}
+      zip_handle = Unzip.handle("__does_not_exist__", :path)
 
       assert {:error, "file not found"} = Unzip.extract(zip_handle, "file1.txt")
     end

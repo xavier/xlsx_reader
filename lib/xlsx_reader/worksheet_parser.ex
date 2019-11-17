@@ -38,10 +38,6 @@ defmodule XlsxReader.WorksheetParser do
     {:ok, %{state | value_type: :value, value: :expect_chars}}
   end
 
-  def handle_event(:start_element, {"f", _attributes}, state) do
-    {:ok, %{state | value_type: :formula, value: :expect_chars}}
-  end
-
   @impl Saxy.Handler
   def handle_event(:start_element, _element, state) do
     {:ok, state}
@@ -79,10 +75,6 @@ defmodule XlsxReader.WorksheetParser do
   def handle_event(:characters, chars, %{value: :expect_chars} = state) do
     case state.value_type do
       :value ->
-        {:ok, %{state | value: chars}}
-
-        :formula
-        # TODO
         {:ok, %{state | value: chars}}
 
       _ ->

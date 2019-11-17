@@ -1,11 +1,11 @@
 defmodule XlsxReader.PackageTest do
   use ExUnit.Case
 
-  alias XlsxReader.Package
+  alias XlsxReader.{Package, Unzip}
 
   describe "open/1" do
     test "opens a xlsx file" do
-      zip_handle = {:path, TestFixtures.path("test.xlsx")}
+      zip_handle = Unzip.handle(TestFixtures.path("test.xlsx"), :path)
 
       assert {:ok, package} = Package.open(zip_handle)
 
@@ -13,18 +13,22 @@ defmodule XlsxReader.PackageTest do
     end
 
     test "rejects non-xlsx file" do
-      assert {:error, "invalid xlsx file"} = Package.open({:path, TestFixtures.path("test.zip")})
+      zip_handle = Unzip.handle(TestFixtures.path("test.zip"), :path)
+
+      assert {:error, "invalid xlsx file"} = Package.open(zip_handle)
     end
 
     test "rejects non-zip file" do
-      assert {:error, "invalid zip file"} =
-               Package.open({:path, TestFixtures.path("not_a_zip.zip")})
+      zip_handle = Unzip.handle(TestFixtures.path("not_a_zip.zip"), :path)
+
+      assert {:error, "invalid zip file"} = Package.open(zip_handle)
     end
   end
 
-  describe "load_sheet/2" do
+  describe "load_sheet_by_name/2" do
     setup do
-      {:ok, package} = Package.open({:path, TestFixtures.path("test.xlsx")})
+      zip_handle = Unzip.handle(TestFixtures.path("test.xlsx"), :path)
+      {:ok, package} = Package.open(zip_handle)
 
       {:ok, %{package: package}}
     end
@@ -36,30 +40,14 @@ defmodule XlsxReader.PackageTest do
                 ["1", "2", "3" | _],
                 ["2", "4", "6" | _]
                 | _
-              ]} = Package.load_sheet(package, "Sheet 1")
+              ]} = Package.load_sheet_by_name(package, "Sheet 1")
 
       assert {:ok,
               [
                 ["", "" | _],
                 ["some ", "test" | _]
                 | _
-              ]} = Package.load_sheet(package, "Sheet 2")
-    end
-  end
-
-  describe "load_sheets/1" do
-    setup do
-      {:ok, package} = Package.open({:path, TestFixtures.path("test.xlsx")})
-
-      {:ok, %{package: package}}
-    end
-
-    test "load all sheets", %{package: package} do
-      assert [
-               {"Sheet 1", [["A", "B", "C" | _] | _]},
-               {"Sheet 2", [["", "" | _] | _]},
-               {"Sheet 3", _}
-             ] = Package.load_sheets(package)
+              ]} = Package.load_sheet_by_name(package, "Sheet 2")
     end
   end
 end

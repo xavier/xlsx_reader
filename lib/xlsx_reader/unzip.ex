@@ -1,6 +1,9 @@
 defmodule XlsxReader.Unzip do
   @type zip_handle :: {:path, String.t()} | {:binary, binary()}
 
+  def handle(source, type) when type in [:path, :binary],
+    do: {type, source}
+
   def list(zip_handle) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, entries} <- :zip.list_dir(zip) do

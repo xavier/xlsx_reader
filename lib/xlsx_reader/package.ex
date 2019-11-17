@@ -35,28 +35,32 @@ defmodule XlsxReader.Package do
 
   def load_sheets(package) do
     for sheet <- package.workbook.sheets do
-      with {:ok, target} <- fetch_rel_target(package.workbook.rels, :sheets, sheet.rid),
-           file <- xl_path(target),
-           {:ok, rows} <- load_worksheet_xml(package, file) do
+      with {:ok, rows} <- load_sheet_by_rid(package, sheet.rid) do
         {sheet.name, rows}
       else
-        :error ->
-          {:error, "sheet relationship not found"}
+        _ ->
+          {sheet.name, []}
       end
     end
   end
 
-  def load_sheet(package, name) do
-    with %{rid: rid} <- find_sheet_by_name(package, name),
-         {:ok, target} <- fetch_rel_target(package.workbook.rels, :sheets, rid),
-         file <- xl_path(target) do
-      load_worksheet_xml(package, file)
-    else
-      nil ->
-        {:error, "sheet #{inspect(name)} not found"}
+  def load_sheet_by_rid(package, rid) do
+    case fetch_rel_target(package.workbook.rels, :sheets, rid) do
+      {:ok, target} ->
+        load_worksheet_xml(package, xl_path(target))
 
       :error ->
         {:error, "sheet relationship not found"}
+    end
+  end
+
+  def load_sheet_by_name(package, name) do
+    case find_sheet_by_name(package, name) do
+      %{rid: rid} ->
+        load_sheet_by_rid(package, rid)
+
+      nil ->
+        {:error, "sheet #{inspect(name)} not found"}
     end
   end
 
