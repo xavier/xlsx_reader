@@ -1,4 +1,10 @@
 defmodule XlsxReader.WorksheetParser do
+  @moduledoc """
+
+  Parses worksheets into rows
+
+  """
+
   @behaviour Saxy.Handler
 
   alias XlsxReader.Conversion

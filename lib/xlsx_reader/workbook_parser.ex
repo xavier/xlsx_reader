@@ -1,4 +1,10 @@
 defmodule XlsxReader.WorkbookParser do
+  @moduledoc """
+
+  Parses a workbook XML filee to extract the list of sheets and determine the date system in use.
+
+  """
+
   @behaviour Saxy.Handler
 
   alias XlsxReader.{ParserUtils, Conversion}

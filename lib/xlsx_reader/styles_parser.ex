@@ -1,4 +1,10 @@
 defmodule XlsxReader.StylesParser do
+  @moduledoc """
+
+  Parses style definitions and build a `style_types` array which
+  is used to look up the cell value format for type conversion
+
+  """
   @behaviour Saxy.Handler
 
   alias XlsxReader.{Styles, ParserUtils}

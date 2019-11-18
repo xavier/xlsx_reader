@@ -1,4 +1,10 @@
 defmodule XlsxReader.ParserUtils do
+  @moduledoc """
+
+  Utility functions used by the XML parser modules
+
+  """
+
   @doc """
 
   Get value of attribute by name

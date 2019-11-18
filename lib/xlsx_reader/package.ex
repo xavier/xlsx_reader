@@ -1,13 +1,23 @@
 defmodule XlsxReader.Package do
-  @enforce_keys [:zip_handle]
+  @moduledoc """
+
+  Loads the content of an XLSX file.
+
+  """
+
+  @enforce_keys [:zip_handle, :workbook]
   defstruct zip_handle: nil, workbook: nil
+
+  @type t :: %__MODULE__{
+          zip_handle: XlsxReader.Unzip.zip_handle(),
+          workbook: XlsxReader.Workbook.t()
+        }
 
   alias XlsxReader.{
     Unzip,
     RelationshipsParser,
     SharedStringsParser,
     StylesParser,
-    Workbook,
     WorkbookParser,
     WorksheetParser
   }

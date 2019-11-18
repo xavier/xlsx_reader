@@ -1,4 +1,15 @@
 defmodule XlsxReader.Styles do
+  @moduledoc """
+
+  Maps cell styles to a type based on a list of "standard" styles and introspection the custom formats.
+
+  """
+
+  @type known_style_type ::
+          :string | :integer | :float | :percentage | :date | :time | :date_time | :unsupported
+  @type style_type :: known_style_type() | String.t()
+  @type style_types :: [style_type]
+
   @known_styles %{
     # General
     "0" => :string,

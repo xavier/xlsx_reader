@@ -1,4 +1,11 @@
 defmodule XlsxReader.RelationshipsParser do
+  @moduledoc """
+
+  Parses a workbook relationships file to determine the exact location
+  of the shared strings, styles, themes and worksheet files within the archive.
+
+  """
+
   @behaviour Saxy.Handler
 
   def parse(xml) do

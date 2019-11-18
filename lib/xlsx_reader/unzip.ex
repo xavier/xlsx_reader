@@ -1,9 +1,34 @@
 defmodule XlsxReader.Unzip do
-  @type zip_handle :: {:path, String.t()} | {:binary, binary()}
+  @moduledoc """
 
+  Zip archive utility functions
+
+  To allow for transparent handling of archives located on disk or in memory,
+  you must first obtain a handle with `handle/2` which can then be used to
+  access the contents of the archive.
+
+  """
+
+  @type source :: String.t() | binary()
+  @type source_type :: :path | :binary
+  @type zip_handle :: {:path, String.t()} | {:binary, binary()}
+  @type error :: {:error, String.t()}
+
+  @doc """
+
+  Returns a `zip_handle` to be used by `list/1` and `extract/2`
+
+  """
+  @spec handle(source(), source_type()) :: zip_handle()
   def handle(source, type) when type in [:path, :binary],
     do: {type, source}
 
+  @doc """
+
+  Lists the content of the archive.
+
+  """
+  @spec list(zip_handle()) :: {:ok, [String.t()]} | error()
   def list(zip_handle) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, entries} <- :zip.list_dir(zip) do
@@ -14,6 +39,12 @@ defmodule XlsxReader.Unzip do
     end
   end
 
+  @doc """
+
+  Extracts a file from the archive
+
+  """
+  @spec extract(zip_handle(), String.t()) :: {:ok, binary()} | error()
   def extract(zip_handle, file) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, [{_, contents}]} <- :zip.extract(zip, extract_options(file)) do

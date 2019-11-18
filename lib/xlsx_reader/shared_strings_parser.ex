@@ -1,4 +1,10 @@
 defmodule XlsxReader.SharedStringsParser do
+  @moduledoc """
+
+  Builds a list of shared strings referenced to by index in the worksheets
+
+  """
+
   @behaviour Saxy.Handler
 
   def parse(xml) do
