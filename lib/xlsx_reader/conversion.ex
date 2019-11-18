@@ -149,6 +149,9 @@ defmodule XlsxReader.Conversion do
       iex> XlsxReader.Conversion.to_date_time("43783.760243055556")
       {:ok, ~N[2019-11-14 18:14:45]}
 
+      iex> XlsxReader.Conversion.to_date_time("0.4895833333333333")
+      {:ok, ~N[1899-12-30 11:45:00]}
+
       iex> XlsxReader.Conversion.to_date_time("1.760243055556", ~D[1999-12-31])
       {:ok, ~N[2000-01-01 18:14:45]}
 
@@ -158,7 +161,7 @@ defmodule XlsxReader.Conversion do
   """
   @spec to_date_time(String.t(), Date.t()) :: {:ok, NaiveDateTime.t()} | :error
   def to_date_time(string, base_date \\ @base_date_system_1900) do
-    with {:ok, days, fraction_of_24} when days > 0.0 <- split_serial_date(string),
+    with {:ok, days, fraction_of_24} when days >= 0.0 <- split_serial_date(string),
          date <- Date.add(base_date, days),
          {:ok, time} <- fraction_of_24_to_time(fraction_of_24) do
       NaiveDateTime.new(date, time)
