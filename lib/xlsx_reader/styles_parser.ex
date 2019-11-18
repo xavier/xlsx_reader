@@ -69,11 +69,6 @@ defmodule XlsxReader.StylesParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, _name, state) do
-    {:ok, state}
-  end
-
-  @impl Saxy.Handler
   def handle_event(:characters, _chars, state) do
     {:ok, state}
   end
