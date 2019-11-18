@@ -60,9 +60,18 @@ defmodule XlsxReaderTest do
       assert {:ok,
               [
                 _,
-                ["date", "43783" | _]
+                ["date", "43783", "" | _]
                 | _
               ]} = XlsxReader.sheet(package, "Sheet 3", type_conversion: false)
+    end
+
+    test "custom blank value", %{package: package} do
+      assert {:ok,
+              [
+                _,
+                ["date", _date, "n/a" | _]
+                | _
+              ]} = XlsxReader.sheet(package, "Sheet 3", blank_value: "n/a")
     end
   end
 

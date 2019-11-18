@@ -46,6 +46,7 @@ defmodule XlsxReader do
   Options:
 
     - `type_conversion`: boolean (default: `true`)
+    - `blank_value`: placeholder value for empty cells (default: `""`)
 
   """
   @spec sheet(XlsxReader.Package.t(), String.t(), Keyword.t()) :: {:ok, rows()}
@@ -60,6 +61,7 @@ defmodule XlsxReader do
   Options:
 
     - `type_conversion`: boolean (default: `true`)
+    - `blank_value`: placeholder value for empty cells (default: `""`)
 
   """
   @spec sheets(XlsxReader.Package.t(), Keyword.t()) :: {:ok, rows()}

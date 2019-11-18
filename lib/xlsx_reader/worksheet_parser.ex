@@ -11,6 +11,7 @@ defmodule XlsxReader.WorksheetParser do
 
   defmodule State do
     @moduledoc false
+    @enforce_keys [:workbook, :type_conversion, :blank_value]
     defstruct workbook: nil,
               rows: [],
               row: nil,
@@ -18,7 +19,8 @@ defmodule XlsxReader.WorksheetParser do
               cell_type: nil,
               value_type: nil,
               value: nil,
-              type_conversion: nil
+              type_conversion: nil,
+              blank_value: nil
   end
 
   @doc """
@@ -27,12 +29,14 @@ defmodule XlsxReader.WorksheetParser do
   Options:
 
     - `type_conversion`: boolean (default: `true`)
+    - `blank_value`: placeholder value for empty cells (default: `""`)
 
   """
   def parse(xml, workbook, options \\ []) do
     Saxy.parse_string(xml, __MODULE__, %State{
       workbook: workbook,
-      type_conversion: Keyword.get(options, :type_conversion, true)
+      type_conversion: Keyword.get(options, :type_conversion, true),
+      blank_value: Keyword.get(options, :blank_value, "")
     })
   end
 
@@ -131,7 +135,7 @@ defmodule XlsxReader.WorksheetParser do
   defp format_current_cell_value(%State{type_conversion: false} = state) do
     case {state.cell_type, state.value} do
       {_, nil} ->
-        ""
+        state.blank_value
 
       {"s", value} ->
         lookup_shared_string(state, value)
@@ -146,7 +150,7 @@ defmodule XlsxReader.WorksheetParser do
 
     case {state.cell_type, style_type, state.value} do
       {_, _, nil} ->
-        ""
+        state.blank_value
 
       {"s", _, value} ->
         lookup_shared_string(state, value)
