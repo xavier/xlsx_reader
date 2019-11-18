@@ -51,7 +51,7 @@ defmodule XlsxReaderTest do
       assert {:ok,
               [
                 ["A", "B", "C" | _],
-                ["1", "2", "3" | _]
+                [1, 2, 3 | _]
                 | _
               ]} = XlsxReader.sheet(package, "Sheet 1")
     end

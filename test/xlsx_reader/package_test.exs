@@ -37,8 +37,8 @@ defmodule XlsxReader.PackageTest do
       assert {:ok,
               [
                 ["A", "B", "C" | _],
-                ["1", "2", "3" | _],
-                ["2", "4", "6" | _]
+                [1, 2, 3 | _],
+                [2, 4, 6 | _]
                 | _
               ]} = Package.load_sheet_by_name(package, "Sheet 1")
 

@@ -46,7 +46,7 @@ defmodule XlsxReader.WorksheetParserTest do
       ["datetime", ~N[2019-11-14 18:14:45], "", "", ""],
       ["time", ~N[2019-11-14 18:14:45], "", "", ""],
       ["percentage", 12.5, "", "", ""],
-      ["money chf", "100", "", "", ""],
+      ["money chf", 100, "", "", ""],
       ["money usd", "9999,99 USD", "", "", ""],
       ["ticked", true, "", "", ""],
       ["not ticked", false, "", "", ""],

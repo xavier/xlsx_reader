@@ -186,7 +186,8 @@ defmodule XlsxReader.WorksheetParser do
         false
 
       {nil, _, value} ->
-        to_string(value)
+        {:ok, number} = Conversion.to_number(value)
+        number
 
       {_, _, value} ->
         to_string(value)
