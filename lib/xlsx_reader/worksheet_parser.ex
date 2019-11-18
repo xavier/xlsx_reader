@@ -20,7 +20,8 @@ defmodule XlsxReader.WorksheetParser do
               value_type: nil,
               value: nil,
               type_conversion: nil,
-              blank_value: nil
+              blank_value: nil,
+              empty_rows: nil
   end
 
   @doc """
@@ -30,13 +31,15 @@ defmodule XlsxReader.WorksheetParser do
 
     - `type_conversion`: boolean (default: `true`)
     - `blank_value`: placeholder value for empty cells (default: `""`)
+    - `empty_rows: include empty rows (default: `true`)
 
   """
   def parse(xml, workbook, options \\ []) do
     Saxy.parse_string(xml, __MODULE__, %State{
       workbook: workbook,
       type_conversion: Keyword.get(options, :type_conversion, true),
-      blank_value: Keyword.get(options, :blank_value, "")
+      blank_value: Keyword.get(options, :blank_value, ""),
+      empty_rows: Keyword.get(options, :empty_rows, true)
     })
   end
 
@@ -83,7 +86,12 @@ defmodule XlsxReader.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "row", state) do
-    {:ok, %{state | rows: [Enum.reverse(state.row) | state.rows], row: nil}}
+    rows =
+      if !state.empty_rows && empty_row?(state),
+        do: state.rows,
+        else: [Enum.reverse(state.row) | state.rows]
+
+    {:ok, %{state | rows: rows, row: nil}}
   end
 
   @impl Saxy.Handler
@@ -187,5 +195,9 @@ defmodule XlsxReader.WorksheetParser do
 
   defp lookup_shared_string(state, value) do
     Enum.at(state.workbook.shared_strings, String.to_integer(value))
+  end
+
+  def empty_row?(state) do
+    Enum.all?(state.row, fn value -> value == state.blank_value end)
   end
 end

@@ -73,6 +73,14 @@ defmodule XlsxReaderTest do
                 | _
               ]} = XlsxReader.sheet(package, "Sheet 3", blank_value: "n/a")
     end
+
+    test "skip empty rows", %{package: package} do
+      assert {:ok,
+              [
+                ["date" | _]
+                | _
+              ]} = XlsxReader.sheet(package, "Sheet 3", empty_rows: false)
+    end
   end
 
   describe "sheets/1" do
