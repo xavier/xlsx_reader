@@ -3,60 +3,46 @@
   <sheetPr>
     <pageSetUpPr fitToPage="1"/>
   </sheetPr>
-  <dimension ref="A1:E11"/>
+  <dimension ref="A1:B9"/>
   <sheetViews>
-    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0">
-      <pane activePane="bottomRight" state="frozen" topLeftCell="B2" xSplit="1" ySplit="1"/>
-    </sheetView>
+    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0"/>
   </sheetViews>
   <sheetFormatPr customHeight="1" defaultColWidth="16.3333" defaultRowHeight="19.9" outlineLevelCol="0" outlineLevelRow="0"/>
   <cols>
-    <col customWidth="1" max="5" min="1" style="17" width="16.3516"/>
-    <col customWidth="1" max="256" min="6" style="17" width="16.3516"/>
+    <col customWidth="1" max="2" min="1" style="17" width="16.3516"/>
+    <col customWidth="1" max="256" min="3" style="17" width="16.3516"/>
   </cols>
   <sheetData>
     <row customHeight="1" ht="20.25" r="1">
       <c r="A1" s="10"/>
       <c r="B1" s="10"/>
-      <c r="C1" s="10"/>
-      <c r="D1" s="10"/>
-      <c r="E1" s="10"/>
     </row>
     <row customHeight="1" ht="20.25" r="2">
       <c r="A2" s="11" t="s">
         <v>9</v>
       </c>
       <c r="B2" s="18">
-        <f>TODAY()</f>
-        <v>43783</v>
+        <f>DATE(2019,11,15)</f>
+        <v>43784</v>
       </c>
-      <c r="C2" s="13"/>
-      <c r="D2" s="13"/>
-      <c r="E2" s="13"/>
     </row>
     <row customHeight="1" ht="20.05" r="3">
       <c r="A3" s="19" t="s">
         <v>10</v>
       </c>
       <c r="B3" s="20">
-        <f ref="B3:B4" si="1" t="shared">NOW()</f>
-        <v>43783.760243055556</v>
+        <f>NOW()</f>
+        <v>43787.924259259256</v>
       </c>
-      <c r="C3" s="16"/>
-      <c r="D3" s="16"/>
-      <c r="E3" s="16"/>
     </row>
     <row customHeight="1" ht="20.05" r="4">
       <c r="A4" s="19" t="s">
         <v>11</v>
       </c>
       <c r="B4" s="21">
-        <f si="1" t="shared"/>
-        <v>43783.760243055556</v>
+        <f>TIME(18,45,12)</f>
+        <v>1462.781388888889</v>
       </c>
-      <c r="C4" s="16"/>
-      <c r="D4" s="16"/>
-      <c r="E4" s="16"/>
     </row>
     <row customHeight="1" ht="20.05" r="5">
       <c r="A5" s="19" t="s">
@@ -65,9 +51,6 @@
       <c r="B5" s="22">
         <v>0.125</v>
       </c>
-      <c r="C5" s="16"/>
-      <c r="D5" s="16"/>
-      <c r="E5" s="16"/>
     </row>
     <row customHeight="1" ht="20.05" r="6">
       <c r="A6" s="19" t="s">
@@ -76,9 +59,6 @@
       <c r="B6" s="23">
         <v>100</v>
       </c>
-      <c r="C6" s="16"/>
-      <c r="D6" s="16"/>
-      <c r="E6" s="16"/>
     </row>
     <row customHeight="1" ht="20.05" r="7">
       <c r="A7" s="19" t="s">
@@ -87,9 +67,6 @@
       <c r="B7" s="24" t="s">
         <v>15</v>
       </c>
-      <c r="C7" s="16"/>
-      <c r="D7" s="16"/>
-      <c r="E7" s="16"/>
     </row>
     <row customHeight="1" ht="20.05" r="8">
       <c r="A8" s="19" t="s">
@@ -98,9 +75,6 @@
       <c r="B8" s="7" t="b">
         <v>1</v>
       </c>
-      <c r="C8" s="16"/>
-      <c r="D8" s="16"/>
-      <c r="E8" s="16"/>
     </row>
     <row customHeight="1" ht="20.05" r="9">
       <c r="A9" s="19" t="s">
@@ -109,23 +83,6 @@
       <c r="B9" s="7" t="b">
         <v>0</v>
       </c>
-      <c r="C9" s="16"/>
-      <c r="D9" s="16"/>
-      <c r="E9" s="16"/>
-    </row>
-    <row customHeight="1" ht="20.05" r="10">
-      <c r="A10" s="25"/>
-      <c r="B10" s="15"/>
-      <c r="C10" s="16"/>
-      <c r="D10" s="16"/>
-      <c r="E10" s="16"/>
-    </row>
-    <row customHeight="1" ht="20.05" r="11">
-      <c r="A11" s="14"/>
-      <c r="B11" s="15"/>
-      <c r="C11" s="16"/>
-      <c r="D11" s="16"/>
-      <c r="E11" s="16"/>
     </row>
   </sheetData>
   <pageMargins bottom="1" footer="0.25" header="0.25" left="1" right="1" top="1"/>

@@ -6,9 +6,9 @@
     <numFmt formatCode="dd/mm/yyyy hh:mm" numFmtId="60"/>
     <numFmt formatCode="hh:mm" numFmtId="61"/>
     <numFmt formatCode="0.0%" numFmtId="62"/>
-    <numFmt formatCode="[$CHF] 0.00" numFmtId="63"/>
+    <numFmt formatCode="[$CHF]&quot; &quot;0.00" numFmtId="63"/>
   </numFmts>
-  <fonts count="3">
+  <fonts count="4">
     <font>
       <sz val="10"/>
       <color indexed="8"/>
@@ -20,13 +20,18 @@
       <name val="Helvetica Neue"/>
     </font>
     <font>
+      <sz val="13"/>
+      <color indexed="8"/>
+      <name val="Helvetica Neue"/>
+    </font>
+    <font>
       <b val="1"/>
       <sz val="10"/>
       <color indexed="8"/>
       <name val="Helvetica Neue"/>
     </font>
   </fonts>
-  <fills count="4">
+  <fills count="5">
     <fill>
       <patternFill patternType="none"/>
     </fill>
@@ -42,6 +47,12 @@
     <fill>
       <patternFill patternType="solid">
         <fgColor indexed="12"/>
+        <bgColor auto="1"/>
+      </patternFill>
+    </fill>
+    <fill>
+      <patternFill patternType="solid">
+        <fgColor indexed="13"/>
         <bgColor auto="1"/>
       </patternFill>
     </fill>
@@ -165,83 +176,80 @@
       <alignment vertical="top" wrapText="1"/>
     </xf>
   </cellStyleXfs>
-  <cellXfs count="26">
+  <cellXfs count="25">
     <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
     <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="1" fillId="2" fontId="2" numFmtId="49">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="1" fillId="2" fontId="3" numFmtId="49">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="2" fillId="3" fontId="2" numFmtId="0">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="2" fillId="3" fontId="3" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fontId="0" numFmtId="0">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="4" fontId="0" numFmtId="0">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="4" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="0">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="3" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="0">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="1" fillId="2" fontId="2" numFmtId="0">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="2" fillId="3" fontId="2" numFmtId="49">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fontId="0" numFmtId="49">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="4" fontId="0" numFmtId="0">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="0">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="6" fontId="0" numFmtId="0">
-      <alignment vertical="top" wrapText="1"/>
-    </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="7" fontId="0" numFmtId="0">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
     <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fontId="0" numFmtId="59">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="1" fillId="2" fontId="3" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="49">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="2" fillId="3" fontId="3" numFmtId="49">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="60">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fillId="4" fontId="0" numFmtId="49">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="61">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="4" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="62">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="5" fillId="3" fontId="3" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="63">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fontId="0" numFmtId="49">
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="0" applyProtection="0" borderId="7" fillId="4" fontId="0" numFmtId="0">
       <alignment vertical="top" wrapText="1"/>
     </xf>
-    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="2" numFmtId="9">
+    <xf applyAlignment="1" applyBorder="0" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" fontId="0" numFmtId="0">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="3" fillId="4" fontId="0" numFmtId="59">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="5" fillId="3" fontId="3" numFmtId="49">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="60">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="61">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="62">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="63">
+      <alignment vertical="top" wrapText="1"/>
+    </xf>
+    <xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="6" fillId="4" fontId="0" numFmtId="49">
       <alignment vertical="top" wrapText="1"/>
     </xf>
   </cellXfs>
@@ -265,6 +273,7 @@
       <rgbColor rgb="ffa5a5a5"/>
       <rgbColor rgb="ff3f3f3f"/>
       <rgbColor rgb="ffdbdbdb"/>
+      <rgbColor rgb="ffffffff"/>
     </indexedColors>
   </colors>
 </styleSheet>

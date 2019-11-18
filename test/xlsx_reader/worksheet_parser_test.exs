@@ -41,17 +41,15 @@ defmodule XlsxReader.WorksheetParserTest do
     sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet3.xml")
 
     expected = [
-      ["", "", "", "", ""],
-      ["date", ~D[2019-11-14], "", "", ""],
-      ["datetime", ~N[2019-11-14 18:14:45], "", "", ""],
-      ["time", ~N[2019-11-14 18:14:45], "", "", ""],
-      ["percentage", 12.5, "", "", ""],
-      ["money chf", 100, "", "", ""],
-      ["money usd", "9999,99 USD", "", "", ""],
-      ["ticked", true, "", "", ""],
-      ["not ticked", false, "", "", ""],
-      ["", "", "", "", ""],
-      ["", "", "", "", ""]
+      ["", ""],
+      ["date", ~D[2019-11-15]],
+      ["datetime", ~N[2019-11-18 22:10:56]],
+      ["time", ~N[1904-01-01 18:45:12]],
+      ["percentage", 12.5],
+      ["money chf", 100],
+      ["money usd", "9999,99 USD"],
+      ["ticked", true],
+      ["not ticked", false]
     ]
 
     assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook)
@@ -65,17 +63,15 @@ defmodule XlsxReader.WorksheetParserTest do
     sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet3.xml")
 
     expected = [
-      ["", "", "", "", ""],
-      ["date", "43783", "", "", ""],
-      ["datetime", "43783.760243055556", "", "", ""],
-      ["time", "43783.760243055556", "", "", ""],
-      ["percentage", "0.125", "", "", ""],
-      ["money chf", "100", "", "", ""],
-      ["money usd", "9999,99 USD", "", "", ""],
-      ["ticked", "1", "", "", ""],
-      ["not ticked", "0", "", "", ""],
-      ["", "", "", "", ""],
-      ["", "", "", "", ""]
+      ["", ""],
+      ["date", "43784"],
+      ["datetime", "43787.924259259256"],
+      ["time", "1462.781388888889"],
+      ["percentage", "0.125"],
+      ["money chf", "100"],
+      ["money usd", "9999,99 USD"],
+      ["ticked", "1"],
+      ["not ticked", "0"]
     ]
 
     assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook, type_conversion: false)

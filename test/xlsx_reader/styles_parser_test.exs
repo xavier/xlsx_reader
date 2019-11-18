@@ -30,9 +30,8 @@ defmodule XlsxReader.StylesParserTest do
       :date_time,
       :time,
       :percentage,
-      "[$CHF] 0.00",
-      :unsupported,
-      :percentage
+      "[$CHF]\" \"0.00",
+      :unsupported
     ]
 
     assert {:ok, expected} == StylesParser.parse(styles_xml)

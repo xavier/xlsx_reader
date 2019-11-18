@@ -2,9 +2,7 @@
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <dimension ref="A1:G22"/>
   <sheetViews>
-    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0">
-      <pane activePane="bottomRight" state="frozen" topLeftCell="B2" xSplit="1" ySplit="1"/>
-    </sheetView>
+    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0"/>
   </sheetViews>
   <sheetFormatPr customHeight="1" defaultColWidth="16.3333" defaultRowHeight="19.9" outlineLevelCol="0" outlineLevelRow="0"/>
   <cols>

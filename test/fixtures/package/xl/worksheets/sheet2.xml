@@ -5,9 +5,7 @@
   </sheetPr>
   <dimension ref="A1:E10"/>
   <sheetViews>
-    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0">
-      <pane activePane="bottomRight" state="frozen" topLeftCell="B2" xSplit="1" ySplit="1"/>
-    </sheetView>
+    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0"/>
   </sheetViews>
   <sheetFormatPr customHeight="1" defaultColWidth="16.3333" defaultRowHeight="19.9" outlineLevelCol="0" outlineLevelRow="0"/>
   <cols>
