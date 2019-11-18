@@ -4,9 +4,9 @@ An XLSX reader in Elixir.
 
 Features:
 
-    - Accepts XLSX data located on the file system or in memory
-    - Automatic type conversions
-    - Straightforward architecture: no ETS tables, no race-conditions
+- Accepts XLSX data located on the file system or in memory
+- Automatic type conversions
+- Straightforward architecture: no ETS tables, no race-conditions
 
 ## Installation
 

@@ -31,7 +31,7 @@ defmodule XlsxReader.WorksheetParser do
 
     - `type_conversion`: boolean (default: `true`)
     - `blank_value`: placeholder value for empty cells (default: `""`)
-    - `empty_rows: include empty rows (default: `true`)
+    - `empty_rows`: include empty rows (default: `true`)
 
   """
   def parse(xml, workbook, options \\ []) do
