@@ -125,10 +125,11 @@ defmodule XlsxReader.Conversion do
   """
   @spec to_date(String.t(), Date.t()) :: {:ok, Date.t()} | :error
   def to_date(string, base_date \\ @base_date_system_1900) do
-    with {:ok, days, _fraction_of_24} when days > 0.0 <- split_serial_date(string) do
-      {:ok, Date.add(base_date, days)}
-    else
-      {:ok, _, _} ->
+    case split_serial_date(string) do
+      {:ok, days, _fraction_of_24} when days > 0.0 ->
+        {:ok, Date.add(base_date, days)}
+
+      {:ok, _days, _fraction_of_24} ->
         :error
 
       error ->

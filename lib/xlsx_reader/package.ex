@@ -14,10 +14,10 @@ defmodule XlsxReader.Package do
         }
 
   alias XlsxReader.{
-    Unzip,
     RelationshipsParser,
     SharedStringsParser,
     StylesParser,
+    Unzip,
     WorkbookParser,
     WorksheetParser
   }
@@ -40,9 +40,10 @@ defmodule XlsxReader.Package do
 
   def load_sheets(package) do
     for sheet <- package.workbook.sheets do
-      with {:ok, rows} <- load_sheet_by_rid(package, sheet.rid) do
-        {sheet.name, rows}
-      else
+      case load_sheet_by_rid(package, sheet.rid) do
+        {:ok, rows} ->
+          {sheet.name, rows}
+
         _ ->
           {sheet.name, []}
       end

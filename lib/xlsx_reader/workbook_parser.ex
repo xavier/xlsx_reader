@@ -7,7 +7,7 @@ defmodule XlsxReader.WorkbookParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{ParserUtils, Conversion}
+  alias XlsxReader.{Conversion, ParserUtils}
 
   def parse(xml) do
     Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{})

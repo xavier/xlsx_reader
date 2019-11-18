@@ -10,6 +10,7 @@ defmodule XlsxReader.WorksheetParser do
   alias XlsxReader.Conversion
 
   defmodule State do
+    @moduledoc false
     defstruct workbook: nil,
               rows: [],
               row: nil,

@@ -7,7 +7,7 @@ defmodule XlsxReader.StylesParser do
   """
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{Styles, ParserUtils}
+  alias XlsxReader.{ParserUtils, Styles}
 
   defmodule State do
     @moduledoc false
