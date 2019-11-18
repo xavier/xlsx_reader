@@ -106,9 +106,6 @@ defmodule XlsxReader.Package do
          {:ok, xml} <- Unzip.extract(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
       %{package | workbook: Map.put(package.workbook, :shared_strings, shared_strings)}
-    else
-      :no_shared_strings ->
-        package
     end
   end
 
@@ -117,9 +114,6 @@ defmodule XlsxReader.Package do
          {:ok, xml} <- Unzip.extract(package.zip_handle, file),
          {:ok, style_types} <- StylesParser.parse(xml) do
       %{package | workbook: %{package.workbook | style_types: style_types}}
-    else
-      :no_shared_strings ->
-        package
     end
   end
 
@@ -128,11 +122,8 @@ defmodule XlsxReader.Package do
       [target] ->
         {:ok, xl_path(target)}
 
-      [] ->
-        :no_shared_strings
-
-      _ ->
-        {:error, "more than one sharedString relationship"}
+      targets ->
+        {:error, "expected a single target in #{inspect(targets)}"}
     end
   end
 

@@ -10,7 +10,7 @@ defmodule XlsxReader.Workbook do
   @type t :: %__MODULE__{
           sheets: [XlsxReader.Sheet.t()],
           rels: nil | map(),
-          shared_strings: nil | [Strings.t()],
+          shared_strings: nil | [String.t()],
           style_types: nil | XlsxReader.Styles.style_types(),
           base_date: nil | Date.t()
         }

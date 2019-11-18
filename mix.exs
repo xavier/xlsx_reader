@@ -7,7 +7,10 @@ defmodule XlsxReader.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        plt_ignore_apps: [:saxy]
+      ]
     ]
   end
 
@@ -22,7 +25,8 @@ defmodule XlsxReader.MixProject do
   defp deps do
     [
       {:saxy, "~> 0.10"},
-      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false}
     ]
   end
 end
