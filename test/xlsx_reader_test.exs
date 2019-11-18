@@ -55,6 +55,15 @@ defmodule XlsxReaderTest do
                 | _
               ]} = XlsxReader.sheet(package, "Sheet 1")
     end
+
+    test "type conversion off", %{package: package} do
+      assert {:ok,
+              [
+                _,
+                ["date", "43783" | _]
+                | _
+              ]} = XlsxReader.sheet(package, "Sheet 3", type_conversion: false)
+    end
   end
 
   describe "sheets/1" do

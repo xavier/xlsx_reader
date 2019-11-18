@@ -37,7 +37,7 @@ defmodule XlsxReader.WorksheetParserTest do
     assert [["A", "B", "C", "D", "E", "F", "G"] | _] = rows
   end
 
-  test "performs cell type conversions", %{workbook: workbook} do
+  test "performs cell type conversions by default", %{workbook: workbook} do
     sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet3.xml")
 
     expected = [
@@ -55,6 +55,30 @@ defmodule XlsxReader.WorksheetParserTest do
     ]
 
     assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook)
+
+    assert expected == rows
+  end
+
+  test "returns raw values (except shared strings) when type conversion is disabled", %{
+    workbook: workbook
+  } do
+    sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet3.xml")
+
+    expected = [
+      ["", "", "", "", ""],
+      ["date", "43783", "", "", ""],
+      ["datetime", "43783.760243055556", "", "", ""],
+      ["time", "43783.760243055556", "", "", ""],
+      ["percentage", "0.125", "", "", ""],
+      ["money chf", "100", "", "", ""],
+      ["money usd", "9999,99 USD", "", "", ""],
+      ["ticked", "1", "", "", ""],
+      ["not ticked", "0", "", "", ""],
+      ["", "", "", "", ""],
+      ["", "", "", "", ""]
+    ]
+
+    assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook, type_conversion: false)
 
     assert expected == rows
   end

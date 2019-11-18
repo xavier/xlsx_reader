@@ -17,11 +17,23 @@ defmodule XlsxReader.WorksheetParser do
               cell_ref: nil,
               cell_type: nil,
               value_type: nil,
-              value: nil
+              value: nil,
+              type_conversion: nil
   end
 
-  def parse(xml, workbook) do
-    Saxy.parse_string(xml, __MODULE__, %State{workbook: workbook})
+  @doc """
+  Parse the given worksheet XML in the context of the given workbook.
+
+  Options:
+
+    - `type_conversion`: boolean (default: `true`)
+
+  """
+  def parse(xml, workbook, options \\ []) do
+    Saxy.parse_string(xml, __MODULE__, %State{
+      workbook: workbook,
+      type_conversion: Keyword.get(options, :type_conversion, true)
+    })
   end
 
   @impl Saxy.Handler
@@ -116,7 +128,20 @@ defmodule XlsxReader.WorksheetParser do
     end)
   end
 
-  defp format_current_cell_value(state) do
+  defp format_current_cell_value(%State{type_conversion: false} = state) do
+    case {state.cell_type, state.value} do
+      {_, nil} ->
+        ""
+
+      {"s", value} ->
+        lookup_shared_string(state, value)
+
+      {_, value} ->
+        value
+    end
+  end
+
+  defp format_current_cell_value(%State{type_conversion: true} = state) do
     style_type = Enum.at(state.workbook.style_types, String.to_integer(state.cell_style))
 
     case {state.cell_type, style_type, state.value} do
@@ -124,7 +149,7 @@ defmodule XlsxReader.WorksheetParser do
         ""
 
       {"s", _, value} ->
-        Enum.at(state.workbook.shared_strings, String.to_integer(value))
+        lookup_shared_string(state, value)
 
       {_, :percentage, value} ->
         {:ok, number} = Conversion.to_number(value)
@@ -154,5 +179,9 @@ defmodule XlsxReader.WorksheetParser do
       {_, _, value} ->
         to_string(value)
     end
+  end
+
+  defp lookup_shared_string(state, value) do
+    Enum.at(state.workbook.shared_strings, String.to_integer(value))
   end
 end

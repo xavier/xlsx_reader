@@ -38,9 +38,9 @@ defmodule XlsxReader.Package do
     end
   end
 
-  def load_sheets(package) do
+  def load_sheets(package, options \\ []) do
     for sheet <- package.workbook.sheets do
-      case load_sheet_by_rid(package, sheet.rid) do
+      case load_sheet_by_rid(package, sheet.rid, options) do
         {:ok, rows} ->
           {sheet.name, rows}
 
@@ -50,20 +50,20 @@ defmodule XlsxReader.Package do
     end
   end
 
-  def load_sheet_by_rid(package, rid) do
+  def load_sheet_by_rid(package, rid, options \\ []) do
     case fetch_rel_target(package.workbook.rels, :sheets, rid) do
       {:ok, target} ->
-        load_worksheet_xml(package, xl_path(target))
+        load_worksheet_xml(package, xl_path(target), options)
 
       :error ->
         {:error, "sheet relationship not found"}
     end
   end
 
-  def load_sheet_by_name(package, name) do
+  def load_sheet_by_name(package, name, options \\ []) do
     case find_sheet_by_name(package, name) do
       %{rid: rid} ->
-        load_sheet_by_rid(package, rid)
+        load_sheet_by_rid(package, rid, options)
 
       nil ->
         {:error, "sheet #{inspect(name)} not found"}
@@ -127,9 +127,9 @@ defmodule XlsxReader.Package do
     end
   end
 
-  def load_worksheet_xml(package, file) do
+  defp load_worksheet_xml(package, file, options) do
     with {:ok, xml} <- Unzip.extract(package.zip_handle, file) do
-      WorksheetParser.parse(xml, package.workbook)
+      WorksheetParser.parse(xml, package.workbook, options)
     end
   end
 

@@ -8,7 +8,7 @@ defmodule XlsxReader do
   alias XlsxReader.{Package, Unzip}
 
   @type source :: :binary | :path
-  @type option :: {:source, source()}
+  @type source_option :: {:source, source()}
   @type row :: list(any())
   @type rows :: list(row())
 
@@ -21,7 +21,7 @@ defmodule XlsxReader do
   - `source`: `:binary` or `:path`
 
   """
-  @spec open(String.t() | binary(), [option]) ::
+  @spec open(String.t() | binary(), [source_option]) ::
           {:ok, XlsxReader.Package.t()} | {:error, String.t()}
   def open(source, options \\ []) do
     source
@@ -43,19 +43,27 @@ defmodule XlsxReader do
 
   Parses the sheet with the given name (see `sheet_names/1`)
 
+  Options:
+
+    - `type_conversion`: boolean (default: `true`)
+
   """
-  @spec sheet(XlsxReader.Package.t(), String.t()) :: {:ok, rows()}
-  def sheet(package, sheet_name) do
-    Package.load_sheet_by_name(package, sheet_name)
+  @spec sheet(XlsxReader.Package.t(), String.t(), Keyword.t()) :: {:ok, rows()}
+  def sheet(package, sheet_name, options \\ []) do
+    Package.load_sheet_by_name(package, sheet_name, options)
   end
 
   @doc """
 
   Parses all the sheets in the workbook.
 
+  Options:
+
+    - `type_conversion`: boolean (default: `true`)
+
   """
-  @spec sheets(XlsxReader.Package.t()) :: {:ok, rows()}
-  def sheets(package) do
-    {:ok, Package.load_sheets(package)}
+  @spec sheets(XlsxReader.Package.t(), Keyword.t()) :: {:ok, rows()}
+  def sheets(package, options \\ []) do
+    {:ok, Package.load_sheets(package, options)}
   end
 end
