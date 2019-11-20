@@ -7,7 +7,7 @@ defmodule XlsxReader.WorksheetParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.Conversion
+  alias XlsxReader.{Conversion, ParserUtils}
 
   defmodule State do
     @moduledoc false
@@ -58,7 +58,7 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   def handle_event(:start_element, {"c", attributes}, state) do
-    {:ok, Map.merge(state, map_cell_attributes(attributes))}
+    {:ok, Map.merge(state, extract_cell_attributes(attributes))}
   end
 
   def handle_event(:start_element, {"v", _attributes}, state) do
@@ -148,22 +148,14 @@ defmodule XlsxReader.WorksheetParser do
 
   ## Utilities
 
-  @attributes_mapping %{
+  @cell_attributes_mapping %{
     "r" => :cell_ref,
     "s" => :cell_style,
     "t" => :cell_type
   }
 
-  defp map_cell_attributes(attributes) do
-    Enum.reduce(attributes, %{}, fn {name, value}, acc ->
-      case Map.fetch(@attributes_mapping, name) do
-        {:ok, key} ->
-          Map.put(acc, key, value)
-
-        :error ->
-          acc
-      end
-    end)
+  defp extract_cell_attributes(attributes) do
+    ParserUtils.map_attributes(attributes, @cell_attributes_mapping)
   end
 
   defp format_current_cell_value(%State{type_conversion: false} = state) do

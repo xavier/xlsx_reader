@@ -62,19 +62,7 @@ defmodule XlsxReader.WorkbookParser do
   }
 
   defp build_sheet(attributes) do
-    Enum.reduce(
-      attributes,
-      %XlsxReader.Sheet{},
-      fn {name, value}, sheet ->
-        case Map.fetch(@sheet_attributes, name) do
-          {:ok, key} ->
-            %{sheet | key => value}
-
-          :error ->
-            sheet
-        end
-      end
-    )
+    ParserUtils.map_attributes(attributes, @sheet_attributes, %XlsxReader.Sheet{})
   end
 
   defp date_system(attributes) do

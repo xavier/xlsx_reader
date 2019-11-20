@@ -6,6 +6,8 @@ defmodule XlsxReader.RelationshipsParser do
 
   """
 
+  alias XlsxReader.ParserUtils
+
   @behaviour Saxy.Handler
 
   def parse(xml) do
@@ -64,21 +66,13 @@ defmodule XlsxReader.RelationshipsParser do
 
   ##
 
-  @attributes_mapping %{
+  @relationship_attributes_mapping %{
     "Id" => :id,
     "Target" => :target,
     "Type" => :type
   }
 
   defp extract_relationship_attributes(attributes) do
-    Enum.reduce(attributes, %{}, fn {name, value}, acc ->
-      case Map.fetch(@attributes_mapping, name) do
-        {:ok, key} ->
-          Map.put(acc, key, value)
-
-        :error ->
-          acc
-      end
-    end)
+    ParserUtils.map_attributes(attributes, @relationship_attributes_mapping)
   end
 end
