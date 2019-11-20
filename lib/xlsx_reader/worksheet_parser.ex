@@ -17,7 +17,6 @@ defmodule XlsxReader.WorksheetParser do
               row: nil,
               cell_ref: nil,
               cell_type: nil,
-              value_type: nil,
               value: nil,
               type_conversion: nil,
               blank_value: nil,
@@ -63,7 +62,7 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   def handle_event(:start_element, {"v", _attributes}, state) do
-    {:ok, %{state | value_type: :value, value: :expect_chars}}
+    {:ok, expect_value(state)}
   end
 
   @impl Saxy.Handler
@@ -73,30 +72,21 @@ defmodule XlsxReader.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "c", state) do
-    {:ok,
-     %{
-       state
-       | row: [format_current_cell_value(state) | state.row],
-         cell_ref: nil,
-         cell_type: nil,
-         value_type: nil,
-         value: nil
-     }}
+    {:ok, add_cell(state)}
   end
 
   @impl Saxy.Handler
   def handle_event(:end_element, "row", state) do
-    rows =
-      if !state.empty_rows && empty_row?(state),
-        do: state.rows,
-        else: [Enum.reverse(state.row) | state.rows]
-
-    {:ok, %{state | rows: rows, row: nil}}
+    if skip_row?(state) do
+      {:ok, skip_row(state)}
+    else
+      {:ok, emit_row(state)}
+    end
   end
 
   @impl Saxy.Handler
   def handle_event(:end_element, "sheetData", state) do
-    {:ok, %{state | rows: Enum.reverse(state.rows)}}
+    {:ok, restore_rows_order(state)}
   end
 
   @impl Saxy.Handler
@@ -106,13 +96,7 @@ defmodule XlsxReader.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:characters, chars, %{value: :expect_chars} = state) do
-    case state.value_type do
-      :value ->
-        {:ok, %{state | value: chars}}
-
-      _ ->
-        {:ok, state}
-    end
+    {:ok, store_value(state, chars)}
   end
 
   @impl Saxy.Handler
@@ -121,6 +105,48 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   ##
+
+  ## State machine
+
+  defp expect_value(state) do
+    %{state | value: :expect_chars}
+  end
+
+  defp store_value(state, value) do
+    %{state | value: value}
+  end
+
+  defp add_cell(state) do
+    %{
+      state
+      | row: [format_current_cell_value(state) | state.row],
+        cell_ref: nil,
+        cell_type: nil,
+        value: nil
+    }
+  end
+
+  defp skip_row?(state) do
+    !state.empty_rows && empty_row?(state)
+  end
+
+  defp empty_row?(state) do
+    Enum.all?(state.row, fn value -> value == state.blank_value end)
+  end
+
+  defp skip_row(state) do
+    %{state | row: nil}
+  end
+
+  defp emit_row(state) do
+    %{state | row: nil, rows: [Enum.reverse(state.row) | state.rows]}
+  end
+
+  defp restore_rows_order(state) do
+    %{state | rows: Enum.reverse(state.rows)}
+  end
+
+  ## Utilities
 
   @attributes_mapping %{
     "r" => :cell_ref,
@@ -196,9 +222,5 @@ defmodule XlsxReader.WorksheetParser do
 
   defp lookup_shared_string(state, value) do
     Enum.at(state.workbook.shared_strings, String.to_integer(value))
-  end
-
-  def empty_row?(state) do
-    Enum.all?(state.row, fn value -> value == state.blank_value end)
   end
 end
