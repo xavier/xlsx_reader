@@ -1,5 +1,9 @@
 defmodule XlsxReader.Workbook do
-  @moduledoc false
+  @moduledoc """
+
+  Workbook structure.
+
+  """
 
   defstruct sheets: [],
             rels: nil,

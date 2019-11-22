@@ -3,6 +3,14 @@ defmodule XlsxReader.Package do
 
   Loads the content of an XLSX file.
 
+  *This is an internal module, you probably want to use the
+  functions of `XlsxReader`. *
+
+  An XLSX file is ZIP archive containing XML files linked to each other
+  using relationships defined in `_rels/*.xml.rels` files.
+
+  This module handles
+
   """
 
   @enforce_keys [:zip_handle, :workbook]
@@ -13,6 +21,8 @@ defmodule XlsxReader.Package do
           workbook: XlsxReader.Workbook.t()
         }
 
+  @type error :: {:error, String.t()}
+
   alias XlsxReader.{
     RelationshipsParser,
     SharedStringsParser,
@@ -22,6 +32,19 @@ defmodule XlsxReader.Package do
     WorksheetParser
   }
 
+  @doc """
+
+  Opens an XLSX package.
+
+  It verifies the contents of the archive and preloads the workbook sheet list
+  and relationships as well as the shared strings and style information required
+  to load the sheet data.
+
+  To load the actual sheet data, see `load_sheets/2`, `load_sheet_by_rid/3`
+  and `load_sheet_by_name/3`.
+
+  """
+  @spec open(XlsxReader.Unzip.zip_handle()) :: {:ok, t()} | error()
   def open(zip_handle) do
     with :ok <- check_contents(zip_handle),
          {:ok, workbook} <- load_workbook_xml(zip_handle),
@@ -38,6 +61,15 @@ defmodule XlsxReader.Package do
     end
   end
 
+  @doc """
+  Loads all sheets in the package
+
+  ## Options
+
+  See `XlsxReader.sheets/2`.
+
+  """
+  @spec load_sheets(t(), Keyword.t()) :: [{String.t(), XlsxReader.rows()}]
   def load_sheets(package, options \\ []) do
     for sheet <- package.workbook.sheets do
       case load_sheet_by_rid(package, sheet.rid, options) do
@@ -50,6 +82,16 @@ defmodule XlsxReader.Package do
     end
   end
 
+  @doc """
+  Loads a single sheet identified by relationship id (`rId`)
+
+  ## Options
+
+  See `XlsxReader.sheet/2`.
+
+  """
+  @spec load_sheet_by_rid(t(), String.t(), Keyword.t()) ::
+          {:ok, XlsxReader.row()} | error()
   def load_sheet_by_rid(package, rid, options \\ []) do
     case fetch_rel_target(package.workbook.rels, :sheets, rid) do
       {:ok, target} ->
@@ -60,6 +102,16 @@ defmodule XlsxReader.Package do
     end
   end
 
+  @doc """
+  Loads a single sheet identified by name
+
+  ## Options
+
+  See `XlsxReader.sheet/2`.
+
+  """
+  @spec load_sheet_by_name(t(), String.t(), Keyword.t()) ::
+          {:ok, XlsxReader.row()} | error()
   def load_sheet_by_name(package, name, options \\ []) do
     case find_sheet_by_name(package, name) do
       %{rid: rid} ->
@@ -81,7 +133,7 @@ defmodule XlsxReader.Package do
     @workbook_xml_rels
   ]
 
-  def check_contents(zip_handle) do
+  defp check_contents(zip_handle) do
     with {:ok, files} <- Unzip.list(zip_handle) do
       if Enum.all?(@required_files, &Enum.member?(files, &1)),
         do: :ok,

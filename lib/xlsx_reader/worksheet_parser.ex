@@ -1,7 +1,18 @@
 defmodule XlsxReader.WorksheetParser do
   @moduledoc """
 
-  Parses worksheets into rows
+  Parses SpreadsheetML worksheets.
+
+  The contents of the sheet is returned as a list of lists:
+
+  ```elixir
+  [
+    ["A1", "B1", "C1" | _],
+    ["A2", "B2", "C2" | _],
+    ["A3", "B3", "C3" | _],
+    | _
+  ]
+  ```
 
   """
 
@@ -26,11 +37,11 @@ defmodule XlsxReader.WorksheetParser do
   @doc """
   Parse the given worksheet XML in the context of the given workbook.
 
-  Options:
+  ## Options
 
-    - `type_conversion`: boolean (default: `true`)
-    - `blank_value`: placeholder value for empty cells (default: `""`)
-    - `empty_rows`: include empty rows (default: `true`)
+    * `type_conversion`: boolean (default: `true`)
+    * `blank_value`: placeholder value for empty cells (default: `""`)
+    * `empty_rows`: include empty rows (default: `true`)
 
   """
   def parse(xml, workbook, options \\ []) do
@@ -146,7 +157,7 @@ defmodule XlsxReader.WorksheetParser do
     %{state | rows: Enum.reverse(state.rows)}
   end
 
-  ## Utilities
+  ## Cell format handling
 
   @cell_attributes_mapping %{
     "r" => :cell_ref,

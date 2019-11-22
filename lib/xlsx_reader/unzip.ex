@@ -1,7 +1,7 @@
 defmodule XlsxReader.Unzip do
   @moduledoc """
 
-  Zip archive utility functions
+  Zip archive utility functions.
 
   To allow for transparent handling of archives located on disk or in memory,
   you must first obtain a handle with `handle/2` which can then be used to

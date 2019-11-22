@@ -1,8 +1,10 @@
 defmodule XlsxReader.RelationshipsParser do
   @moduledoc """
 
-  Parses a workbook relationships file to determine the exact location
-  of the shared strings, styles, themes and worksheet files within the archive.
+  Parses SpreadsheetML workbook relationships.
+
+  The relationships determine the exact location of the shared strings, styles,
+  themes and worksheet files within the archive.
 
   """
 

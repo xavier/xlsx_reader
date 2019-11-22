@@ -1,10 +1,14 @@
 defmodule XlsxReader.StylesParser do
   @moduledoc """
 
-  Parses style definitions and build a `style_types` array which
-  is used to look up the cell value format for type conversion
+  Parses SpreadsheetML style definitions.
+
+  It extracts the relevant subset of style definitions in order to build
+  a `style_types` array which is used to look up the cell value format
+  for type conversions.
 
   """
+
   @behaviour Saxy.Handler
 
   alias XlsxReader.{ParserUtils, Styles}

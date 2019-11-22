@@ -11,18 +11,19 @@ defmodule XlsxReader do
   @type source_option :: {:source, source()}
   @type row :: list(any())
   @type rows :: list(row())
+  @type error :: {:error, String.t()}
 
   @doc """
 
-  Opens an XLSX file
+  Opens an XLSX file from the file system (default) or from memory.
 
-  Options:
+  ## Options
 
-  - `source`: `:binary` or `:path`
+    * `source`: `:path` (on the file system, default) or `:binary` (in memory)
 
   """
   @spec open(String.t() | binary(), [source_option]) ::
-          {:ok, XlsxReader.Package.t()} | {:error, String.t()}
+          {:ok, XlsxReader.Package.t()} | error()
   def open(source, options \\ []) do
     source
     |> Unzip.handle(Keyword.get(options, :source, :path))
@@ -43,11 +44,11 @@ defmodule XlsxReader do
 
   Parses the sheet with the given name (see `sheet_names/1`)
 
-  Options:
+  ## Options
 
-    - `type_conversion`: boolean (default: `true`)
-    - `blank_value`: placeholder value for empty cells (default: `""`)
-    - `empty_rows`: include empty rows (default: `true`)
+    * `type_conversion` - boolean (default: `true`)
+    * `blank_value` - placeholder value for empty cells (default: `""`)
+    * `empty_rows` - include empty rows (default: `true`)
 
   """
   @spec sheet(XlsxReader.Package.t(), String.t(), Keyword.t()) :: {:ok, rows()}
@@ -59,11 +60,9 @@ defmodule XlsxReader do
 
   Parses all the sheets in the workbook.
 
-  Options:
+  ## Options
 
-    - `type_conversion`: boolean (default: `true`)
-    - `blank_value`: placeholder value for empty cells (default: `""`)
-    - `empty_rows`: include empty rows (default: `true`)
+  See `sheet/2`.
 
   """
   @spec sheets(XlsxReader.Package.t(), Keyword.t()) :: {:ok, rows()}

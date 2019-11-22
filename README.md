@@ -6,7 +6,7 @@ Features:
 
 - Accepts XLSX data located on the file system or in memory
 - Automatic type conversions
-- Straightforward architecture: no ETS tables, no race-conditions
+- Straightforward architecture: no ETS tables, no race-conditions, no manual resource management
 
 ## Installation
 

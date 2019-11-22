@@ -1,7 +1,7 @@
 defmodule XlsxReader.Conversion do
   @moduledoc """
 
-  Conversion of cell values to Elixir types
+  Conversion of cell values to Elixir types.
 
   """
 
