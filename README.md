@@ -5,7 +5,8 @@ An XLSX reader in Elixir.
 Features:
 
 - Accepts XLSX data located on the file system or in memory
-- Automatic type conversions
+- Automatic type conversions (numbers, date & times, booleans)
+- Optional support for arbitrary precision [decimal](https://github.com/ericmj/decimal) numbers
 - Straightforward architecture: no ETS tables, no race-conditions, no manual resource management
 
 ## Installation
@@ -39,6 +40,14 @@ XlsxReader.sheet_names(package)
 #   ["Date", "Temperature"], 
 #   [~D[2019-11-01], 8.4], 
 #   [~D[2019-11-02], 7.5], 
+#   ...
+# ]
+
+{:ok, rows} = XlsxReader.sheet(package, "Sheet 1", number_type: Decimal)
+# [
+#   ["Date", "Temperature"], 
+#   [~D[2019-11-01], %Decimal{coef: 84, exp: -1, sign: 1}], 
+#   [~D[2019-11-02], %Decimal{coef: 75, exp: -1, sign: 1}], 
 #   ...
 # ]
 

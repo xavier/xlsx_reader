@@ -6,34 +6,48 @@ defmodule XlsxReader.Conversion do
   """
 
   @type date_system :: 1900 | 1904
+  @type number_type :: Integer | Float | Decimal
+  @type number_value :: integer() | float() | Decimal.t()
 
   @doc """
 
-  Converts a string to an integer or float
+  Converts a string to the given number type.
+
+  Supported number types are: `Integer`, `Float` or `Decimal` (requires the [decimal](https://github.com/ericmj/decimal) library)
 
   ## Examples
 
-      iex> XlsxReader.Conversion.to_number("123")
+      iex> XlsxReader.Conversion.to_number("123", Integer)
       {:ok, 123}
 
-      iex> XlsxReader.Conversion.to_number("123.0")
-      {:ok, 123.0}
-
-      iex> XlsxReader.Conversion.to_number("-123.45")
+      iex> XlsxReader.Conversion.to_number("-123.45", Float)
       {:ok, -123.45}
 
-      iex> XlsxReader.Conversion.to_number("0.12345e3")
+      iex> XlsxReader.Conversion.to_number("0.12345e3", Float)
       {:ok, 123.45}
 
-      iex> XlsxReader.Conversion.to_number("0.12345E3")
-      {:ok, 123.45}
+      iex> XlsxReader.Conversion.to_number("-123.45", Decimal)
+      {:ok, %Decimal{coef: 12345, exp: -2, sign: -1}}
+
+      iex> XlsxReader.Conversion.to_number("0.12345E3", Decimal)
+      {:ok, %Decimal{coef: 12345, exp: -2, sign: 1}}
+
+      iex> XlsxReader.Conversion.to_number("123.0", Integer)
+      :error
 
   """
-  @spec to_number(String.t()) :: {:ok, integer()} | {:ok, float()} | :error
-  def to_number(string) do
-    if String.match?(string, ~r/[\.eE]/),
-      do: to_float(string),
-      else: to_integer(string)
+  @spec to_number(String.t(), number_type()) :: {:ok, number_value()} | :error
+
+  def to_number(string, Integer) do
+    to_integer(string)
+  end
+
+  def to_number(string, Float) do
+    to_float(string)
+  end
+
+  def to_number(string, Decimal) do
+    to_decimal(string)
   end
 
   @doc """
@@ -54,6 +68,9 @@ defmodule XlsxReader.Conversion do
       iex> XlsxReader.Conversion.to_float("0.12345E3")
       {:ok, 123.45}
 
+      iex> XlsxReader.Conversion.to_float("bogus")
+      :error
+
   """
   @spec to_float(String.t()) :: {:ok, float()} | :error
   def to_float(string) do
@@ -64,6 +81,33 @@ defmodule XlsxReader.Conversion do
       _ ->
         :error
     end
+  end
+
+  @doc """
+
+  Converts a string to an arbitrary precision Decimal
+
+  ## Examples
+
+      iex> XlsxReader.Conversion.to_decimal("123")
+      {:ok, %Decimal{coef: 123, exp: 0, sign: 1}}
+
+      iex> XlsxReader.Conversion.to_decimal("-123.45")
+      {:ok, %Decimal{coef: 12345, exp: -2, sign: -1}}
+
+      iex> XlsxReader.Conversion.to_decimal("0.12345e3")
+      {:ok, %Decimal{coef: 12345, exp: -2, sign: 1}}
+
+      iex> XlsxReader.Conversion.to_decimal("0.12345E3")
+      {:ok, %Decimal{coef: 12345, exp: -2, sign: 1}}
+
+      iex> XlsxReader.Conversion.to_decimal("bogus")
+      :error
+
+  """
+  @spec to_decimal(String.t()) :: {:ok, Decimal.t()} | :error
+  def to_decimal(string) do
+    Decimal.parse(string)
   end
 
   @doc """
@@ -79,6 +123,9 @@ defmodule XlsxReader.Conversion do
       {:ok, -123}
 
       iex> XlsxReader.Conversion.to_integer("123.45")
+      :error
+
+      iex> XlsxReader.Conversion.to_integer("bogus")
       :error
 
   """

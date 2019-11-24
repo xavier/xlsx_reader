@@ -51,7 +51,7 @@ defmodule XlsxReaderTest do
       assert {:ok,
               [
                 ["A", "B", "C" | _],
-                [1, 2, 3 | _]
+                [1.0, 2.0, 3.0 | _]
                 | _
               ]} = XlsxReader.sheet(package, "Sheet 1")
     end
@@ -63,6 +63,19 @@ defmodule XlsxReaderTest do
                 ["date", "43784"]
                 | _
               ]} = XlsxReader.sheet(package, "Sheet 3", type_conversion: false)
+    end
+
+    test "number type", %{package: package} do
+      assert {:ok,
+              [
+                ["A", "B", "C" | _],
+                [
+                  %Decimal{coef: 1, exp: 0, sign: 1},
+                  %Decimal{coef: 2, exp: 0, sign: 1},
+                  %Decimal{coef: 3, exp: 0, sign: 1} | _
+                ]
+                | _
+              ]} = XlsxReader.sheet(package, "Sheet 1", number_type: Decimal)
     end
 
     test "custom blank value", %{package: package} do

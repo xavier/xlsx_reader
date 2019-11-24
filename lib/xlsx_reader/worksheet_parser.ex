@@ -18,7 +18,7 @@ defmodule XlsxReader.WorksheetParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{Conversion, ParserUtils}
+  alias XlsxReader.{Conversion, Number, ParserUtils}
 
   defmodule State do
     @moduledoc false
@@ -31,7 +31,8 @@ defmodule XlsxReader.WorksheetParser do
               value: nil,
               type_conversion: nil,
               blank_value: nil,
-              empty_rows: nil
+              empty_rows: nil,
+              number_type: nil
   end
 
   @doc """
@@ -42,6 +43,7 @@ defmodule XlsxReader.WorksheetParser do
     * `type_conversion`: boolean (default: `true`)
     * `blank_value`: placeholder value for empty cells (default: `""`)
     * `empty_rows`: include empty rows (default: `true`)
+    * `number_type` - type used for numeric conversion :`Integer`, 'Decimal' or `Float` (default: `Float`)
 
   """
   def parse(xml, workbook, options \\ []) do
@@ -49,7 +51,8 @@ defmodule XlsxReader.WorksheetParser do
       workbook: workbook,
       type_conversion: Keyword.get(options, :type_conversion, true),
       blank_value: Keyword.get(options, :blank_value, ""),
-      empty_rows: Keyword.get(options, :empty_rows, true)
+      empty_rows: Keyword.get(options, :empty_rows, true),
+      number_type: Keyword.get(options, :number_type, Float)
     })
   end
 
@@ -193,8 +196,8 @@ defmodule XlsxReader.WorksheetParser do
         lookup_shared_string(state, value)
 
       {_, :percentage, value} ->
-        {:ok, number} = Conversion.to_number(value)
-        number * 100
+        {:ok, number} = Conversion.to_number(value, state.number_type)
+        Number.multiply(number, 100)
 
       {nil, :date, value} ->
         {:ok, date} = Conversion.to_date(value, state.workbook.base_date)
@@ -215,7 +218,7 @@ defmodule XlsxReader.WorksheetParser do
         false
 
       {nil, _, value} ->
-        {:ok, number} = Conversion.to_number(value)
+        {:ok, number} = Conversion.to_number(value, state.number_type)
         number
 
       {_, _, value} ->
