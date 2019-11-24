@@ -1,13 +1,11 @@
 defmodule XlsxReader.Unzip do
-  @moduledoc """
+  @moduledoc false
 
-  Zip archive utility functions.
-
-  To allow for transparent handling of archives located on disk or in memory,
-  you must first obtain a handle with `handle/2` which can then be used to
-  access the contents of the archive.
-
-  """
+  # Zip archive utility functions.
+  #
+  # To allow for transparent handling of archives located on disk or in memory,
+  # you must first obtain a handle with `handle/2` which can then be used to
+  # access the contents of the archive.
 
   @type source :: String.t() | binary()
   @type source_type :: :path | :binary

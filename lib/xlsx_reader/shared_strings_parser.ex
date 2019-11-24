@@ -1,14 +1,12 @@
 defmodule XlsxReader.SharedStringsParser do
-  @moduledoc """
+  @moduledoc false
 
-  Parses SpreadsheetML shared strings definitions.
-
-  The parser builds a list of shared strings.
-
-  Worksheets only contain numbers: the value of cells containing text is
-  numeric index to the array of shared strings.
-
-  """
+  # Parses SpreadsheetML shared strings definitions.
+  #
+  # The parser builds a list of shared strings.
+  #
+  # Worksheets only contain numbers: the value of cells containing text is
+  # numeric index to the array of shared strings.
 
   @behaviour Saxy.Handler
 

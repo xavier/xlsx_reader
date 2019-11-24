@@ -1,20 +1,7 @@
 defmodule XlsxReader.WorksheetParser do
-  @moduledoc """
+  @moduledoc false
 
-  Parses SpreadsheetML worksheets.
-
-  The contents of the sheet is returned as a list of lists:
-
-  ```elixir
-  [
-    ["A1", "B1", "C1" | _],
-    ["A2", "B2", "C2" | _],
-    ["A3", "B3", "C3" | _],
-    | _
-  ]
-  ```
-
-  """
+  # Parses SpreadsheetML worksheets.
 
   @behaviour Saxy.Handler
 

@@ -1,12 +1,10 @@
 defmodule XlsxReader.RelationshipsParser do
-  @moduledoc """
+  @moduledoc false
 
-  Parses SpreadsheetML workbook relationships.
-
-  The relationships determine the exact location of the shared strings, styles,
-  themes and worksheet files within the archive.
-
-  """
+  # Parses SpreadsheetML workbook relationships.
+  #
+  # The relationships determine the exact location of the shared strings, styles,
+  # themes and worksheet files within the archive.
 
   alias XlsxReader.ParserUtils
 

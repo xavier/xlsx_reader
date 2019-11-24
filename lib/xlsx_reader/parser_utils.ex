@@ -1,9 +1,7 @@
 defmodule XlsxReader.ParserUtils do
-  @moduledoc """
+  @moduledoc false
 
-  Utility functions used by the XML parser modules
-
-  """
+  # Utility functions used by the XML parser modules
 
   @type xml_attribute :: {String.t(), String.t()}
   @type xml_attributes :: [xml_attribute]

@@ -1,13 +1,11 @@
 defmodule XlsxReader.WorkbookParser do
-  @moduledoc """
+  @moduledoc false
 
-  Parses SpreadsheetML workbooks.
-
-  The `workbook.xml` contains the worksheet list and their relationship identifier (`rId`).
-
-  The workbook may also contain a hint regarding the [date system](https://docs.microsoft.com/en-us/office/troubleshoot/excel/1900-and-1904-date-system) in use.
-
-  """
+  # Parses SpreadsheetML workbooks.
+  #
+  # The `workbook.xml` contains the worksheet list and their relationship identifier (`rId`).
+  # The workbook may also contain a hint regarding the [date system](https://docs.microsoft.com/en-us/office/troubleshoot/excel/1900-and-1904-date-system) in use.
+  #
 
   @behaviour Saxy.Handler
 

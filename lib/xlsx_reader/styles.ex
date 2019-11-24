@@ -1,9 +1,5 @@
 defmodule XlsxReader.Styles do
-  @moduledoc """
-
-  Maps cell styles to a type based on a list of "standard" styles and introspection the custom formats.
-
-  """
+  @moduledoc false
 
   @type known_style_type ::
           :string | :integer | :float | :percentage | :date | :time | :date_time | :unsupported
@@ -84,6 +80,18 @@ defmodule XlsxReader.Styles do
     {"hh:mm", :time}
   ]
 
+  @doc """
+  Guesses the type of a cell based on its style.
+
+  The type is:
+
+  1. looked-up from a list of "standard" styles, or
+  2. guessed from a list of known custom formats.
+
+  If no type could be guessed, returns `nil`.
+
+  """
+  @spec get_style_type(String.t(), map()) :: style_type() | nil
   def get_style_type(num_fmt_id, custom_formats \\ %{}) do
     Map.get_lazy(
       @known_styles,

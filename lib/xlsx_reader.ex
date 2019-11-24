@@ -3,6 +3,17 @@ defmodule XlsxReader do
 
   Opens XLSX workbook and reads its worksheets
 
+  The sheet contents is returned as a list of lists:
+
+  ```elixir
+  [
+    ["A1", "B1", "C1" | _],
+    ["A2", "B2", "C2" | _],
+    ["A3", "B3", "C3" | _],
+    | _
+  ]
+  ```
+
   """
 
   alias XlsxReader.{Package, Unzip}

@@ -3,6 +3,12 @@ defmodule XlsxReader.Workbook do
 
   Workbook structure.
 
+  - `sheets` - list of sheet metadata
+  - `rels` - workbook relationships
+  - `shared_strings` - list of shared strings
+  - `style_types` - List of types indexed by style
+  - `base_date` - base date for all serial dates in the workbook
+
   """
 
   defstruct sheets: [],
