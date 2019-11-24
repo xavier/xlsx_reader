@@ -1,2 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sst uniqueCount="18" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t>A</t></si><si><t>B</t></si><si><t>C</t></si><si><t>D</t></si><si><t>E</t></si><si><t>F</t></si><si><t>G</t></si><si><t xml:space="preserve">some </t></si><si><t>test</t></si><si><t>date</t></si><si><t>datetime</t></si><si><t>time</t></si><si><t>percentage</t></si><si><t>money chf</t></si><si><t>money usd</t></si><si><t>9999,99 USD</t></si><si><t>ticked</t></si><si><t>not ticked</t></si></sst>
+<sst uniqueCount="20" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <si>
+    <t>A</t>
+  </si>
+  <si>
+    <t>B</t>
+  </si>
+  <si>
+    <t>C</t>
+  </si>
+  <si>
+    <t>D</t>
+  </si>
+  <si>
+    <t>E</t>
+  </si>
+  <si>
+    <t>F</t>
+  </si>
+  <si>
+    <t>G</t>
+  </si>
+  <si>
+    <t xml:space="preserve">some </t>
+  </si>
+  <si>
+    <t>test</t>
+  </si>
+  <si>
+    <t>date</t>
+  </si>
+  <si>
+    <t>datetime</t>
+  </si>
+  <si>
+    <t>time</t>
+  </si>
+  <si>
+    <t>percentage</t>
+  </si>
+  <si>
+    <t>money chf</t>
+  </si>
+  <si>
+    <t>money usd</t>
+  </si>
+  <si>
+    <t>9999,99 USD</t>
+  </si>
+  <si>
+    <t>ticked</t>
+  </si>
+  <si>
+    <t>not ticked</t>
+  </si>
+  <si>
+    <t>hyperlink</t>
+  </si>
+  <si>
+    <r>
+      <rPr>
+        <u val="single"/>
+        <sz val="10"/>
+        <color indexed="14"/>
+        <rFont val="Helvetica Neue"/>
+      </rPr>
+      <t>https://elixir-lang.org/</t>
+    </r>
+  </si>
+</sst>

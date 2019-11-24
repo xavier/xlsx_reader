@@ -3,13 +3,14 @@
   <sheetPr>
     <pageSetUpPr fitToPage="1"/>
   </sheetPr>
-  <dimension ref="A1:B9"/>
+  <dimension ref="A1:B10"/>
   <sheetViews>
     <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0"/>
   </sheetViews>
   <sheetFormatPr customHeight="1" defaultColWidth="16.3333" defaultRowHeight="19.9" outlineLevelCol="0" outlineLevelRow="0"/>
   <cols>
-    <col customWidth="1" max="2" min="1" style="17" width="16.3516"/>
+    <col customWidth="1" max="1" min="1" style="17" width="16.3516"/>
+    <col customWidth="1" max="2" min="2" style="17" width="22.7734"/>
     <col customWidth="1" max="256" min="3" style="17" width="16.3516"/>
   </cols>
   <sheetData>
@@ -32,7 +33,7 @@
       </c>
       <c r="B3" s="20">
         <f>NOW()</f>
-        <v>43787.924259259256</v>
+        <v>43793.462650462963</v>
       </c>
     </row>
     <row customHeight="1" ht="20.05" r="4">
@@ -84,7 +85,18 @@
         <v>0</v>
       </c>
     </row>
+    <row customHeight="1" ht="20.05" r="10">
+      <c r="A10" s="19" t="s">
+        <v>18</v>
+      </c>
+      <c r="B10" s="24" t="s">
+        <v>19</v>
+      </c>
+    </row>
   </sheetData>
+  <hyperlinks>
+    <hyperlink display="https://elixir-lang.org/" location="" r:id="rId1" ref="B10" tooltip=""/>
+  </hyperlinks>
   <pageMargins bottom="1" footer="0.25" header="0.25" left="1" right="1" top="1"/>
   <pageSetup firstPageNumber="1" fitToHeight="1" fitToWidth="1" orientation="portrait" pageOrder="downThenOver" scale="100" useFirstPageNumber="0"/>
   <headerFooter>

@@ -8,7 +8,7 @@
     <numFmt formatCode="0.0%" numFmtId="62"/>
     <numFmt formatCode="[$CHF]&quot; &quot;0.00" numFmtId="63"/>
   </numFmts>
-  <fonts count="4">
+  <fonts count="5">
     <font>
       <sz val="10"/>
       <color indexed="8"/>
@@ -28,6 +28,12 @@
       <b val="1"/>
       <sz val="10"/>
       <color indexed="8"/>
+      <name val="Helvetica Neue"/>
+    </font>
+    <font>
+      <u val="single"/>
+      <sz val="10"/>
+      <color indexed="14"/>
       <name val="Helvetica Neue"/>
     </font>
   </fonts>
@@ -274,6 +280,7 @@
       <rgbColor rgb="ff3f3f3f"/>
       <rgbColor rgb="ffdbdbdb"/>
       <rgbColor rgb="ffffffff"/>
+      <rgbColor rgb="ff0000ff"/>
     </indexedColors>
   </colors>
 </styleSheet>

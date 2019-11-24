@@ -24,7 +24,9 @@ defmodule XlsxReader.SharedStringsParserTest do
       "money usd",
       "9999,99 USD",
       "ticked",
-      "not ticked"
+      "not ticked",
+      "hyperlink",
+      "https://elixir-lang.org/"
     ]
 
     assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)

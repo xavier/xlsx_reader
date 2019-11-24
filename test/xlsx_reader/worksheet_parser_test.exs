@@ -43,13 +43,14 @@ defmodule XlsxReader.WorksheetParserTest do
     expected = [
       ["", ""],
       ["date", ~D[2019-11-15]],
-      ["datetime", ~N[2019-11-18 22:10:56]],
+      ["datetime", ~N[2019-11-24 11:06:13]],
       ["time", ~N[1904-01-01 18:45:12]],
       ["percentage", 12.5],
       ["money chf", 100],
       ["money usd", "9999,99 USD"],
       ["ticked", true],
-      ["not ticked", false]
+      ["not ticked", false],
+      ["hyperlink", "https://elixir-lang.org/"]
     ]
 
     assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook)
@@ -65,13 +66,14 @@ defmodule XlsxReader.WorksheetParserTest do
     expected = [
       ["", ""],
       ["date", "43784"],
-      ["datetime", "43787.924259259256"],
+      ["datetime", "43793.462650462963"],
       ["time", "1462.781388888889"],
       ["percentage", "0.125"],
       ["money chf", "100"],
       ["money usd", "9999,99 USD"],
       ["ticked", "1"],
-      ["not ticked", "0"]
+      ["not ticked", "0"],
+      ["hyperlink", "https://elixir-lang.org/"]
     ]
 
     assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook, type_conversion: false)
