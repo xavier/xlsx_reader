@@ -146,10 +146,23 @@ defmodule XlsxReader.Conversion do
 
   @doc """
   Returns the base date for the given date system
+
+  ## Examples
+
+      iex> XlsxReader.Conversion.base_date(1900)
+      ~D[1899-12-30]
+
+      iex> XlsxReader.Conversion.base_date(1904)
+      ~D[1904-01-01]
+
+      iex> XlsxReader.Conversion.base_date(2019)
+      :error
+
   """
   @spec base_date(date_system()) :: Date.t()
   def base_date(1900), do: @base_date_system_1900
   def base_date(1904), do: @base_date_system_1904
+  def base_date(_date_system), do: :error
 
   @doc """
 
