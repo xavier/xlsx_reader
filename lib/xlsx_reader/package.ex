@@ -21,8 +21,6 @@ defmodule XlsxReader.Package do
           workbook: XlsxReader.Workbook.t()
         }
 
-  @type error :: {:error, String.t()}
-
   alias XlsxReader.{
     RelationshipsParser,
     SharedStringsParser,
@@ -44,7 +42,7 @@ defmodule XlsxReader.Package do
   and `load_sheet_by_name/3`.
 
   """
-  @spec open(XlsxReader.Unzip.zip_handle()) :: {:ok, t()} | error()
+  @spec open(XlsxReader.Unzip.zip_handle()) :: {:ok, t()} | XlsxReader.error()
   def open(zip_handle) do
     with :ok <- check_contents(zip_handle),
          {:ok, workbook} <- load_workbook_xml(zip_handle),
@@ -91,7 +89,7 @@ defmodule XlsxReader.Package do
 
   """
   @spec load_sheet_by_rid(t(), String.t(), Keyword.t()) ::
-          {:ok, XlsxReader.row()} | error()
+          {:ok, XlsxReader.row()} | XlsxReader.error()
   def load_sheet_by_rid(package, rid, options \\ []) do
     case fetch_rel_target(package.workbook.rels, :sheets, rid) do
       {:ok, target} ->
@@ -111,7 +109,7 @@ defmodule XlsxReader.Package do
 
   """
   @spec load_sheet_by_name(t(), String.t(), Keyword.t()) ::
-          {:ok, XlsxReader.row()} | error()
+          {:ok, XlsxReader.row()} | XlsxReader.error()
   def load_sheet_by_name(package, name, options \\ []) do
     case find_sheet_by_name(package, name) do
       %{rid: rid} ->

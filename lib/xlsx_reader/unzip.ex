@@ -10,7 +10,6 @@ defmodule XlsxReader.Unzip do
   @type source :: String.t() | binary()
   @type source_type :: :path | :binary
   @type zip_handle :: {:path, String.t()} | {:binary, binary()}
-  @type error :: {:error, String.t()}
 
   @doc """
 
@@ -26,7 +25,7 @@ defmodule XlsxReader.Unzip do
   Lists the content of the archive.
 
   """
-  @spec list(zip_handle()) :: {:ok, [String.t()]} | error()
+  @spec list(zip_handle()) :: {:ok, [String.t()]} | XlsxReader.error()
   def list(zip_handle) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, entries} <- :zip.list_dir(zip) do
@@ -42,7 +41,7 @@ defmodule XlsxReader.Unzip do
   Extracts a file from the archive
 
   """
-  @spec extract(zip_handle(), String.t()) :: {:ok, binary()} | error()
+  @spec extract(zip_handle(), String.t()) :: {:ok, binary()} | XlsxReader.error()
   def extract(zip_handle, file) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, [{_, contents}]} <- :zip.extract(zip, extract_options(file)) do
