@@ -1,17 +1,10 @@
 defmodule XlsxReader.Package do
-  @moduledoc """
+  @moduledoc false
 
-  Loads the content of an XLSX file.
-
-  *This is an internal module, you probably want to use the
-  functions of `XlsxReader`. *
-
-  An XLSX file is ZIP archive containing XML files linked to each other
-  using relationships defined in `_rels/*.xml.rels` files.
-
-  This module handles
-
-  """
+  # Loads the content of an XLSX file.
+  #
+  # An XLSX file is ZIP archive containing XML files linked to each other
+  # using relationships defined in `_rels/*.xml.rels` files.
 
   @enforce_keys [:zip_handle, :workbook]
   defstruct zip_handle: nil, workbook: nil
