@@ -159,7 +159,7 @@ defmodule XlsxReader.Conversion do
       :error
 
   """
-  @spec base_date(date_system()) :: Date.t()
+  @spec base_date(date_system()) :: Date.t() | :error
   def base_date(1900), do: @base_date_system_1900
   def base_date(1904), do: @base_date_system_1904
   def base_date(_date_system), do: :error
