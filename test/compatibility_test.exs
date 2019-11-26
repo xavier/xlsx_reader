@@ -19,4 +19,17 @@ defmodule CompatibilityTest do
               ["image", ""]
             ]} = XlsxReader.sheet(package, "Sheet1")
   end
+
+  test "merged.xlsx" do
+    assert {:ok, package} = XlsxReader.open(TestFixtures.path("merged.xlsx"))
+
+    assert ["merged"] = XlsxReader.sheet_names(package)
+
+    assert {:ok,
+            [
+              ["horizontal", "", "vertical"],
+              ["horizontal + vertical", "", ""],
+              ["", "", "none"]
+            ]} = XlsxReader.sheet(package, "merged")
+  end
 end
