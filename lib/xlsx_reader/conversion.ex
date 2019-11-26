@@ -229,6 +229,9 @@ defmodule XlsxReader.Conversion do
       {:ok, _, _} ->
         :error
 
+      {:error, _} ->
+        :error
+
       error ->
         error
     end
@@ -247,7 +250,7 @@ defmodule XlsxReader.Conversion do
 
   @seconds_per_day 60 * 60 * 24
 
-  @spec fraction_of_24_to_time(float()) :: {:ok, Time.t()}
+  @spec fraction_of_24_to_time(float()) :: {:ok, Time.t()} | {:error, atom()}
   defp fraction_of_24_to_time(fraction_of_24) do
     seconds = round(fraction_of_24 * @seconds_per_day)
 
