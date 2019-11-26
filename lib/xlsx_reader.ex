@@ -1,7 +1,9 @@
 defmodule XlsxReader do
   @moduledoc """
 
-  Opens XLSX workbook and reads its worksheets
+  Opens XLSX workbook and reads its worksheets.
+
+  Sheets are loaded on-demand.
 
   The sheet contents is returned as a list of lists:
 
@@ -26,7 +28,7 @@ defmodule XlsxReader do
 
   @doc """
 
-  Opens an XLSX file from the file system (default) or from memory.
+  Opens an XLSX file located on the file system (default) or from memory.
 
   ## Options
 
@@ -43,7 +45,7 @@ defmodule XlsxReader do
 
   @doc """
 
-  Returns the names of the sheets in the package's workbook
+  Lists the names of the sheets in the package's workbook
 
   """
   @spec sheet_names(XlsxReader.Package.t()) :: [String.t()]
@@ -53,7 +55,7 @@ defmodule XlsxReader do
 
   @doc """
 
-  Parses the sheet with the given name (see `sheet_names/1`)
+  Loads the sheet with the given name (see `sheet_names/1`)
 
   ## Options
 
@@ -72,7 +74,7 @@ defmodule XlsxReader do
 
   @doc """
 
-  Parses all the sheets in the workbook.
+  Loads all the sheets in the workbook.
 
   ## Options
 

@@ -1,10 +1,10 @@
 defmodule XlsxReader.Sheet do
   @moduledoc """
 
-  Worksheet structure
+  Worksheet structure.
 
   - `name` - name of the sheet
-  - `rid` - relationship ID used to retrive the corresponding sheet in the archive
+  - `rid` - relationship ID used to retrieve the corresponding sheet in the archive
   - `sheet_id` - unused
 
   """

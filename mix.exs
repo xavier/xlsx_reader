@@ -10,6 +10,13 @@ defmodule XlsxReader.MixProject do
       deps: deps(),
       dialyzer: [
         plt_ignore_apps: [:saxy]
+      ],
+      # Docs
+      source_url: "https://github.com/xavier/xlsx_reader",
+      docs: [
+        main: "XlsxReader",
+        logo: "assets/logo.png",
+        extras: ["README.md"]
       ]
     ]
   end

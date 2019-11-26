@@ -11,7 +11,7 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
-  Converts a string to the given number type.
+  Converts a string into the given number type.
 
   Supported number types are: `Integer`, `Float` or `Decimal` (requires the [decimal](https://github.com/ericmj/decimal) library)
 
@@ -52,7 +52,7 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
-  Converts a string to float
+  Converts a string into a float.
 
   ## Examples
 
@@ -85,7 +85,7 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
-  Converts a string to an arbitrary precision Decimal
+  Converts a string into an arbitrary precision [decimal](https://github.com/ericmj/decimal).
 
   ## Examples
 
@@ -112,7 +112,7 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
-  Converts a string to an integer
+  Converts a string into an integer.
 
   ## Examples
 
@@ -145,7 +145,7 @@ defmodule XlsxReader.Conversion do
   @base_date_system_1904 ~D[1904-01-01]
 
   @doc """
-  Returns the base date for the given date system
+  Returns the base date for the given date system.
 
   ## Examples
 
@@ -166,7 +166,7 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
-  Converts a serial date to a `Date`
+  Converts a serial date into a `Date`.
 
   ## Examples
 
@@ -199,7 +199,7 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
-  Converts a serial date to a `NaiveDateTime`
+  Converts a serial date to a `NaiveDateTime`.
 
   ## Examples
 
@@ -236,6 +236,7 @@ defmodule XlsxReader.Conversion do
 
   ## Private
 
+  # Splits a serial date into `{:ok, days_since_base_date, time_as_fraction_of_24}`
   @spec split_serial_date(String.t()) :: {:ok, integer(), float()} | :error
   defp split_serial_date(string) do
     with {:ok, value} <- to_float(string) do

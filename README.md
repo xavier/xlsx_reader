@@ -9,10 +9,11 @@ Features:
 - Optional support for arbitrary precision [decimal](https://github.com/ericmj/decimal) numbers
 - Straightforward architecture: no ETS tables, no race-conditions, no manual resource management
 
+The docs can be found at [https://hexdocs.pm/xlsx_reader](https://hexdocs.pm/xlsx_reader).
+
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `xlsx_reader` to your list of dependencies in `mix.exs`:
+Add `xlsx_reader` as a dependency in your  `mix.exs`:
 
 ```elixir
 def deps do
@@ -22,11 +23,11 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/xlsx_reader](https://hexdocs.pm/xlsx_reader).
+Run `mix deps.get` in your shell to fetch and compile XlsxReader. 
 
-## Usage
+## Examples
+
+### Loading from the file system
 
 ```elixir
 
@@ -42,7 +43,19 @@ XlsxReader.sheet_names(package)
 #   [~D[2019-11-02], 7.5], 
 #   ...
 # ]
+```
 
+### Loading from memory
+
+```elixir
+blob = File.read!("test.xlsx")
+
+{:ok, package} = XlsxReader.open(blob, source: :binary)
+```
+
+### Using arbitrary precision numbers
+
+```elixir
 {:ok, rows} = XlsxReader.sheet(package, "Sheet 1", number_type: Decimal)
 # [
 #   ["Date", "Temperature"], 
@@ -50,7 +63,11 @@ XlsxReader.sheet_names(package)
 #   [~D[2019-11-02], %Decimal{coef: 75, exp: -1, sign: 1}], 
 #   ...
 # ]
+```
 
+### Load all sheets at once
+
+```elixir
 {:ok, sheets} = XlsxReader.sheets(package)
 # [
 #   {"Sheet 1", [["Date", "Temperature"], ...]}, 
