@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Readability.LargeNumbers
 defmodule CompatibilityTest do
   use ExUnit.Case
 
