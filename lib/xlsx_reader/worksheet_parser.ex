@@ -182,6 +182,10 @@ defmodule XlsxReader.WorksheetParser do
       {"s", _, value} ->
         lookup_shared_string(state, value)
 
+      {"b", _, value} ->
+        {:ok, boolean} = Conversion.to_boolean(value)
+        boolean
+
       {_, :percentage, value} ->
         {:ok, number} = Conversion.to_number(value, state.number_type)
         Number.multiply(number, 100)
@@ -197,12 +201,6 @@ defmodule XlsxReader.WorksheetParser do
       {nil, :date_time, value} ->
         {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
-
-      {"b", _, "1"} ->
-        true
-
-      {"b", _, "0"} ->
-        false
 
       {nil, _, value} ->
         {:ok, number} = Conversion.to_number(value, state.number_type)

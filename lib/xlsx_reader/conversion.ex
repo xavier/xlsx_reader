@@ -11,6 +11,29 @@ defmodule XlsxReader.Conversion do
 
   @doc """
 
+  Converts the string representation of a truth value into to a boolean.
+
+  Cells with type attribute `"b"` store boolean values as a single digit: `"1"` or `"0"`.
+
+    ## Examples
+
+    iex> XlsxReader.Conversion.to_boolean("1")
+    {:ok, true}
+
+    iex> XlsxReader.Conversion.to_boolean("0")
+    {:ok, false}
+
+    iex> XlsxReader.Conversion.to_boolean("true")
+    :error
+
+  """
+  @spec to_boolean(String.t()) :: {:ok, boolean()} | :error
+  def to_boolean("1"), do: {:ok, true}
+  def to_boolean("0"), do: {:ok, false}
+  def to_boolean(_), do: :error
+
+  @doc """
+
   Converts a string into the given number type.
 
   Supported number types are: `Integer`, `Float` or `Decimal` (requires the [decimal](https://github.com/ericmj/decimal) library)
