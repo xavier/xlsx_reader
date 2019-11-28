@@ -194,11 +194,7 @@ defmodule XlsxReader.WorksheetParser do
         {:ok, date} = Conversion.to_date(value, state.workbook.base_date)
         date
 
-      {nil, :time, value} ->
-        {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
-        date_time
-
-      {nil, :date_time, value} ->
+      {nil, type, value} when type in [:time, :date_time] ->
         {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
