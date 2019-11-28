@@ -207,7 +207,7 @@ defmodule XlsxReader.WorksheetParser do
         number
 
       {_, _, value} ->
-        to_string(value)
+        value
     end
   end
 
