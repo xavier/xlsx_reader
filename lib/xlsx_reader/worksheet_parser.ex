@@ -120,7 +120,7 @@ defmodule XlsxReader.WorksheetParser do
   defp add_cell(state) do
     %{
       state
-      | row: [format_current_cell_value(state) | state.row],
+      | row: [convert_current_cell_value(state) | state.row],
         cell_ref: nil,
         cell_type: nil,
         value: nil
@@ -159,7 +159,7 @@ defmodule XlsxReader.WorksheetParser do
     ParserUtils.map_attributes(attributes, @cell_attributes_mapping)
   end
 
-  defp format_current_cell_value(%State{type_conversion: false} = state) do
+  defp convert_current_cell_value(%State{type_conversion: false} = state) do
     case {state.cell_type, state.value} do
       {_, nil} ->
         state.blank_value
@@ -172,7 +172,7 @@ defmodule XlsxReader.WorksheetParser do
     end
   end
 
-  defp format_current_cell_value(%State{type_conversion: true} = state) do
+  defp convert_current_cell_value(%State{type_conversion: true} = state) do
     style_type = Enum.at(state.workbook.style_types, String.to_integer(state.cell_style))
 
     case {state.cell_type, style_type, state.value} do
