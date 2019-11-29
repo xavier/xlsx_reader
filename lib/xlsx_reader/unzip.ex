@@ -83,11 +83,12 @@ defmodule XlsxReader.Unzip do
     [{:file_list, [String.to_charlist(file)]}, :memory]
   end
 
-  defp translate_zip_error({:error, :einval}) do
-    {:error, "invalid zip file"}
-  end
-
   defp translate_zip_error({:error, :enoent}) do
     {:error, "file not found"}
+  end
+
+  defp translate_zip_error({:error, code})
+       when code in [:einval, :bad_eocd, :bad_central_directory] do
+    {:error, "invalid zip file"}
   end
 end
