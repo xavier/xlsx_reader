@@ -173,7 +173,7 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   defp convert_current_cell_value(%State{type_conversion: true} = state) do
-    style_type = Enum.at(state.workbook.style_types, String.to_integer(state.cell_style))
+    style_type = lookup_current_cell_style_type(state)
 
     case {state.cell_type, style_type, state.value} do
       {_, _, nil} ->
@@ -207,7 +207,16 @@ defmodule XlsxReader.WorksheetParser do
     end
   end
 
+  defp lookup_current_cell_style_type(state) do
+    lookup_index(state.workbook.style_types, state.cell_style)
+  end
+
   defp lookup_shared_string(state, value) do
-    Enum.at(state.workbook.shared_strings, String.to_integer(value))
+    lookup_index(state.workbook.shared_strings, value)
+  end
+
+  defp lookup_index(table, string_index) do
+    {:ok, index} = Conversion.to_integer(string_index)
+    Enum.at(table, index)
   end
 end
