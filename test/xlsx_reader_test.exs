@@ -9,10 +9,10 @@ defmodule XlsxReaderTest do
       assert {:ok, %XlsxReader.Package{}} = XlsxReader.open(xlsx, source: :path)
     end
 
-    test "opsn a xlsx file from memory" do
-      xslx = TestFixtures.read!("test.xlsx")
+    test "open a xlsx file from memory" do
+      xlsx = TestFixtures.read!("test.xlsx")
 
-      assert {:ok, %XlsxReader.Package{}} = XlsxReader.open(xslx, source: :binary)
+      assert {:ok, %XlsxReader.Package{}} = XlsxReader.open(xlsx, source: :binary)
     end
 
     test "rejects non-xlsx file" do
