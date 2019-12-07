@@ -3,7 +3,26 @@ defmodule XlsxReader do
 
   Opens XLSX workbook and reads its worksheets.
 
-  Sheets are loaded on-demand.
+  ## Example
+
+  ```elixir
+  {:ok, package} = XlsxReader.open("test.xlsx")
+
+  XlsxReader.sheet_names(package)
+  # ["Sheet 1", "Sheet 2", "Sheet 3"]
+
+  {:ok, rows} = XlsxReader.sheet(package, "Sheet 1")
+  # [
+  #   ["Date", "Temperature"],
+  #   [~D[2019-11-01], 8.4],
+  #   [~D[2019-11-02], 7.5],
+  #   ...
+  # ]
+  ```
+
+  ## Sheet contents
+
+  Sheets are loaded on-demand by `sheet/3` and `sheets/2`.
 
   The sheet contents is returned as a list of lists:
 
@@ -15,6 +34,9 @@ defmodule XlsxReader do
     | _
   ]
   ```
+
+  The behavior of the sheet parser can be customized for each
+  individual sheet, see `sheet/3`.
 
   """
 
@@ -29,6 +51,22 @@ defmodule XlsxReader do
   @doc """
 
   Opens an XLSX file located on the file system (default) or from memory.
+
+  ## Examples
+
+  ### Opening XLSX file on the file system
+
+  ```elixir
+  {:ok, package} = XlsxReader.open("test.xlsx")
+  ```
+
+  ### Opening XLSX file from memory
+
+  ```elixir
+  blob = File.read!("test.xlsx")
+
+  {:ok, package} = XlsxReader.open(blob, source: :binary)
+  ```
 
   ## Options
 

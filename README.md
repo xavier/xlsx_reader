@@ -1,3 +1,5 @@
+![XlsxReader logo](https://raw.github.com/xavier/xlsx_reader/master/assets/logo.png)
+
 # XlsxReader
 
 An XLSX reader in Elixir.
@@ -53,6 +55,17 @@ blob = File.read!("test.xlsx")
 {:ok, package} = XlsxReader.open(blob, source: :binary)
 ```
 
+### Loading all sheets at once
+
+```elixir
+{:ok, sheets} = XlsxReader.sheets(package)
+# [
+#   {"Sheet 1", [["Date", "Temperature"], ...]}, 
+#   {"Sheet 2", [...]}, 
+#   ...
+# ]
+```
+
 ### Using arbitrary precision numbers
 
 ```elixir
@@ -61,17 +74,6 @@ blob = File.read!("test.xlsx")
 #   ["Date", "Temperature"], 
 #   [~D[2019-11-01], %Decimal{coef: 84, exp: -1, sign: 1}], 
 #   [~D[2019-11-02], %Decimal{coef: 75, exp: -1, sign: 1}], 
-#   ...
-# ]
-```
-
-### Load all sheets at once
-
-```elixir
-{:ok, sheets} = XlsxReader.sheets(package)
-# [
-#   {"Sheet 1", [["Date", "Temperature"], ...]}, 
-#   {"Sheet 2", [...]}, 
 #   ...
 # ]
 ```
