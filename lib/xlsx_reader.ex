@@ -18,7 +18,7 @@ defmodule XlsxReader do
 
   """
 
-  alias XlsxReader.{Package, Unzip}
+  alias XlsxReader.{PackageLoader, Unzip}
 
   @type source :: :binary | :path
   @type source_option :: {:source, source()}
@@ -40,7 +40,7 @@ defmodule XlsxReader do
   def open(source, options \\ []) do
     source
     |> Unzip.handle(Keyword.get(options, :source, :path))
-    |> Package.open()
+    |> PackageLoader.open()
   end
 
   @doc """
@@ -69,7 +69,7 @@ defmodule XlsxReader do
   """
   @spec sheet(XlsxReader.Package.t(), String.t(), Keyword.t()) :: {:ok, rows()}
   def sheet(package, sheet_name, options \\ []) do
-    Package.load_sheet_by_name(package, sheet_name, options)
+    PackageLoader.load_sheet_by_name(package, sheet_name, options)
   end
 
   @doc """
@@ -83,6 +83,6 @@ defmodule XlsxReader do
   """
   @spec sheets(XlsxReader.Package.t(), Keyword.t()) :: {:ok, rows()}
   def sheets(package, options \\ []) do
-    {:ok, Package.load_sheets(package, options)}
+    {:ok, PackageLoader.load_sheets(package, options)}
   end
 end

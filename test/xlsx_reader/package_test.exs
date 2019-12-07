@@ -1,13 +1,13 @@
-defmodule XlsxReader.PackageTest do
+defmodule XlsxReader.PackageLoaderTest do
   use ExUnit.Case
 
-  alias XlsxReader.{Package, Unzip}
+  alias XlsxReader.{PackageLoader, Unzip}
 
   describe "open/1" do
     test "opens a xlsx file" do
       zip_handle = Unzip.handle(TestFixtures.path("test.xlsx"), :path)
 
-      assert {:ok, package} = Package.open(zip_handle)
+      assert {:ok, package} = PackageLoader.open(zip_handle)
 
       assert package.zip_handle == zip_handle
     end
@@ -15,20 +15,20 @@ defmodule XlsxReader.PackageTest do
     test "rejects non-xlsx file" do
       zip_handle = Unzip.handle(TestFixtures.path("test.zip"), :path)
 
-      assert {:error, "invalid xlsx file"} = Package.open(zip_handle)
+      assert {:error, "invalid xlsx file"} = PackageLoader.open(zip_handle)
     end
 
     test "rejects non-zip file" do
       zip_handle = Unzip.handle(TestFixtures.path("not_a_zip.zip"), :path)
 
-      assert {:error, "invalid zip file"} = Package.open(zip_handle)
+      assert {:error, "invalid zip file"} = PackageLoader.open(zip_handle)
     end
   end
 
   describe "load_sheet_by_name/2" do
     setup do
       zip_handle = Unzip.handle(TestFixtures.path("test.xlsx"), :path)
-      {:ok, package} = Package.open(zip_handle)
+      {:ok, package} = PackageLoader.open(zip_handle)
 
       {:ok, %{package: package}}
     end
@@ -40,14 +40,14 @@ defmodule XlsxReader.PackageTest do
                 [1.0, 2.0, 3.0 | _],
                 [2.0, 4.0, 6.0 | _]
                 | _
-              ]} = Package.load_sheet_by_name(package, "Sheet 1")
+              ]} = PackageLoader.load_sheet_by_name(package, "Sheet 1")
 
       assert {:ok,
               [
                 ["", "" | _],
                 ["some ", "test" | _]
                 | _
-              ]} = Package.load_sheet_by_name(package, "Sheet 2")
+              ]} = PackageLoader.load_sheet_by_name(package, "Sheet 2")
     end
   end
 end
