@@ -15,6 +15,7 @@ defmodule XlsxReader.WorksheetParser do
               row: nil,
               cell_ref: nil,
               cell_type: nil,
+              cell_style: nil,
               value: nil,
               type_conversion: nil,
               blank_value: nil,
