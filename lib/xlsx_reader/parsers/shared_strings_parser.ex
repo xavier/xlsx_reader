@@ -1,4 +1,4 @@
-defmodule XlsxReader.SharedStringsParser do
+defmodule XlsxReader.Parsers.SharedStringsParser do
   @moduledoc false
 
   # Parses SpreadsheetML shared strings definitions.
@@ -10,7 +10,7 @@ defmodule XlsxReader.SharedStringsParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.ParserUtils
+  alias XlsxReader.Parsers.Utils
 
   defmodule State do
     @moduledoc false
@@ -48,7 +48,7 @@ defmodule XlsxReader.SharedStringsParser do
        state
        | expect_chars: true,
          got_chars: false,
-         preserve_space: ParserUtils.get_attribute(attributes, "xml:space") == "preserve"
+         preserve_space: Utils.get_attribute(attributes, "xml:space") == "preserve"
      }}
   end
 

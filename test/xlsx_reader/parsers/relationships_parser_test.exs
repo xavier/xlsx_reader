@@ -1,7 +1,7 @@
-defmodule XlsxReader.RelationshipsParserTest do
+defmodule XlsxReader.Parsers.RelationshipsParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.RelationshipsParser
+  alias XlsxReader.Parsers.RelationshipsParser
 
   test "parses workbook.xml.rels" do
     workbook_xml_rels = TestFixtures.read!("package/xl/_rels/workbook.xml.rels")

@@ -1,7 +1,7 @@
-defmodule XlsxReader.WorkbookParserTest do
+defmodule XlsxReader.Parsers.WorkbookParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.WorkbookParser
+  alias XlsxReader.Parsers.WorkbookParser
 
   test "parses workbook.xml" do
     workbook_xml = TestFixtures.read!("package/xl/workbook.xml")

@@ -1,4 +1,4 @@
-defmodule XlsxReader.RelationshipsParser do
+defmodule XlsxReader.Parsers.RelationshipsParser do
   @moduledoc false
 
   # Parses SpreadsheetML workbook relationships.
@@ -6,7 +6,7 @@ defmodule XlsxReader.RelationshipsParser do
   # The relationships determine the exact location of the shared strings, styles,
   # themes and worksheet files within the archive.
 
-  alias XlsxReader.ParserUtils
+  alias XlsxReader.Parsers.Utils
 
   @behaviour Saxy.Handler
 
@@ -73,6 +73,6 @@ defmodule XlsxReader.RelationshipsParser do
   }
 
   defp extract_relationship_attributes(attributes) do
-    ParserUtils.map_attributes(attributes, @relationship_attributes_mapping)
+    Utils.map_attributes(attributes, @relationship_attributes_mapping)
   end
 end

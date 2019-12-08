@@ -1,7 +1,7 @@
-defmodule XlsxReader.SharedStringsParserTest do
+defmodule XlsxReader.Parsers.SharedStringsParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.SharedStringsParser
+  alias XlsxReader.Parsers.SharedStringsParser
 
   test "parses sharedStrings.xml" do
     shared_strings_xml = TestFixtures.read!("package/xl/sharedStrings.xml")

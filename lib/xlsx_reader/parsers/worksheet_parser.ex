@@ -1,11 +1,12 @@
-defmodule XlsxReader.WorksheetParser do
+defmodule XlsxReader.Parsers.WorksheetParser do
   @moduledoc false
 
   # Parses SpreadsheetML worksheets.
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{Conversion, Number, ParserUtils}
+  alias XlsxReader.{Conversion, Number}
+  alias XlsxReader.Parsers.Utils
 
   defmodule State do
     @moduledoc false
@@ -161,7 +162,7 @@ defmodule XlsxReader.WorksheetParser do
   }
 
   defp extract_cell_attributes(attributes) do
-    ParserUtils.map_attributes(attributes, @cell_attributes_mapping)
+    Utils.map_attributes(attributes, @cell_attributes_mapping)
   end
 
   defp convert_current_cell_value(%State{type_conversion: false} = state) do

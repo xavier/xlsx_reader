@@ -1,7 +1,8 @@
-defmodule XlsxReader.WorksheetParserTest do
+defmodule XlsxReader.Parsers.WorksheetParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.{Conversion, SharedStringsParser, StylesParser, Workbook, WorksheetParser}
+  alias XlsxReader.{Conversion, Workbook}
+  alias XlsxReader.Parsers.{SharedStringsParser, StylesParser, WorksheetParser}
 
   setup do
     {:ok, shared_strings} =

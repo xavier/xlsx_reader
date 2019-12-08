@@ -1,4 +1,4 @@
-defmodule XlsxReader.WorkbookParser do
+defmodule XlsxReader.Parsers.WorkbookParser do
   @moduledoc false
 
   # Parses SpreadsheetML workbooks.
@@ -9,7 +9,8 @@ defmodule XlsxReader.WorkbookParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{Conversion, ParserUtils}
+  alias XlsxReader.Conversion
+  alias XlsxReader.Parsers.Utils
 
   def parse(xml) do
     Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{})
@@ -64,11 +65,11 @@ defmodule XlsxReader.WorkbookParser do
   }
 
   defp build_sheet(attributes) do
-    ParserUtils.map_attributes(attributes, @sheet_attributes, %XlsxReader.Sheet{})
+    Utils.map_attributes(attributes, @sheet_attributes, %XlsxReader.Sheet{})
   end
 
   defp date_system(attributes) do
-    if ParserUtils.get_attribute(attributes, "date1904", "0") == "1",
+    if Utils.get_attribute(attributes, "date1904", "0") == "1",
       do: 1904,
       else: 1900
   end

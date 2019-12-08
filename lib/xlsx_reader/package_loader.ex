@@ -6,14 +6,15 @@ defmodule XlsxReader.PackageLoader do
   # An XLSX file is ZIP archive containing XML files linked to each other
   # using relationships defined in `_rels/*.xml.rels` files.
 
-  alias XlsxReader.{
+  alias XlsxReader.Parsers.{
     RelationshipsParser,
     SharedStringsParser,
     StylesParser,
     WorkbookParser,
-    WorksheetParser,
-    ZipArchive
+    WorksheetParser
   }
+
+  alias XlsxReader.ZipArchive
 
   @doc """
 

@@ -1,7 +1,7 @@
-defmodule XlsxReader.StylesParserTest do
+defmodule XlsxReader.Parsers.StylesParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.StylesParser
+  alias XlsxReader.Parsers.StylesParser
 
   test "parses styles.xml into an array of style types" do
     styles_xml = TestFixtures.read!("package/xl/styles.xml")

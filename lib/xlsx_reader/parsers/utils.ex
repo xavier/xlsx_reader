@@ -1,4 +1,4 @@
-defmodule XlsxReader.ParserUtils do
+defmodule XlsxReader.Parsers.Utils do
   @moduledoc false
 
   # Utility functions used by the XML parser modules
@@ -12,19 +12,19 @@ defmodule XlsxReader.ParserUtils do
 
   ## Examples
 
-      iex> XlsxReader.ParserUtils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "y"}], "a")
+      iex> XlsxReader.Parsers.Utils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "y"}], "a")
       "x"
 
-      iex> XlsxReader.ParserUtils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "y"}], "b")
+      iex> XlsxReader.Parsers.Utils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "y"}], "b")
       "y"
 
-      iex> XlsxReader.ParserUtils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "z"}], "c")
+      iex> XlsxReader.Parsers.Utils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "z"}], "c")
       "z"
 
-      iex> XlsxReader.ParserUtils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "z"}], "d")
+      iex> XlsxReader.Parsers.Utils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "z"}], "d")
       nil
 
-      iex> XlsxReader.ParserUtils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "z"}], "d", "default")
+      iex> XlsxReader.Parsers.Utils.get_attribute([{"a", "x"}, {"b", "y"}, {"c", "z"}], "d", "default")
       "default"
 
   """
@@ -41,7 +41,7 @@ defmodule XlsxReader.ParserUtils do
 
   ## Examples
 
-      iex> XlsxReader.ParserUtils.map_attributes([{"a", "x"}, {"b", "y"}], %{"a" => :foo, "b" => :bar, "c" => :baz})
+      iex> XlsxReader.Parsers.Utils.map_attributes([{"a", "x"}, {"b", "y"}], %{"a" => :foo, "b" => :bar, "c" => :baz})
       %{foo: "x", bar: "y"}
 
   """

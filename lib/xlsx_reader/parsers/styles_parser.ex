@@ -1,4 +1,4 @@
-defmodule XlsxReader.StylesParser do
+defmodule XlsxReader.Parsers.StylesParser do
   @moduledoc false
 
   # Parses SpreadsheetML style definitions.
@@ -9,7 +9,8 @@ defmodule XlsxReader.StylesParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{ParserUtils, Styles}
+  alias XlsxReader.Parsers.Utils
+  alias XlsxReader.Styles
 
   defmodule State do
     @moduledoc false
@@ -32,8 +33,8 @@ defmodule XlsxReader.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"numFmt", attributes}, state) do
-    num_fmt_id = ParserUtils.get_attribute(attributes, "numFmtId")
-    format_code = ParserUtils.get_attribute(attributes, "formatCode")
+    num_fmt_id = Utils.get_attribute(attributes, "numFmtId")
+    format_code = Utils.get_attribute(attributes, "formatCode")
     {:ok, %{state | custom_formats: Map.put(state.custom_formats, num_fmt_id, format_code)}}
   end
 
@@ -44,7 +45,7 @@ defmodule XlsxReader.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"xf", attributes}, %{collect_xf: true} = state) do
-    num_fmt_id = ParserUtils.get_attribute(attributes, "numFmtId")
+    num_fmt_id = Utils.get_attribute(attributes, "numFmtId")
 
     {:ok,
      %{
