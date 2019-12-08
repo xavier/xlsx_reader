@@ -80,4 +80,14 @@ defmodule XlsxReader.WorksheetParserTest do
 
     assert expected == rows
   end
+
+  test "handles inline strings", %{workbook: workbook} do
+    sheet_xml = TestFixtures.read!("xml/worksheetWithInlineStr.xml")
+
+    expected = [["inline string"]]
+
+    assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook)
+
+    assert expected == rows
+  end
 end

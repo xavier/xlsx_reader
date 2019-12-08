@@ -67,6 +67,10 @@ defmodule XlsxReader.WorksheetParser do
     {:ok, expect_value(state)}
   end
 
+  def handle_event(:start_element, {"t", _attributes}, state) do
+    {:ok, expect_value(state)}
+  end
+
   @impl Saxy.Handler
   def handle_event(:start_element, _element, state) do
     {:ok, state}
@@ -183,6 +187,9 @@ defmodule XlsxReader.WorksheetParser do
       {"s", _, value} ->
         lookup_shared_string(state, value)
 
+      {"inlineStr", _, value} ->
+        value
+
       {"b", _, value} ->
         {:ok, boolean} = Conversion.to_boolean(value)
         boolean
@@ -209,7 +216,9 @@ defmodule XlsxReader.WorksheetParser do
   end
 
   defp lookup_current_cell_style_type(state) do
-    lookup_index(state.workbook.style_types, state.cell_style)
+    if state.cell_style,
+      do: lookup_index(state.workbook.style_types, state.cell_style),
+      else: nil
   end
 
   defp lookup_shared_string(state, value) do
