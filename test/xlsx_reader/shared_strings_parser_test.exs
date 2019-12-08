@@ -31,4 +31,18 @@ defmodule XlsxReader.SharedStringsParserTest do
 
     assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)
   end
+
+  test "parses strings with rich text" do
+    shared_strings_xml = TestFixtures.read!("xml/sharedStringsWithRichText.xml")
+
+    expected = [
+      "Cell A1",
+      "Cell B1",
+      "My Cell",
+      "Cell A2",
+      "Cell B2"
+    ]
+
+    assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)
+  end
 end
