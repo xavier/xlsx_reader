@@ -94,8 +94,8 @@ defmodule XlsxReader do
   """
   @spec open(String.t() | binary(), [source_option]) ::
           {:ok, XlsxReader.Package.t()} | error()
-  def open(source, options \\ []) do
-    source
+  def open(file, options \\ []) do
+    file
     |> ZipArchive.handle(Keyword.get(options, :source, :path))
     |> PackageLoader.open()
   end
