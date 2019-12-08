@@ -40,7 +40,7 @@ defmodule XlsxReader do
 
   """
 
-  alias XlsxReader.{PackageLoader, Unzip}
+  alias XlsxReader.{PackageLoader, ZipArchive}
 
   @type source :: :binary | :path
   @type source_option :: {:source, source()}
@@ -77,7 +77,7 @@ defmodule XlsxReader do
           {:ok, XlsxReader.Package.t()} | error()
   def open(source, options \\ []) do
     source
-    |> Unzip.handle(Keyword.get(options, :source, :path))
+    |> ZipArchive.handle(Keyword.get(options, :source, :path))
     |> PackageLoader.open()
   end
 

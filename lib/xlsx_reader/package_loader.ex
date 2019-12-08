@@ -10,9 +10,9 @@ defmodule XlsxReader.PackageLoader do
     RelationshipsParser,
     SharedStringsParser,
     StylesParser,
-    Unzip,
     WorkbookParser,
-    WorksheetParser
+    WorksheetParser,
+    ZipArchive
   }
 
   @doc """
@@ -27,7 +27,8 @@ defmodule XlsxReader.PackageLoader do
   and `load_sheet_by_name/3`.
 
   """
-  @spec open(XlsxReader.Unzip.zip_handle()) :: {:ok, XlsxReader.Package.t()} | XlsxReader.error()
+  @spec open(XlsxReader.ZipArchive.zip_handle()) ::
+          {:ok, XlsxReader.Package.t()} | XlsxReader.error()
   def open(zip_handle) do
     with :ok <- check_contents(zip_handle),
          {:ok, workbook} <- load_workbook_xml(zip_handle),
@@ -117,7 +118,7 @@ defmodule XlsxReader.PackageLoader do
   ]
 
   defp check_contents(zip_handle) do
-    with {:ok, files} <- Unzip.list(zip_handle) do
+    with {:ok, files} <- ZipArchive.list(zip_handle) do
       if Enum.all?(@required_files, &Enum.member?(files, &1)),
         do: :ok,
         else: {:error, "invalid xlsx file"}
@@ -125,20 +126,20 @@ defmodule XlsxReader.PackageLoader do
   end
 
   defp load_workbook_xml(zip_handle) do
-    with {:ok, xml} <- Unzip.extract(zip_handle, @workbook_xml) do
+    with {:ok, xml} <- ZipArchive.extract(zip_handle, @workbook_xml) do
       WorkbookParser.parse(xml)
     end
   end
 
   defp load_workbook_xml_rels(zip_handle) do
-    with {:ok, xml} <- Unzip.extract(zip_handle, @workbook_xml_rels) do
+    with {:ok, xml} <- ZipArchive.extract(zip_handle, @workbook_xml_rels) do
       RelationshipsParser.parse(xml)
     end
   end
 
   defp load_shared_strings(package) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
-         {:ok, xml} <- Unzip.extract(package.zip_handle, file),
+         {:ok, xml} <- ZipArchive.extract(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
       %{package | workbook: Map.put(package.workbook, :shared_strings, shared_strings)}
     end
@@ -146,7 +147,7 @@ defmodule XlsxReader.PackageLoader do
 
   defp load_styles(package) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
-         {:ok, xml} <- Unzip.extract(package.zip_handle, file),
+         {:ok, xml} <- ZipArchive.extract(package.zip_handle, file),
          {:ok, style_types} <- StylesParser.parse(xml) do
       %{package | workbook: %{package.workbook | style_types: style_types}}
     end
@@ -163,7 +164,7 @@ defmodule XlsxReader.PackageLoader do
   end
 
   defp load_worksheet_xml(package, file, options) do
-    with {:ok, xml} <- Unzip.extract(package.zip_handle, file) do
+    with {:ok, xml} <- ZipArchive.extract(package.zip_handle, file) do
       WorksheetParser.parse(xml, package.workbook, options)
     end
   end

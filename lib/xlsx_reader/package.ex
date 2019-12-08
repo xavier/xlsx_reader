@@ -14,7 +14,7 @@ defmodule XlsxReader.Package do
   defstruct zip_handle: nil, workbook: nil
 
   @type t :: %__MODULE__{
-          zip_handle: XlsxReader.Unzip.zip_handle(),
+          zip_handle: XlsxReader.ZipArchive.zip_handle(),
           workbook: XlsxReader.Workbook.t()
         }
 end

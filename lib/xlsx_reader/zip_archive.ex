@@ -1,4 +1,4 @@
-defmodule XlsxReader.Unzip do
+defmodule XlsxReader.ZipArchive do
   @moduledoc false
 
   # Zip archive utility functions.
