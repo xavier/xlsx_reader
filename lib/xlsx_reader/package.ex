@@ -13,6 +13,9 @@ defmodule XlsxReader.Package do
   @enforce_keys [:zip_handle, :workbook]
   defstruct zip_handle: nil, workbook: nil
 
+  @typedoc """
+  XLSX package
+  """
   @type t :: %__MODULE__{
           zip_handle: XlsxReader.ZipArchive.zip_handle(),
           workbook: XlsxReader.Workbook.t()

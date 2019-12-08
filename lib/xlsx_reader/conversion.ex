@@ -5,8 +5,19 @@ defmodule XlsxReader.Conversion do
 
   """
 
+  @typedoc """
+  Date system identified by its reference year
+  """
   @type date_system :: 1900 | 1904
+
+  @typedoc """
+  Supported number types identified by module name
+  """
   @type number_type :: Integer | Float | Decimal
+
+  @typedoc """
+  Supported number value types
+  """
   @type number_value :: integer() | float() | Decimal.t()
 
   @doc """

@@ -17,6 +17,9 @@ defmodule XlsxReader.Workbook do
             style_types: nil,
             base_date: nil
 
+  @typedoc """
+  XLSX workbook
+  """
   @type t :: %__MODULE__{
           sheets: [XlsxReader.Sheet.t()],
           rels: nil | map(),

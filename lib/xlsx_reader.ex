@@ -42,10 +42,29 @@ defmodule XlsxReader do
 
   alias XlsxReader.{PackageLoader, ZipArchive}
 
-  @type source :: :binary | :path
+  @typedoc """
+  Source for the XLSX file: file system (`:path`) or in-memory (`:binary`)
+  """
+  @type source :: :path | :binary
+
+  @typedoc """
+  Option to specify the XLSX file source
+  """
   @type source_option :: {:source, source()}
+
+  @typedoc """
+  List of cell values
+  """
   @type row :: list(any())
+
+  @typedoc """
+  List of rows
+  """
   @type rows :: list(row())
+
+  @typedoc """
+  Error tuple with message describing the cause of the error
+  """
   @type error :: {:error, String.t()}
 
   @doc """

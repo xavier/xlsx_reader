@@ -15,6 +15,9 @@ defmodule XlsxReader.Sheet do
 
   defstruct [:name, :rid, :sheet_id]
 
+  @typedoc """
+  XLSX worksheet metadata
+  """
   @type t :: %__MODULE__{
           name: String.t(),
           rid: String.t(),
