@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst count="6" uniqueCount="5" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <si>
+    <t xml:space="preserve">  with spaces  </t>
+  </si>
+   <si>
+    <t xml:space="default">  without spaces  </t>
+  </si>
+  <si>
+    <t>  without spaces  </t>
+  </si>
+</sst>

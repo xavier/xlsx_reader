@@ -18,7 +18,6 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
     defstruct current_string: nil,
               strings: [],
               expect_chars: false,
-              got_chars: false,
               preserve_space: false
   end
 
@@ -47,7 +46,6 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
      %{
        state
        | expect_chars: true,
-         got_chars: false,
          preserve_space: Utils.get_attribute(attributes, "xml:space") == "preserve"
      }}
   end
@@ -59,8 +57,7 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "t", state) do
-    state = preserve_space(state)
-    {:ok, %{state | expect_chars: false, got_chars: false, preserve_space: false}}
+    {:ok, %{state | expect_chars: false, preserve_space: false}}
   end
 
   @impl Saxy.Handler
@@ -75,18 +72,15 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
 
   @impl Saxy.Handler
   def handle_event(:characters, chars, %{expect_chars: true} = state) do
-    {:ok, %{state | current_string: state.current_string <> chars, got_chars: true}}
+    {:ok, %{state | current_string: state.current_string <> preserve_space(state, chars)}}
+  end
+
+  @impl Saxy.Handler
+  def handle_event(:characters, _chars, %{expect_chars: false} = state) do
+    {:ok, state}
   end
 
   ##
-
-  # Work around a bug in Saxy: https://github.com/qcam/saxy/issues/51
-  # If we expected characters with `xml:space="preserve"` but got nothing, we emit a single space
-  defp preserve_space(state) do
-    if state.preserve_space && state.got_chars == false do
-      %{state | current_string: state.current_string <> " "}
-    else
-      state
-    end
-  end
+  defp preserve_space(%{preserve_space: true}, string), do: string
+  defp preserve_space(%{preserve_space: false}, string), do: String.trim(string)
 end

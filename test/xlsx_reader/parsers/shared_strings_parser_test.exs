@@ -45,4 +45,16 @@ defmodule XlsxReader.Parsers.SharedStringsParserTest do
 
     assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)
   end
+
+  test "takes xml:space instruction into account" do
+    shared_strings_xml = TestFixtures.read!("xml/sharedStringsWithXmlSpacePreserve.xml")
+
+    expected = [
+      "  with spaces  ",
+      "without spaces",
+      "without spaces"
+    ]
+
+    assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)
+  end
 end
