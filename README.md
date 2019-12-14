@@ -1,3 +1,5 @@
+![](https://github.com/xavier/xlsx_reader/workflows/CI/badge.svg)
+
 ![XlsxReader logo](https://raw.github.com/xavier/xlsx_reader/master/assets/logo.png)
 
 # XlsxReader
