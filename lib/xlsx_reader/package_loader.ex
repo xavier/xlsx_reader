@@ -24,8 +24,7 @@ defmodule XlsxReader.PackageLoader do
   and relationships as well as the shared strings and style information required
   to load the sheet data.
 
-  To load the actual sheet data, see `load_sheets/2`, `load_sheet_by_rid/3`
-  and `load_sheet_by_name/3`.
+  To load the actual sheet data, see `load_sheet_by_rid/3` and `load_sheet_by_name/3`.
 
   """
   @spec open(XlsxReader.ZipArchive.zip_handle()) ::
@@ -43,27 +42,6 @@ defmodule XlsxReader.PackageLoader do
         |> load_styles
 
       {:ok, package}
-    end
-  end
-
-  @doc """
-  Loads all sheets in the package
-
-  ## Options
-
-  See `XlsxReader.sheets/2`.
-
-  """
-  @spec load_sheets(XlsxReader.Package.t(), Keyword.t()) :: [{String.t(), XlsxReader.rows()}]
-  def load_sheets(package, options \\ []) do
-    for sheet <- package.workbook.sheets do
-      case load_sheet_by_rid(package, sheet.rid, options) do
-        {:ok, rows} ->
-          {sheet.name, rows}
-
-        _ ->
-          {sheet.name, []}
-      end
     end
   end
 

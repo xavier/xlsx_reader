@@ -63,6 +63,11 @@ defmodule XlsxReader do
   @type rows :: list(row())
 
   @typedoc """
+  Sheet name
+  """
+  @type sheet_name :: String.t()
+
+  @typedoc """
   Error tuple with message describing the cause of the error
   """
   @type error :: {:error, String.t()}
@@ -133,13 +138,38 @@ defmodule XlsxReader do
 
   Loads all the sheets in the workbook.
 
+  On success, returns a list of `{sheet_name, rows}` pairs.
+
   ## Options
 
   See `sheet/2`.
 
   """
-  @spec sheets(XlsxReader.Package.t(), Keyword.t()) :: {:ok, rows()}
+  @spec sheets(XlsxReader.Package.t(), Keyword.t()) ::
+          {:ok, list({sheet_name(), rows()})} | error()
   def sheets(package, options \\ []) do
-    {:ok, PackageLoader.load_sheets(package, options)}
+    load_all_sheets(package, options, package.workbook.sheets, [])
+  end
+
+  ##
+
+  @spec load_all_sheets(
+          XlsxReader.Package.t(),
+          Keyword.t(),
+          list(XlsxReader.Sheet.t()),
+          list({sheet_name(), rows()})
+        ) ::
+          {:ok, list({sheet_name(), rows()})} | error()
+
+  defp load_all_sheets(_package, _options, [], acc), do: {:ok, Enum.reverse(acc)}
+
+  defp load_all_sheets(package, options, [sheet | sheets], acc) do
+    case PackageLoader.load_sheet_by_rid(package, sheet.rid, options) do
+      {:ok, rows} ->
+        load_all_sheets(package, options, sheets, [{sheet.name, rows} | acc])
+
+      error ->
+        error
+    end
   end
 end
