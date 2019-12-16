@@ -110,7 +110,7 @@ defmodule XlsxReader do
   Lists the names of the sheets in the package's workbook
 
   """
-  @spec sheet_names(XlsxReader.Package.t()) :: [String.t()]
+  @spec sheet_names(XlsxReader.Package.t()) :: [sheet_name()]
   def sheet_names(package) do
     for %{name: name} <- package.workbook.sheets, do: name
   end
@@ -129,7 +129,7 @@ defmodule XlsxReader do
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
 
   """
-  @spec sheet(XlsxReader.Package.t(), String.t(), Keyword.t()) :: {:ok, rows()}
+  @spec sheet(XlsxReader.Package.t(), sheet_name(), Keyword.t()) :: {:ok, rows()}
   def sheet(package, sheet_name, options \\ []) do
     PackageLoader.load_sheet_by_name(package, sheet_name, options)
   end
