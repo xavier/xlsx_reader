@@ -1,8 +1,8 @@
-![](https://github.com/xavier/xlsx_reader/workflows/CI/badge.svg)
-
 ![XlsxReader logo](https://raw.githubusercontent.com/xavier/xlsx_reader/master/assets/logo.png)
 
 # XlsxReader
+
+![Build status](https://github.com/xavier/xlsx_reader/workflows/CI/badge.svg)
 
 An XLSX reader in Elixir.
 
