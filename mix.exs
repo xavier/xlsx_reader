@@ -8,10 +8,13 @@ defmodule XlsxReader.MixProject do
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      description: description(),
+      package: package(),
       dialyzer: [
         plt_ignore_apps: [:saxy]
       ],
       # Docs
+      homepage_url: "https://github.com/xavier/xlsx_reader",
       source_url: "https://github.com/xavier/xlsx_reader",
       docs: [
         main: "XlsxReader",
@@ -37,5 +40,16 @@ defmodule XlsxReader.MixProject do
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false}
     ]
+  end
+
+  defp description do
+    "XLSX file reader for Elixir"
+  end
+
+  defp package do
+    %{
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/xavier/xlsx_reader"}
+    }
   end
 end
