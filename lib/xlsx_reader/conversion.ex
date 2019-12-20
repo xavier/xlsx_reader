@@ -13,12 +13,12 @@ defmodule XlsxReader.Conversion do
   @typedoc """
   Supported number types identified by module name
   """
-  @type number_type :: Integer | Float | Decimal
+  @type number_type :: Integer | Float | Decimal | String
 
   @typedoc """
   Supported number value types
   """
-  @type number_value :: integer() | float() | Decimal.t()
+  @type number_value :: integer() | float() | Decimal.t() | String.t()
 
   @doc """
 
@@ -47,7 +47,7 @@ defmodule XlsxReader.Conversion do
 
   Converts a string into the given number type.
 
-  Supported number types are: `Integer`, `Float` or `Decimal` (requires the [decimal](https://github.com/ericmj/decimal) library)
+  Supported number types are: `Integer`, `Float`, `String` or `Decimal` (requires the [decimal](https://github.com/ericmj/decimal) library)
 
   ## Examples
 
@@ -66,6 +66,12 @@ defmodule XlsxReader.Conversion do
       iex> XlsxReader.Conversion.to_number("0.12345E3", Decimal)
       {:ok, %Decimal{coef: 12345, exp: -2, sign: 1}}
 
+      iex> XlsxReader.Conversion.to_number("-123.45", String)
+      {:ok, "-123.45"}
+
+      iex> XlsxReader.Conversion.to_number("0.12345e3", String)
+      {:ok, "0.12345e3"}
+
       iex> XlsxReader.Conversion.to_number("123.0", Integer)
       :error
 
@@ -82,6 +88,10 @@ defmodule XlsxReader.Conversion do
 
   def to_number(string, Decimal) do
     to_decimal(string)
+  end
+
+  def to_number(string, String) do
+    {:ok, string}
   end
 
   @doc """

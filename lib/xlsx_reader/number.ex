@@ -14,3 +14,7 @@ end
 defimpl XlsxReader.Number, for: Decimal do
   def multiply(number, factor), do: Decimal.mult(number, factor)
 end
+
+defimpl XlsxReader.Number, for: String do
+  def multiply(number, _factor), do: number
+end

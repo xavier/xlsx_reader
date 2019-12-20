@@ -32,7 +32,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     * `type_conversion`: boolean (default: `true`)
     * `blank_value`: placeholder value for empty cells (default: `""`)
     * `empty_rows`: include empty rows (default: `true`)
-    * `number_type` - type used for numeric conversion :`Integer`, 'Decimal' or `Float` (default: `Float`)
+    * `number_type` - type used for numeric conversion : `String` (no conversion), `Integer`, 'Decimal' or `Float`  (default: `Float`)
 
   """
   def parse(xml, workbook, options \\ []) do
