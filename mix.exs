@@ -34,7 +34,7 @@ defmodule XlsxReader.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:saxy, "~> 0.10"},
+      {:saxy, "~> 1.0.0"},
       {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
       {:decimal, "~> 1.0", optional: true},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
