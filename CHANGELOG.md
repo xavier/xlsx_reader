@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [0.1.2] - 2019-12-30
 
 - Add `String` number type to disable numeric conversions
 
