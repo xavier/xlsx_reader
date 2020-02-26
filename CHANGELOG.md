@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.3] - 2020-02-26
+
+- Improve compatibility with XLSX writers (Excel, Elixslx, …) which completely omit empty cells in worksheets
+
 ## [0.1.2] - 2019-12-30
 
 - Add `String` number type to disable numeric conversions
