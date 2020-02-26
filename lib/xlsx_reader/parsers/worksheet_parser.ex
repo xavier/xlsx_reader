@@ -5,7 +5,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{Conversion, Number}
+  alias XlsxReader.{CellReference, Conversion, Number}
   alias XlsxReader.Parsers.Utils
 
   defmodule State do
@@ -14,6 +14,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     defstruct workbook: nil,
               rows: [],
               row: nil,
+              expected_column: nil,
               cell_ref: nil,
               cell_type: nil,
               cell_style: nil,
@@ -57,11 +58,14 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"row", _attributes}, state) do
-    {:ok, %{state | row: []}}
+    # Some XLSX writers (Excel, Elixlsx, …) completely omit `<c>` elements for empty cells.
+    # As we build the row, we'll keep track of the expected column number and fill the blanks
+    # based on the column indicated in the cell reference
+    {:ok, %{state | row: [], expected_column: 1}}
   end
 
   def handle_event(:start_element, {"c", attributes}, state) do
-    {:ok, Map.merge(state, extract_cell_attributes(attributes))}
+    {:ok, start_new_row(state, extract_cell_attributes(attributes))}
   end
 
   def handle_event(:start_element, {"v", _attributes}, state) do
@@ -79,7 +83,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "c", state) do
-    {:ok, add_cell(state)}
+    {:ok, add_cell_to_row(state)}
   end
 
   @impl Saxy.Handler
@@ -115,6 +119,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   ## State machine
 
+  defp start_new_row(state, cell_attributes) do
+    state
+    |> Map.merge(cell_attributes)
+    |> handle_omitted_cells()
+  end
+
   defp expect_value(state) do
     %{state | value: :expect_chars}
   end
@@ -123,7 +133,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | value: value}
   end
 
-  defp add_cell(state) do
+  defp add_cell_to_row(state) do
     %{
       state
       | row: [convert_current_cell_value(state) | state.row],
@@ -152,6 +162,32 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp restore_rows_order(state) do
     %{state | rows: Enum.reverse(state.rows)}
   end
+
+  ## Omitted cells
+
+  defp handle_omitted_cells(state) do
+    # Using the current cell reference and the expected column:
+    # 1. fill any missing cell
+    # 2. determine the next expected column
+    case CellReference.parse(state.cell_ref) do
+      {column, _row} ->
+        omitted_cells = column - state.expected_column
+
+        state
+        |> add_omitted_cells_to_row(omitted_cells)
+        |> Map.put(:expected_column, column + 1)
+
+      :error ->
+        state
+    end
+  end
+
+  defp add_omitted_cells_to_row(state, n) do
+    %{state | row: prepend_n_times(state.row, state.blank_value, n)}
+  end
+
+  defp prepend_n_times(list, _value, 0), do: list
+  defp prepend_n_times(list, value, n), do: prepend_n_times([value | list], value, n - 1)
 
   ## Cell format handling
 
@@ -184,6 +220,13 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     case {state.cell_type, style_type, state.value} do
       {_, _, nil} ->
         state.blank_value
+
+      {_, _, ""} ->
+        state.blank_value
+
+      {"n", _, value} ->
+        {:ok, number} = Conversion.to_number(value, state.number_type)
+        number
 
       {"s", _, value} ->
         lookup_shared_string(state, value)
