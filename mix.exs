@@ -38,7 +38,8 @@ defmodule XlsxReader.MixProject do
       {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
       {:decimal, "~> 1.0", optional: true},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:elixlsx, "~> 0.4.0", only: [:dev, :test], runtime: false}
     ]
   end
 
