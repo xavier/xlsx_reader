@@ -169,15 +169,15 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     # Using the current cell reference and the expected column:
     # 1. fill any missing cell
     # 2. determine the next expected column
-    case CellReference.parse(state.cell_ref) do
-      {column, _row} ->
-        omitted_cells = column - state.expected_column
+    with %{cell_ref: cell_ref} when not is_nil(cell_ref) <- state,
+         {column, _row} <- CellReference.parse(cell_ref) do
+      omitted_cells = column - state.expected_column
 
-        state
-        |> add_omitted_cells_to_row(omitted_cells)
-        |> Map.put(:expected_column, column + 1)
-
-      :error ->
+      state
+      |> add_omitted_cells_to_row(omitted_cells)
+      |> Map.put(:expected_column, column + 1)
+    else
+      _ ->
         state
     end
   end
