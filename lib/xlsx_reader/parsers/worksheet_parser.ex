@@ -65,7 +65,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   def handle_event(:start_element, {"c", attributes}, state) do
-    {:ok, start_new_row(state, extract_cell_attributes(attributes))}
+    {:ok, new_cell(state, extract_cell_attributes(attributes))}
   end
 
   def handle_event(:start_element, {"v", _attributes}, state) do
@@ -119,7 +119,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   ## State machine
 
-  defp start_new_row(state, cell_attributes) do
+  defp new_cell(state, cell_attributes) do
     state
     |> Map.merge(cell_attributes)
     |> handle_omitted_cells()
