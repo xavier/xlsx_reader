@@ -120,7 +120,7 @@ defmodule XlsxReader.PackageLoader do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
          {:ok, xml} <- ZipArchive.extract(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
-      %{package | workbook: Map.put(package.workbook, :shared_strings, shared_strings)}
+      %{package | workbook: %{package.workbook | shared_strings: shared_strings}}
     end
   end
 
