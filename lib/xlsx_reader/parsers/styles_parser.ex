@@ -9,8 +9,8 @@ defmodule XlsxReader.Parsers.StylesParser do
 
   @behaviour Saxy.Handler
 
+  alias XlsxReader.{Array, Styles}
   alias XlsxReader.Parsers.Utils
-  alias XlsxReader.Styles
 
   defmodule State do
     @moduledoc false
@@ -63,7 +63,8 @@ defmodule XlsxReader.Parsers.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "cellXfs", state) do
-    {:ok, %{state | collect_xf: false, style_types: Enum.reverse(state.style_types)}}
+    {:ok,
+     %{state | collect_xf: false, style_types: Array.from_list(Enum.reverse(state.style_types))}}
   end
 
   @impl Saxy.Handler

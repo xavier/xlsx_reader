@@ -10,6 +10,7 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
 
   @behaviour Saxy.Handler
 
+  alias XlsxReader.Array
   alias XlsxReader.Parsers.Utils
 
   defmodule State do
@@ -32,7 +33,7 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
 
   @impl Saxy.Handler
   def handle_event(:end_document, _data, state) do
-    {:ok, Enum.reverse(state.strings)}
+    {:ok, Array.from_list(Enum.reverse(state.strings))}
   end
 
   @impl Saxy.Handler

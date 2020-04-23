@@ -4,7 +4,7 @@ defmodule XlsxReader.Styles do
   @type known_style_type ::
           :string | :integer | :float | :percentage | :date | :time | :date_time | :unsupported
   @type style_type :: known_style_type() | String.t()
-  @type style_types :: [style_type]
+  @type style_types :: XlsxReader.Array.t(style_type())
 
   @known_styles %{
     # General

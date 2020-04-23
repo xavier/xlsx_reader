@@ -271,6 +271,6 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defp lookup_index(table, string_index) do
     {:ok, index} = Conversion.to_integer(string_index)
-    Enum.at(table, index)
+    XlsxReader.Array.lookup(table, index)
   end
 end

@@ -1,5 +1,9 @@
 # Changelog
 
+## [unreleased] - YYYY-MM-DD
+
+- Speed-up shared string and styles lookups
+
 ## [0.1.3] - 2020-02-26
 
 - Improve compatibility with XLSX writers (Excel, Elixslx, …) which completely omit empty cells in worksheets
