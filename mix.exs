@@ -35,9 +35,9 @@ defmodule XlsxReader.MixProject do
   defp deps do
     [
       {:saxy, "~> 1.0.0"},
-      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:decimal, "~> 1.0", optional: true},
-      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:elixlsx, "~> 0.4.0", only: [:dev, :test], runtime: false}
     ]
