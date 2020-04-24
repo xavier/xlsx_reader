@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased] - YYYY-MM-DD
+## [0.1.4] - 2020-04-24
 
 - Speed-up shared string and styles lookups
 
