@@ -2,10 +2,18 @@ defmodule Benchmark do
   def files(), do: Path.wildcard("benchmark/files/*.xlsx")
 
   def run(files) do
+    timeout = 60_000
+
     Benchee.run(
       %{
         "XlsxReader.sheets/2" => fn package ->
           XlsxReader.sheets(package)
+        end,
+        "XlsxReader.async_sheets/3 - ordered" => fn package ->
+          XlsxReader.async_sheets(package, [], timeout: timeout)
+        end,
+        "XlsxReader.async_sheets/3 - unordered" => fn package ->
+          XlsxReader.async_sheets(package, [], ordered: false, timeout: timeout)
         end
       },
       inputs: for(file <- files, do: {Path.basename(file), file}),

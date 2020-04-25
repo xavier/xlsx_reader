@@ -138,7 +138,7 @@ defmodule XlsxReader do
 
   Loads all the sheets in the workbook.
 
-  On success, returns a list of `{sheet_name, rows}` pairs.
+  On success, returns `{:ok, [{sheet_name, rows}, ...]}`.
 
   ## Options
 
@@ -149,6 +149,76 @@ defmodule XlsxReader do
           {:ok, list({sheet_name(), rows()})} | error()
   def sheets(package, options \\ []) do
     load_all_sheets(package, options, package.workbook.sheets, [])
+  end
+
+  @doc """
+
+  Loads all the sheets in the workbook concurrently.
+
+  On success, returns `{:ok, [{sheet_name, rows}, ...]}`.
+
+  When processing files with multiple sheets, `async_sheets/3` is ~3x faster than `sheets/2`
+  but it comes with a caveat. `async_sheets/3` uses `Task.async_stream/3` under the hood and thus
+  runs each concurrent task with a timeout. If you expect your dataset to be of a significant size,
+  you may want to increase it from the default 10000ms (see "Concurrency options" below).
+
+  If the order in which the sheets are returned is not relevant for your application, you can
+  pass `ordered: false` (see "Concurrency options" below) for a modest speed gain.
+
+  ## Sheet options
+
+  See `sheet/2`.
+
+  ## Concurrency options
+
+    * `max_concurrency` - maximum number of tasks to run at the same time (default: `System.schedulers_online/0`)
+    * `ordered` - maintain order consistent with `sheet_names/1` (default: `true`)
+    * `timeout` - maximum duration in milliseconds to process a sheet (default: `10_000`)
+
+  """
+  def async_sheets(package, sheet_options \\ [], task_options \\ []) do
+    max_concurrency = Keyword.get(task_options, :max_concurrency, System.schedulers_online())
+    ordered = Keyword.get(task_options, :ordered, true)
+    timeout = Keyword.get(task_options, :timeout, 10_000)
+
+    package.workbook.sheets
+    |> Task.async_stream(
+      fn sheet ->
+        case PackageLoader.load_sheet_by_rid(package, sheet.rid, sheet_options) do
+          {:ok, rows} ->
+            {:ok, {sheet.name, rows}}
+
+          error ->
+            error
+        end
+      end,
+      max_concurrency: max_concurrency,
+      ordered: ordered,
+      timeout: timeout,
+      on_timeout: :kill_task
+    )
+    |> Enum.reduce_while({:ok, []}, fn
+      {:ok, {:ok, entry}}, {:ok, acc} ->
+        {:cont, {:ok, [entry | acc]}}
+
+      {:ok, error}, _acc ->
+        {:halt, {:error, error}}
+
+      {:exit, :timeout}, _acc ->
+        {:halt, {:error, "timeout exceeded"}}
+
+      {:exit, reason}, _acc ->
+        {:halt, {:error, reason}}
+    end)
+    |> case do
+      {:ok, list} ->
+        if ordered,
+          do: {:ok, Enum.reverse(list)},
+          else: {:ok, list}
+
+      error ->
+        error
+    end
   end
 
   ##

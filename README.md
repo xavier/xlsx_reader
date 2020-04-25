@@ -68,6 +68,17 @@ blob = File.read!("test.xlsx")
 # ]
 ```
 
+### Loading all sheets at once concurrently
+
+```elixir
+{:ok, sheets} = XlsxReader.async_sheets(package)
+# [
+#   {"Sheet 1", [["Date", "Temperature"], ...]}, 
+#   {"Sheet 2", [...]}, 
+#   ...
+# ]
+```
+
 ### Using arbitrary precision numbers
 
 ```elixir

@@ -111,4 +111,21 @@ defmodule XlsxReaderTest do
               ]} = XlsxReader.sheets(package)
     end
   end
+
+  describe "async_sheets/3" do
+    setup do
+      {:ok, package} = XlsxReader.open(TestFixtures.path("test.xlsx"))
+
+      {:ok, %{package: package}}
+    end
+
+    test "load all sheets", %{package: package} do
+      assert {:ok,
+              [
+                {"Sheet 1", [["A", "B", "C" | _] | _]},
+                {"Sheet 2", [["", "", "", "", ""] | _]},
+                {"Sheet 3", [["", ""] | _]}
+              ]} = XlsxReader.async_sheets(package)
+    end
+  end
 end
