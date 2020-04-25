@@ -1,7 +1,7 @@
 defmodule XlsxReaderTest do
   use ExUnit.Case
 
-  describe "open/1" do
+  describe "open/2" do
     test "opens a xlsx file from the file system" do
       xlsx = TestFixtures.path("test.xlsx")
 
@@ -40,7 +40,7 @@ defmodule XlsxReaderTest do
     end
   end
 
-  describe "sheet/2" do
+  describe "sheet/3" do
     setup do
       {:ok, package} = XlsxReader.open(TestFixtures.path("test.xlsx"))
 
@@ -95,7 +95,7 @@ defmodule XlsxReaderTest do
     end
   end
 
-  describe "sheets/1" do
+  describe "sheets/2" do
     setup do
       {:ok, package} = XlsxReader.open(TestFixtures.path("test.xlsx"))
 
