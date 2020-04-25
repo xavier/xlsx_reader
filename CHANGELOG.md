@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.0] - 2020-04-27
+
+- Add `XlsxReader.async_sheets/3`
+
 ## [0.1.4] - 2020-04-24
 
 - Speed-up shared string and styles lookups
