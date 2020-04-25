@@ -23,3 +23,7 @@ erl_crash.dump
 xlsx_reader-*.tar
 
 .DS_Store
+
+# Ignore generated benchmark files
+/benchmark/files/*.xlsx
+/benchmark/output/*.benchee

@@ -80,6 +80,13 @@ blob = File.read!("test.xlsx")
 # ]
 ```
 
+## Development
+
+### Benchmarking
+
+1. `mix run benchmark/init.exs` to create the benchmarking dataset
+2. `mix run benchmark/run.exs` to run the [Benchee](https://github.com/bencheeorg/benchee) suite
+
 ## License
 
 Copyright 2019 Xavier Defrang
