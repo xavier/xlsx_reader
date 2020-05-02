@@ -110,6 +110,32 @@ defmodule XlsxReaderTest do
                 {"Sheet 3", [["", ""] | _]}
               ]} = XlsxReader.sheets(package)
     end
+
+    test "filters sheets", %{package: package} do
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.sheets(package, only: ["Sheet 1", "Sheet 3"])
+
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.sheets(package, only: [~r/Sheet [13]/])
+
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.sheets(package, except: "Sheet 2")
+
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.sheets(package, only: ~r/Sheet \d+/, except: ["Sheet 2"])
+    end
   end
 
   describe "async_sheets/3" do
@@ -126,6 +152,32 @@ defmodule XlsxReaderTest do
                 {"Sheet 2", [["", "", "", "", ""] | _]},
                 {"Sheet 3", [["", ""] | _]}
               ]} = XlsxReader.async_sheets(package)
+    end
+
+    test "filters sheets", %{package: package} do
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.async_sheets(package, only: ["Sheet 1", "Sheet 3"])
+
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.async_sheets(package, only: [~r/Sheet [13]/])
+
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.async_sheets(package, except: "Sheet 2")
+
+      assert {:ok,
+              [
+                {"Sheet 1", _},
+                {"Sheet 3", _}
+              ]} = XlsxReader.async_sheets(package, only: ~r/Sheet \d+/, except: ["Sheet 2"])
     end
   end
 end

@@ -140,7 +140,18 @@ defmodule XlsxReader do
 
   On success, returns `{:ok, [{sheet_name, rows}, ...]}`.
 
-  ## Options
+  ## Filtering options
+
+    * `only` - include the sheets whose name matches the filter
+    * `except` - exclude the sheets whose name matches the filter
+
+  Sheets can filtered by name using:
+
+    * a string (e.g. `"Exact Match"`)
+    * a regex (e.g. `~r/Sheet \d+/`)
+    * a list of string and/or regexes (e.g. `["Parameters", ~r/Sheet [12]/]`)
+
+  ## Sheet options
 
   See `sheet/2`.
 
@@ -148,7 +159,27 @@ defmodule XlsxReader do
   @spec sheets(XlsxReader.Package.t(), Keyword.t()) ::
           {:ok, list({sheet_name(), rows()})} | error()
   def sheets(package, options \\ []) do
-    load_all_sheets(package, options, package.workbook.sheets, [])
+    package.workbook.sheets
+    |> filter_sheets_by_name(
+      sheet_filter_option(options, :only),
+      sheet_filter_option(options, :except)
+    )
+    |> Enum.reduce_while([], fn sheet, acc ->
+      case PackageLoader.load_sheet_by_rid(package, sheet.rid, options) do
+        {:ok, rows} ->
+          {:cont, [{sheet.name, rows} | acc]}
+
+        error ->
+          {:halt, error}
+      end
+    end)
+    |> case do
+      sheets when is_list(sheets) ->
+        {:ok, Enum.reverse(sheets)}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -164,6 +195,10 @@ defmodule XlsxReader do
 
   If the order in which the sheets are returned is not relevant for your application, you can
   pass `ordered: false` (see "Concurrency options" below) for a modest speed gain.
+
+  ## Filtering options
+
+  See `sheets/2`.
 
   ## Sheet options
 
@@ -182,6 +217,10 @@ defmodule XlsxReader do
     timeout = Keyword.get(task_options, :timeout, 10_000)
 
     package.workbook.sheets
+    |> filter_sheets_by_name(
+      sheet_filter_option(sheet_options, :only),
+      sheet_filter_option(sheet_options, :except)
+    )
     |> Task.async_stream(
       fn sheet ->
         case PackageLoader.load_sheet_by_rid(package, sheet.rid, sheet_options) do
@@ -221,25 +260,26 @@ defmodule XlsxReader do
     end
   end
 
-  ##
+  ## Sheet filter
 
-  @spec load_all_sheets(
-          XlsxReader.Package.t(),
-          Keyword.t(),
-          list(XlsxReader.Sheet.t()),
-          list({sheet_name(), rows()})
-        ) ::
-          {:ok, list({sheet_name(), rows()})} | error()
+  def sheet_filter_option(options, key),
+    do: options |> Keyword.get(key, []) |> List.wrap()
 
-  defp load_all_sheets(_package, _options, [], acc), do: {:ok, Enum.reverse(acc)}
+  defp filter_sheets_by_name(sheets, [], []), do: sheets
 
-  defp load_all_sheets(package, options, [sheet | sheets], acc) do
-    case PackageLoader.load_sheet_by_rid(package, sheet.rid, options) do
-      {:ok, rows} ->
-        load_all_sheets(package, options, sheets, [{sheet.name, rows} | acc])
-
-      error ->
-        error
-    end
+  defp filter_sheets_by_name(sheets, only, except) do
+    Enum.filter(sheets, fn %{name: name} ->
+      filter_only?(name, only) && !filter_except?(name, except)
+    end)
   end
+
+  defp filter_only?(_name, []), do: true
+  defp filter_only?(name, filters), do: Enum.any?(filters, &filter_match?(name, &1))
+
+  defp filter_except?(_name, []), do: false
+  defp filter_except?(name, filters), do: Enum.any?(filters, &filter_match?(name, &1))
+
+  defp filter_match?(name, %Regex{} = regex), do: String.match?(name, regex)
+  defp filter_match?(exact_match, exact_match) when is_binary(exact_match), do: true
+  defp filter_match?(_, _), do: false
 end

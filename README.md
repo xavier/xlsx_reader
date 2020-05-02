@@ -68,6 +68,19 @@ blob = File.read!("test.xlsx")
 # ]
 ```
 
+### Loading sheets selectively
+
+```elixir
+{:ok, sheets} = XlsxReader.sheets(package, only: ["Parameters", ~r/Sheet \d+/], except: ["Sheet 2"])
+# [
+#   {"Parameters", [...]}, 
+#   {"Sheet 1", [...]}, 
+#   {"Sheet 3", [...]}, 
+#   {"Sheet 4", [...]}, 
+#   ...
+# ]
+```
+
 ### Loading all sheets at once concurrently
 
 ```elixir
