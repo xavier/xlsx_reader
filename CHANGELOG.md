@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0] - unreleased
+## [0.3.0] - 2020-05-07
 
 - Add `:only` and `:except` options to `XlsxReader.sheets/2` and `XlsxReader.async_sheets/3`
 
