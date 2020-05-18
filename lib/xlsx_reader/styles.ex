@@ -77,6 +77,10 @@ defmodule XlsxReader.Styles do
     {"0.0%", :percentage},
     {~r/\Add?\/mm?\/yy(?:yy)\z/, :date},
     {~r/\Add?\/mm?\/yy(?:yy) hh?:mm?\z/, :date_time},
+    {"yyyy-mm-dd", :date},
+    {"yyyy-mm-dd h:mm:ss", :date_time},
+    {"m/d/yyyy", :date},
+    {"m/d/yyyy h:mm", :date_time},
     {"hh:mm", :time}
   ]
 
