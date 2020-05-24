@@ -111,7 +111,7 @@ defmodule XlsxReader.Styles do
   end
 
   defp custom_format_to_style_type(nil, _), do: nil
-  defp custom_format_to_style_type(custom_format, []), do: custom_format
+  defp custom_format_to_style_type(_custom_format, []), do: nil
 
   defp custom_format_to_style_type(custom_format, [{custom_format, style_type} | _others]),
     do: style_type

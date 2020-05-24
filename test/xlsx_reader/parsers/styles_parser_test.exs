@@ -32,7 +32,7 @@ defmodule XlsxReader.Parsers.StylesParserTest do
         :date_time,
         :time,
         :percentage,
-        "[$CHF]\" \"0.00",
+        nil,
         :unsupported
       ])
 
