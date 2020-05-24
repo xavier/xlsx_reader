@@ -111,6 +111,13 @@ blob = File.read!("test.xlsx")
 1. `mix run benchmark/init.exs` to create the benchmarking dataset
 2. `mix run benchmark/run.exs` to run the [Benchee](https://github.com/bencheeorg/benchee) suite
 
+## Contributors
+
+In order of appearance:
+
+- Xavier Defrang ([xavier](https://github.com/xavier))
+- Darragh Enright ([darraghenright](https://github.com/darraghenright))
+
 ## License
 
 Copyright 2020 Xavier Defrang
