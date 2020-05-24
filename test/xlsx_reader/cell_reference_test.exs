@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Warning.OperationWithConstantResult
 defmodule XlsxReader.CellReferenceTest do
   use ExUnit.Case
 
