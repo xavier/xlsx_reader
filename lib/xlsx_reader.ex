@@ -124,7 +124,7 @@ defmodule XlsxReader do
     * `type_conversion` - boolean (default: `true`)
     * `blank_value` - placeholder value for empty cells (default: `""`)
     * `empty_rows` - include empty rows (default: `true`)
-    * `number_type` - type used for numeric conversion :`Integer`, 'Decimal' or `Float` (default: `Float`)
+    * `number_type` - type used for numeric conversion :`Integer`, `Decimal` or `Float` (default: `Float`)
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
 
