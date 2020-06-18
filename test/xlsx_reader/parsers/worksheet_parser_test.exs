@@ -10,7 +10,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
       |> TestFixtures.read!()
       |> SharedStringsParser.parse()
 
-    {:ok, style_types} =
+    {:ok, style_types, custom_formats} =
       "package/xl/styles.xml"
       |> TestFixtures.read!()
       |> StylesParser.parse()
@@ -18,6 +18,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     workbook = %Workbook{
       shared_strings: shared_strings,
       style_types: style_types,
+      custom_formats: custom_formats,
       base_date: Conversion.base_date(1900)
     }
 
@@ -47,7 +48,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
       ["datetime", ~N[2019-11-24 11:06:13]],
       ["time", ~N[1904-01-01 18:45:12]],
       ["percentage", 12.5],
-      ["money chf", 100],
+      ["money chf", "100"],
       ["money usd", "9999,99 USD"],
       ["ticked", true],
       ["not ticked", false],

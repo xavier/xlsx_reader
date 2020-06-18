@@ -29,7 +29,7 @@ defmodule XlsxReader.PackageLoader do
   """
   @spec open(XlsxReader.ZipArchive.zip_handle()) ::
           {:ok, XlsxReader.Package.t()} | XlsxReader.error()
-  def open(zip_handle) do
+  def open(zip_handle, options \\ []) do
     with :ok <- check_contents(zip_handle),
          {:ok, workbook} <- load_workbook_xml(zip_handle),
          {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle) do
@@ -39,7 +39,7 @@ defmodule XlsxReader.PackageLoader do
           workbook: %{workbook | rels: workbook_rels}
         }
         |> load_shared_strings
-        |> load_styles
+        |> load_styles(Keyword.get(options, :supported_custom_formats, []))
 
       {:ok, package}
     end
@@ -124,11 +124,14 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
-  defp load_styles(package) do
+  defp load_styles(package, supported_custom_formats) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
          {:ok, xml} <- ZipArchive.extract(package.zip_handle, file),
-         {:ok, style_types} <- StylesParser.parse(xml) do
-      %{package | workbook: %{package.workbook | style_types: style_types}}
+         {:ok, style_types, custom_formats} <- StylesParser.parse(xml, supported_custom_formats) do
+      %{
+        package
+        | workbook: %{package.workbook | style_types: style_types, custom_formats: custom_formats}
+      }
     end
   end
 

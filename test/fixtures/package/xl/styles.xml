@@ -6,7 +6,7 @@
     <numFmt formatCode="dd/mm/yyyy hh:mm" numFmtId="60"/>
     <numFmt formatCode="hh:mm" numFmtId="61"/>
     <numFmt formatCode="0.0%" numFmtId="62"/>
-    <numFmt formatCode="[$CHF]&quot; &quot;0.00" numFmtId="63"/>
+    <numFmt formatCode="[$CHF]0.00" numFmtId="63"/>
   </numFmts>
   <fonts count="5">
     <font>

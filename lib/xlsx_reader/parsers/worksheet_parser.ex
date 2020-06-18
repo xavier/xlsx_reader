@@ -242,6 +242,10 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         {:ok, number} = Conversion.to_number(value, state.number_type)
         Number.multiply(number, 100)
 
+      {nil, :number, value} ->
+        {:ok, number} = Conversion.to_number(value, state.number_type)
+        number
+
       {nil, :date, value} ->
         {:ok, date} = Conversion.to_date(value, state.workbook.base_date)
         date
@@ -250,9 +254,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
-      {nil, _, value} ->
-        {:ok, number} = Conversion.to_number(value, state.number_type)
-        number
+      {nil, :string, value} ->
+        value
 
       {_, _, value} ->
         value

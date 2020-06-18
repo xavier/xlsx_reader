@@ -38,6 +38,62 @@ defmodule XlsxReader do
   The behavior of the sheet parser can be customized for each
   individual sheet, see `sheet/3`.
 
+  ## Cell types
+
+  This library takes a best effort approach for determining cell types.
+  In order of priority, the actual type of an XLSX cell value is determined using:
+
+  1. basic cell properties (e.g. boolean)
+  2. predefined known styles (e.g. default money/date formats)
+  3. introspection of the [custom format string](https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68) associated with the cell
+
+  ### Custom formats supported by default
+
+  * percentages
+  * ISO 8601 date/time (y-m-d)
+  * US date/time (m/d/y)
+  * European date/time (d/m/y)
+
+  ### Additional custom formats support
+
+  If the spreadsheet you need to process contains some unusual cell formatting, you
+  may provide hints to map format strings to a known cell type.
+
+  The hints are given as a list of `{matcher, type}` tuples. The matcher is either a
+  string or regex to match against the custom format string. The supported types are:
+
+  * `:string`
+  * `:number`
+  * `:percentage`
+  * `:date`
+  * `:time`
+  * `:date_time`
+  * `:unsupported` (used for explicitly unsupported styles and formats)
+
+  #### Example
+
+  ```elixir
+  [
+    {"mmm yy", :date},
+    {~r/mmm? yy hh:mm/, :date_time},
+    {"[$CHF]0.00", :number}
+  ]
+  ```
+
+  To find out what custom formats are in use in the workbook, you can inspect `package.workbook.custom_formats`:
+
+  ```elixir
+  # num_fmt_id => format string
+  %{
+    "0" => "General",
+    "59" => "dd/mm/yyyy",
+    "60" => "dd/mm/yyyy hh:mm",
+    "61" => "hh:mm",
+    "62" => "0.0%",
+    "63" => "[$CHF]0.00"
+  }
+  ```
+
   """
 
   alias XlsxReader.{PackageLoader, ZipArchive}
@@ -95,6 +151,7 @@ defmodule XlsxReader do
   ## Options
 
     * `source`: `:path` (on the file system, default) or `:binary` (in memory)
+    * `supported_custom_formats`: a list of `{regex | string, type}` tuples (see "Additional custom formats support")
 
   """
   @spec open(String.t() | binary(), [source_option]) ::
@@ -102,7 +159,7 @@ defmodule XlsxReader do
   def open(file, options \\ []) do
     file
     |> ZipArchive.handle(Keyword.get(options, :source, :path))
-    |> PackageLoader.open()
+    |> PackageLoader.open(Keyword.take(options, [:supported_custom_formats]))
   end
 
   @doc """

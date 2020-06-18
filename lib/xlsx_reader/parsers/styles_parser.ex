@@ -14,11 +14,19 @@ defmodule XlsxReader.Parsers.StylesParser do
 
   defmodule State do
     @moduledoc false
-    defstruct collect_xf: false, style_types: [], custom_formats: %{}
+    defstruct collect_xf: false,
+              style_types: [],
+              custom_formats: %{},
+              supported_custom_formats: []
   end
 
-  def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, %State{})
+  def parse(xml, supported_custom_formats \\ []) do
+    with {:ok, state} <-
+           Saxy.parse_string(xml, __MODULE__, %State{
+             supported_custom_formats: supported_custom_formats
+           }) do
+      {:ok, state.style_types, state.custom_formats}
+    end
   end
 
   @impl Saxy.Handler
@@ -28,7 +36,7 @@ defmodule XlsxReader.Parsers.StylesParser do
 
   @impl Saxy.Handler
   def handle_event(:end_document, _data, state) do
-    {:ok, state.style_types}
+    {:ok, state}
   end
 
   @impl Saxy.Handler
@@ -51,7 +59,12 @@ defmodule XlsxReader.Parsers.StylesParser do
      %{
        state
        | style_types: [
-           Styles.get_style_type(num_fmt_id, state.custom_formats) | state.style_types
+           Styles.get_style_type(
+             num_fmt_id,
+             state.custom_formats,
+             state.supported_custom_formats
+           )
+           | state.style_types
          ]
      }}
   end

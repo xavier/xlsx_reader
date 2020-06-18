@@ -3,7 +3,11 @@ defmodule CompatibilityTest do
   use ExUnit.Case
 
   test "google_spreadsheet.xlsx" do
-    assert {:ok, package} = XlsxReader.open(TestFixtures.path("google_spreadsheet.xlsx"))
+    assert {:ok, package} =
+             XlsxReader.open(
+               TestFixtures.path("google_spreadsheet.xlsx"),
+               supported_custom_formats: [{"mmmm d", :date}]
+             )
 
     assert ["Sheet1"] = XlsxReader.sheet_names(package)
 
@@ -12,7 +16,7 @@ defmodule CompatibilityTest do
               ["integer", 123.0],
               ["float", 123.456],
               ["percentage", 12.5],
-              ["date", 43784.0],
+              ["date", ~D[2019-11-15]],
               ["time", ~N[1899-12-30 11:45:00]],
               ["ticked\n", true],
               ["unticked", false],

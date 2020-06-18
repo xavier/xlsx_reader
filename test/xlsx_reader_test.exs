@@ -26,6 +26,32 @@ defmodule XlsxReaderTest do
 
       assert {:error, "invalid zip file"} = XlsxReader.open(xlsx)
     end
+
+    test "supported custom formats" do
+      xlsx = TestFixtures.path("test.xlsx")
+
+      assert {:ok, package} =
+               XlsxReader.open(xlsx,
+                 supported_custom_formats: [
+                   {"[$CHF]0.00", :string}
+                 ]
+               )
+
+      {:ok, sheet} = XlsxReader.sheet(package, "Sheet 3")
+
+      assert [
+               ["", _],
+               ["date", _],
+               ["datetime", _],
+               ["time", _],
+               ["percentage", _],
+               ["money chf", "100"],
+               ["money usd", _],
+               ["ticked", _],
+               ["not ticked", _],
+               ["hyperlink", _]
+             ] = sheet
+    end
   end
 
   describe "sheet_names/1" do
