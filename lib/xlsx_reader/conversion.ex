@@ -26,16 +26,16 @@ defmodule XlsxReader.Conversion do
 
   Cells with type attribute `"b"` store boolean values as a single digit: `"1"` or `"0"`.
 
-    ## Examples
+  ## Examples
 
-    iex> XlsxReader.Conversion.to_boolean("1")
-    {:ok, true}
+      iex> XlsxReader.Conversion.to_boolean("1")
+      {:ok, true}
 
-    iex> XlsxReader.Conversion.to_boolean("0")
-    {:ok, false}
+      iex> XlsxReader.Conversion.to_boolean("0")
+      {:ok, false}
 
-    iex> XlsxReader.Conversion.to_boolean("true")
-    :error
+      iex> XlsxReader.Conversion.to_boolean("true")
+      :error
 
   """
   @spec to_boolean(String.t()) :: {:ok, boolean()} | :error
