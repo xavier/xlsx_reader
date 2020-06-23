@@ -214,6 +214,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     end
   end
 
+  # credo:disable-for-lines:54 Credo.Check.Refactor.CyclomaticComplexity
   defp convert_current_cell_value(%State{type_conversion: true} = state) do
     style_type = lookup_current_cell_style_type(state)
 
