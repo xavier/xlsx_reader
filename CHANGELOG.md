@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0] - unreleased
+
+- Add `:supported_custom_format` option to `XlsxReader.open/2`
+- Support ISO 8601 and US date/time custom format by default
+
 ## [0.3.0] - 2020-05-07
 
 - Add `:only` and `:except` options to `XlsxReader.sheets/2` and `XlsxReader.async_sheets/3`
