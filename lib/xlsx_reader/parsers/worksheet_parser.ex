@@ -218,15 +218,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     style_type = lookup_current_cell_style_type(state)
 
     case {state.cell_type, style_type, state.value} do
-      {_, _, nil} ->
+      # Blank
+
+      {_, _, value} when is_nil(value) or value == "" ->
         state.blank_value
 
-      {_, _, ""} ->
-        state.blank_value
-
-      {"n", _, value} ->
-        {:ok, number} = Conversion.to_number(value, state.number_type)
-        number
+      # Strings
 
       {"s", _, value} ->
         lookup_shared_string(state, value)
@@ -234,17 +231,28 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       {"inlineStr", _, value} ->
         value
 
+      {nil, :string, value} ->
+        value
+
       {"b", _, value} ->
         {:ok, boolean} = Conversion.to_boolean(value)
         boolean
+
+      # Numbers
+
+      {"n", _, value} ->
+        {:ok, number} = Conversion.to_number(value, state.number_type)
+        number
+
+      {nil, :number, value} ->
+        {:ok, number} = Conversion.to_number(value, state.number_type)
+        number
 
       {_, :percentage, value} ->
         {:ok, number} = Conversion.to_number(value, state.number_type)
         Number.multiply(number, 100)
 
-      {nil, :number, value} ->
-        {:ok, number} = Conversion.to_number(value, state.number_type)
-        number
+      # Dates/times
 
       {nil, :date, value} ->
         {:ok, date} = Conversion.to_date(value, state.workbook.base_date)
@@ -254,8 +262,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
-      {nil, :string, value} ->
-        value
+      # Fall back
 
       {_, _, value} ->
         value
