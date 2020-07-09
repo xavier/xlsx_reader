@@ -4,14 +4,18 @@ on: push
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    container:
-      image: elixir:1.9.1-slim
-
+    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        otp: ["21", "22", "23"]
+        elixir: ["1.9.4", "1.10.4"]
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-elixir@v1
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
     - name: Install Dependencies
       run: |
         mix local.rebar --force
