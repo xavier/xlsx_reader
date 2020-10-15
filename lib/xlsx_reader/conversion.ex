@@ -151,7 +151,11 @@ defmodule XlsxReader.Conversion do
   """
   @spec to_decimal(String.t()) :: {:ok, Decimal.t()} | :error
   def to_decimal(string) do
-    Decimal.parse(string)
+    case Decimal.parse(string) do
+      {:ok, decimal} -> {:ok, decimal}
+      {decimal, _} -> {:ok, decimal}
+      :error -> :error
+    end
   end
 
   @doc """
