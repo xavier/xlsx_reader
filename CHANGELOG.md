@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.4.0] - unreleased
+## [0.4.1] - 2020-10-15
+
+- Add support for `decimal ~> 2.0`
+
+## [0.4.0] - 2020-06-23
 
 - Add `:supported_custom_format` option to `XlsxReader.open/2`
 - Support ISO 8601 and US date/time custom format by default
