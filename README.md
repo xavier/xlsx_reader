@@ -117,6 +117,7 @@ In order of appearance:
 
 - Xavier Defrang ([xavier](https://github.com/xavier))
 - Darragh Enright ([darraghenright](https://github.com/darraghenright))
+- Patryk Woziński ([patrykwozinski](https://github.com/patrykwozinski))
 
 ## License
 
