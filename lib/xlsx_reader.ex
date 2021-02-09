@@ -182,8 +182,8 @@ defmodule XlsxReader do
     * `blank_value` - placeholder value for empty cells (default: `""`)
     * `empty_rows` - include empty rows (default: `true`)
     * `number_type` - type used for numeric conversion :`Integer`, `Decimal` or `Float` (default: `Float`)
-    * `skip_row?`: function callback that determines if a row should be skipped or not.
-       Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
+    * `skip_row?`: function callback that determines if a row should be skipped.
+       Takes precedence over `blank_value` and `empty_rows`.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
@@ -192,10 +192,18 @@ defmodule XlsxReader do
 
   ### Skipping rows
 
+  When using the `skip_row?` callback, rows are ignored in the parser which is more memory efficient.
+
   ```elixir
-  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row -> Enum.all(row, & &1 == "-") end)
-  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row -> Enum.all(row, & String.trim(&1) == "") end)
-  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row -> Enum.at(row, 0) == "disabled" end)
+  # Skip all rows for which all the values are either blank or "-"
+  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row ->
+    Enum.all?(row, & String.trim(&1) in ["", "-"])
+  end)
+
+  # Skip all rows for which the first column contains the text "disabled"
+  XlsxReader.sheet(package, "Sheet1", skip_row?: fn [column | _] ->
+    column == "disabled"
+  end)
   ```
 
   """
