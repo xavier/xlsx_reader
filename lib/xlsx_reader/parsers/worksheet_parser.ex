@@ -22,7 +22,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               type_conversion: nil,
               blank_value: nil,
               empty_rows: nil,
-              number_type: nil
+              number_type: nil,
+              skip_row?: nil
   end
 
   @doc """
@@ -42,7 +43,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       type_conversion: Keyword.get(options, :type_conversion, true),
       blank_value: Keyword.get(options, :blank_value, ""),
       empty_rows: Keyword.get(options, :empty_rows, true),
-      number_type: Keyword.get(options, :number_type, Float)
+      number_type: Keyword.get(options, :number_type, Float),
+      skip_row?: Keyword.get(options, :skip_row?)
     })
   end
 
@@ -141,6 +143,10 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         cell_type: nil,
         value: nil
     }
+  end
+
+  defp skip_row?(%{skip_row?: skip_row?, row: row}) when is_function(skip_row?) do
+    skip_row?.(row)
   end
 
   defp skip_row?(state) do
