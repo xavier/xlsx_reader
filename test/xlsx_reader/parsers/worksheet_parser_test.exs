@@ -98,16 +98,16 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
   } do
     sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet4.xml")
 
-    ignore_trimmed = fn row -> Enum.all?(row, & String.trim(&1) == "") end
+    ignore_trimmed = fn row -> Enum.all?(row, &(String.trim(&1) == "")) end
 
     assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook, skip_row?: ignore_trimmed)
     assert [["-", "-", "-", "-"]] == rows
 
-    ignore_trimmed_or_dashes = fn row -> ignore_trimmed.(row) or Enum.all?(row, & &1 == "-") end
+    ignore_trimmed_or_dashes = fn row -> ignore_trimmed.(row) or Enum.all?(row, &(&1 == "-")) end
 
-    assert {:ok, rows} = WorksheetParser.parse(sheet_xml, workbook, skip_row?: ignore_trimmed_or_dashes)
+    assert {:ok, rows} =
+             WorksheetParser.parse(sheet_xml, workbook, skip_row?: ignore_trimmed_or_dashes)
+
     assert [] == rows
   end
-
-
 end
