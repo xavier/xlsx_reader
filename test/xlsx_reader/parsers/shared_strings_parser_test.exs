@@ -28,7 +28,9 @@ defmodule XlsxReader.Parsers.SharedStringsParserTest do
         "ticked",
         "not ticked",
         "hyperlink",
-        "https://elixir-lang.org/"
+        "https://elixir-lang.org/",
+        " ",
+        "-"
       ])
 
     assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)
