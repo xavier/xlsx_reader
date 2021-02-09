@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sst uniqueCount="20" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<sst uniqueCount="22" xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
   <si>
     <t>A</t>
   </si>
@@ -67,5 +67,11 @@
       </rPr>
       <t>https://elixir-lang.org/</t>
     </r>
+  </si>
+  <si>
+    <t xml:space="preserve"> </t>
+  </si>
+  <si>
+    <t xml:space="preserve">-</t>
   </si>
 </sst>
