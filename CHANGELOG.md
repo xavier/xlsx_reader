@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.2] - 2021-02-09
+
+- Add `skip_row?` callback
+
 ## [0.4.1] - 2020-10-15
 
 - Add support for `decimal ~> 2.0`
