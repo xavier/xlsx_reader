@@ -35,6 +35,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     * `blank_value`: placeholder value for empty cells (default: `""`)
     * `empty_rows`: include empty rows (default: `true`)
     * `number_type` - type used for numeric conversion : `String` (no conversion), `Integer`, 'Decimal' or `Float`  (default: `Float`)
+    * `skip_row?`: function callback that determines if a row should be skipped or not.
+       Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
+       Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
 
   """
   def parse(xml, workbook, options \\ []) do

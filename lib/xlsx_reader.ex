@@ -182,8 +182,21 @@ defmodule XlsxReader do
     * `blank_value` - placeholder value for empty cells (default: `""`)
     * `empty_rows` - include empty rows (default: `true`)
     * `number_type` - type used for numeric conversion :`Integer`, `Decimal` or `Float` (default: `Float`)
+    * `skip_row?`: function callback that determines if a row should be skipped or not.
+       Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
+       Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
+
+  ## Examples
+
+  ### Skipping rows
+
+  ```elixir
+  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row -> Enum.all(row, & &1 == "-") end)
+  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row -> Enum.all(row, & String.trim(&1) == "") end)
+  XlsxReader.sheet(package, "Sheet1", skip_row?: fn row -> Enum.at(row, 0) == "disabled" end)
+  ```
 
   """
   @spec sheet(XlsxReader.Package.t(), sheet_name(), Keyword.t()) :: {:ok, rows()}
