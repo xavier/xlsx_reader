@@ -28,7 +28,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
   test "parses sheet.xml", %{workbook: workbook} do
     sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet1.xml")
 
-    assert {:ok, result} = WorksheetParser.parse(sheet_xml, workbook)
+    assert {:ok, _result} = WorksheetParser.parse(sheet_xml, workbook)
   end
 
   test "looks up shared strings", %{workbook: workbook} do
