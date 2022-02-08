@@ -14,6 +14,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     defstruct workbook: nil,
               rows: [],
               row: nil,
+              current_row: nil,
+              expected_row: 1,
               expected_column: nil,
               cell_ref: nil,
               cell_type: nil,
@@ -62,11 +64,27 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, {"row", _attributes}, state) do
-    # Some XLSX writers (Excel, Elixlsx, …) completely omit `<c>` elements for empty cells.
-    # As we build the row, we'll keep track of the expected column number and fill the blanks
-    # based on the column indicated in the cell reference
-    {:ok, %{state | row: [], expected_column: 1}}
+  def handle_event(:start_element, {"row", attributes}, state) do
+    # Some XLSX writers (Excel, Elixlsx, …) completely omit `<row>` or `<c>` elements when empty.
+    # As we build the sheet, we'll keep track of the expected row and column number and
+    # fill the blanks as needed usingthe coordinates indicated in the row or cell reference.
+
+    current_row =
+      case Utils.get_attribute(attributes, "r") do
+        nil ->
+          state.expected_row
+
+        value ->
+          String.to_integer(value)
+      end
+
+    {:ok,
+     %{
+       state
+       | row: [],
+         current_row: current_row,
+         expected_column: 1
+     }}
   end
 
   def handle_event(:start_element, {"c", attributes}, state) do
@@ -152,27 +170,47 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     skip_row?.(row)
   end
 
-  defp skip_row?(state) do
-    !state.empty_rows && empty_row?(state)
-  end
+  defp skip_row?(%{empty_rows: false} = state), do: empty_row?(state)
+
+  defp skip_row?(_state), do: false
 
   defp empty_row?(state) do
     Enum.all?(state.row, fn value -> value == state.blank_value end)
   end
 
   defp skip_row(state) do
-    %{state | row: nil}
+    %{state | row: nil, expected_row: state.current_row + 1}
   end
 
   defp emit_row(state) do
-    %{state | row: nil, rows: [Enum.reverse(state.row) | state.rows]}
+    state = handle_omitted_rows(state)
+
+    %{
+      state
+      | row: nil,
+        rows: [Enum.reverse(state.row) | state.rows],
+        expected_row: state.current_row + 1
+    }
   end
 
   defp restore_rows_order(state) do
     %{state | rows: Enum.reverse(state.rows)}
   end
 
-  ## Omitted cells
+  ## Omitted rows / cells
+
+  defp handle_omitted_rows(%{empty_rows: true} = state) do
+    omitted_rows = state.current_row - state.expected_row
+
+    if omitted_rows > 0 do
+      blank_row = List.duplicate(state.blank_value, length(state.row))
+      %{state | rows: prepend_n_times(state.rows, blank_row, omitted_rows)}
+    else
+      state
+    end
+  end
+
+  defp handle_omitted_rows(state), do: state
 
   defp handle_omitted_cells(state) do
     # Using the current cell reference and the expected column:
@@ -196,7 +234,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   defp prepend_n_times(list, _value, 0), do: list
-  defp prepend_n_times(list, value, n), do: prepend_n_times([value | list], value, n - 1)
+
+  defp prepend_n_times(list, value, n) when n > 0,
+    do: prepend_n_times([value | list], value, n - 1)
 
   ## Cell format handling
 

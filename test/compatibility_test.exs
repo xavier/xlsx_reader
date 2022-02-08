@@ -85,4 +85,11 @@ defmodule CompatibilityTest do
 
     assert {:ok, []} = XlsxReader.sheet(package, "sheet2")
   end
+
+  test "file with omitted row elements" do
+    assert {:ok, package} = XlsxReader.open(TestFixtures.path("omitted_row.xlsx"))
+
+    assert {:ok, [["", ""], ["", "b2"]]} = XlsxReader.sheet(package, "Sheet1", empty_rows: true)
+    assert {:ok, [["", "b2"]]} = XlsxReader.sheet(package, "Sheet1", empty_rows: false)
+  end
 end
