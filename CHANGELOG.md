@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.3] - 2021-02-08
+
+- Improve compatibility with XLSX writers (Excel for Mac, …) which completely omit empty rows in worksheets
+
 ## [0.4.2] - 2021-02-09
 
 - Add `skip_row?` callback
