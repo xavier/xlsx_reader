@@ -1,7 +1,7 @@
 defmodule XlsxReader do
   @moduledoc """
 
-  Opens XLSX workbook and reads its worksheets.
+  Opens XLSX workbooks and reads its worksheets.
 
   ## Example
 
