@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.0] - 2022-06-12
+
+- Require Elixir 1.10 to fix publishing of documentation
+
 ## [0.4.3] - 2021-02-08
 
 - Improve compatibility with XLSX writers (Excel for Mac, …) which completely omit empty rows in worksheets
