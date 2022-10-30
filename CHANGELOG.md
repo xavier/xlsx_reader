@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.0] - 2022-10-30
+
+- Update Saxy XML parser
+
 ## [0.5.0] - 2022-06-12
 
 - Require Elixir 1.10 to fix publishing of documentation
