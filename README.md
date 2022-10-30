@@ -119,6 +119,7 @@ In order of appearance:
 - Darragh Enright ([darraghenright](https://github.com/darraghenright))
 - Patryk Woziński ([patrykwozinski](https://github.com/patrykwozinski))
 - Evaldo Bratti ([evaldobratti](https://github.com/evaldobratti))
+- Zach Liss ([ZachLiss](https://github.com/ZachLiss))
 
 ## License
 
