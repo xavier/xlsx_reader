@@ -120,6 +120,7 @@ In order of appearance:
 - Patryk Woziński ([patrykwozinski](https://github.com/patrykwozinski))
 - Evaldo Bratti ([evaldobratti](https://github.com/evaldobratti))
 - Zach Liss ([ZachLiss](https://github.com/ZachLiss))
+- [Paranojik](https://github.com/paranojik)
 
 ## License
 
