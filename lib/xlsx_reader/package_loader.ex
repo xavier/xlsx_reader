@@ -10,6 +10,7 @@ defmodule XlsxReader.PackageLoader do
     RelationshipsParser,
     SharedStringsParser,
     StylesParser,
+    Utils,
     WorkbookParser,
     WorksheetParser
   }
@@ -105,20 +106,20 @@ defmodule XlsxReader.PackageLoader do
   end
 
   defp load_workbook_xml(zip_handle) do
-    with {:ok, xml} <- ZipArchive.extract(zip_handle, @workbook_xml) do
+    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml) do
       WorkbookParser.parse(xml)
     end
   end
 
   defp load_workbook_xml_rels(zip_handle) do
-    with {:ok, xml} <- ZipArchive.extract(zip_handle, @workbook_xml_rels) do
+    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml_rels) do
       RelationshipsParser.parse(xml)
     end
   end
 
   defp load_shared_strings(package) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
-         {:ok, xml} <- ZipArchive.extract(package.zip_handle, file),
+         {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
       %{package | workbook: %{package.workbook | shared_strings: shared_strings}}
     end
@@ -126,7 +127,7 @@ defmodule XlsxReader.PackageLoader do
 
   defp load_styles(package, supported_custom_formats) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
-         {:ok, xml} <- ZipArchive.extract(package.zip_handle, file),
+         {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, style_types, custom_formats} <- StylesParser.parse(xml, supported_custom_formats) do
       %{
         package
@@ -146,8 +147,14 @@ defmodule XlsxReader.PackageLoader do
   end
 
   defp load_worksheet_xml(package, file, options) do
-    with {:ok, xml} <- ZipArchive.extract(package.zip_handle, file) do
+    with {:ok, xml} <- extract_xml(package.zip_handle, file) do
       WorksheetParser.parse(xml, package.workbook, options)
+    end
+  end
+
+  defp extract_xml(zip_handle, file) do
+    with {:ok, xml} <- ZipArchive.extract(zip_handle, file) do
+      Utils.ensure_utf8(xml)
     end
   end
 

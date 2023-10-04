@@ -45,7 +45,7 @@ defmodule XlsxReader.ZipArchive do
   def extract(zip_handle, file) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, [{_, contents}]} <- :zip.extract(zip, extract_options(file)) do
-      {:ok, remove_bom(contents)}
+      {:ok, contents}
     else
       {:ok, []} ->
         {:error, "file #{inspect(file)} not found in archive"}
@@ -56,10 +56,6 @@ defmodule XlsxReader.ZipArchive do
   end
 
   ##
-
-  def remove_bom(str) when is_binary(str) do
-    str |> String.trim_leading("\uFEFF")
-  end
 
   defp source({:path, path}) do
     {:ok, String.to_charlist(path)}
