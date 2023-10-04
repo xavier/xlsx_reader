@@ -92,7 +92,7 @@ defmodule XlsxReader.ZipArchive do
   end
 
   defp translate_zip_error({:error, code})
-       when code in [:einval, :bad_eocd, :bad_central_directory] do
+       when code in [:einval, :bad_eocd, :bad_central_directory, :eisdir] do
     {:error, "invalid zip file"}
   end
 end
