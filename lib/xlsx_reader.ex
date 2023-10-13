@@ -207,7 +207,7 @@ defmodule XlsxReader do
   ```
 
   """
-  @spec sheet(XlsxReader.Package.t(), sheet_name(), Keyword.t()) :: {:ok, rows()}
+  @spec sheet(XlsxReader.Package.t(), sheet_name(), Keyword.t()) :: {:ok, rows()} | error()
   def sheet(package, sheet_name, options \\ []) do
     PackageLoader.load_sheet_by_name(package, sheet_name, options)
   end

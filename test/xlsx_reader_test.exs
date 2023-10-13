@@ -45,6 +45,14 @@ defmodule XlsxReaderTest do
       assert {:error, "invalid zip file"} = XlsxReader.open(xlsx)
     end
 
+    test "rejects relative and absolute path to directory" do
+      relative_path = "test"
+      absolute_path = Path.absname(relative_path)
+
+      assert {:error, "invalid zip file"} = XlsxReader.open(relative_path)
+      assert {:error, "invalid zip file"} = XlsxReader.open(absolute_path)
+    end
+
     test "supported custom formats" do
       xlsx = TestFixtures.path("test.xlsx")
 
