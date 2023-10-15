@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0] - 2023-10-15
+
+- Improve ZIP file error handling
+- Update Saxy XML parser
+- Improve UTF-16 support
+
 ## [0.6.0] - 2022-10-30
 
 - Update Saxy XML parser
