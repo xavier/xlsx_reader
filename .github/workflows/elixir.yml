@@ -3,25 +3,43 @@ name: CI
 on: push
 
 jobs:
-  build:
+  unit-test:
     runs-on: ubuntu-latest
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    env:
+      MIX_ENV: test
     strategy:
+      fail-fast: false
       matrix:
-        otp: ["22", "23", "24"]
-        elixir: ["1.10.4", "1.11.4", "1.12.3", "1.13.4"]
+        include:
+          - elixir: 1.15.6
+            otp: 25.3.2.6
+          - elixir: 1.15.6
+            otp: 24.3.4.13
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-elixir@v1
-      with:
-        otp-version: ${{matrix.otp}}
-        elixir-version: ${{matrix.elixir}}
-        experimental-otp: true
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Run tests
-      run: mix test
-    - name: Check format
-      run: mix format --check-formatted
-    - name: Check quality
-      run: mix credo --all --strict || true
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Elixir and Erlang
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+      - name: Restore deps and _build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile deps
+        run: mix deps.compile
+      - name: Run tests
+        run: mix test
+      - name: Check format
+        run: mix format --check-formatted
+      - name: Check quality
+        run: mix credo --all --strict || true
