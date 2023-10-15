@@ -121,6 +121,7 @@ In order of appearance:
 - Evaldo Bratti ([evaldobratti](https://github.com/evaldobratti))
 - Zach Liss ([ZachLiss](https://github.com/ZachLiss))
 - [Paranojik](https://github.com/paranojik)
+- [Juan Barrios](https://github.com/03juan)
 
 ## License
 
