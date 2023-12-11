@@ -1,7 +1,7 @@
 defmodule XlsxReader.Parsers.WorksheetParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.{Conversion, Workbook}
+  alias XlsxReader.{Cell, Conversion, Workbook}
   alias XlsxReader.Parsers.{SharedStringsParser, StylesParser, WorksheetParser}
 
   setup do
@@ -109,5 +109,31 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
              WorksheetParser.parse(sheet_xml, workbook, skip_row?: ignore_trimmed_or_dashes)
 
     assert [] == rows
+  end
+
+  test "should return cell structs instead of values when cell_data_format is :cell" do
+    {:ok, package} = XlsxReader.open(TestFixtures.path("has_formulas.xlsx"))
+    {:ok, sheets} = XlsxReader.sheets(package, cell_data_format: :cell)
+
+    expected = [
+      {"sheet_1",
+       [
+         [
+           %Cell{value: "abc", formula: nil, ref: "A1"},
+           %Cell{value: 123.0, formula: nil, ref: "B1"}
+         ]
+       ]},
+      {"sheet_2",
+       [
+         [
+           %Cell{value: "def", formula: nil, ref: "A1"},
+           %Cell{value: 456.0, formula: nil, ref: "B1"},
+           "",
+           %Cell{value: 466.0, formula: "SUM(B1, 10)", ref: "D1"}
+         ]
+       ]}
+    ]
+
+    assert expected == sheets
   end
 end

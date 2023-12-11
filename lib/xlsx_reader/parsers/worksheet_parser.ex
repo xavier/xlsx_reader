@@ -5,7 +5,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{CellReference, Conversion, Number}
+  alias XlsxReader.{Cell, CellReference, Conversion, Number}
   alias XlsxReader.Parsers.Utils
 
   defmodule State do
@@ -21,11 +21,13 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               cell_type: nil,
               cell_style: nil,
               value: nil,
+              formula: nil,
               type_conversion: nil,
               blank_value: nil,
               empty_rows: nil,
               number_type: nil,
-              skip_row?: nil
+              skip_row?: nil,
+              cell_data_format: :value
   end
 
   @doc """
@@ -40,6 +42,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     * `skip_row?`: function callback that determines if a row should be skipped or not.
        Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
+    * `cell_data_format`: Controls the format of the cell data. Can be `:value` (default, returns the cell value only) or `:cell` (returns instances of `XlsxReader.Cell`).
 
   """
   def parse(xml, workbook, options \\ []) do
@@ -49,7 +52,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       blank_value: Keyword.get(options, :blank_value, ""),
       empty_rows: Keyword.get(options, :empty_rows, true),
       number_type: Keyword.get(options, :number_type, Float),
-      skip_row?: Keyword.get(options, :skip_row?)
+      skip_row?: Keyword.get(options, :skip_row?),
+      cell_data_format: Keyword.get(options, :cell_data_format, :value)
     })
   end
 
@@ -99,6 +103,10 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     {:ok, expect_value(state)}
   end
 
+  def handle_event(:start_element, {"f", _attributes}, state) do
+    {:ok, expect_formula(state)}
+  end
+
   @impl Saxy.Handler
   def handle_event(:start_element, _element, state) do
     {:ok, state}
@@ -134,6 +142,11 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
+  def handle_event(:characters, chars, %{value: :expect_formula} = state) do
+    {:ok, store_formula(state, chars)}
+  end
+
+  @impl Saxy.Handler
   def handle_event(:characters, _chars, state) do
     {:ok, state}
   end
@@ -152,17 +165,26 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | value: :expect_chars}
   end
 
+  defp expect_formula(state) do
+    %{state | value: :expect_formula}
+  end
+
   defp store_value(state, value) do
     %{state | value: value}
+  end
+
+  defp store_formula(state, formula) do
+    %{state | formula: formula}
   end
 
   defp add_cell_to_row(state) do
     %{
       state
-      | row: [convert_current_cell_value(state) | state.row],
+      | row: [format_cell_data(state) | state.row],
         cell_ref: nil,
         cell_type: nil,
-        value: nil
+        value: nil,
+        formula: nil
     }
   end
 
@@ -248,6 +270,16 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defp extract_cell_attributes(attributes) do
     Utils.map_attributes(attributes, @cell_attributes_mapping)
+  end
+
+  defp format_cell_data(state) do
+    value = convert_current_cell_value(state)
+
+    case state.cell_data_format do
+      :cell -> %Cell{value: value, formula: state.formula, ref: state.cell_ref}
+      :value -> value
+      _ -> value
+    end
   end
 
   defp convert_current_cell_value(%State{type_conversion: false} = state) do
