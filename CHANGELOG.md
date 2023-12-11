@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.0] - 2023-12-11
+
+- Add `cell_data_format` option to return data as `Cell` structs instead of values
+
 ## [0.7.0] - 2023-10-15
 
 - Improve ZIP file error handling
