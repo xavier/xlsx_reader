@@ -111,10 +111,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert [] == rows
   end
 
-  @tag runnable: true
-  test "should return maps instead of values when expand_cell_data? is true", %{
-    workbook: workbook
-  } do
+  test "should return maps instead of values when expand_cell_data? is true" do
     {:ok, package} = XlsxReader.open(TestFixtures.path("has_formulas.xlsx"))
     {:ok, sheets} = XlsxReader.sheets(package, expand_cell_data?: true)
 

@@ -147,7 +147,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, chars, state) do
+  def handle_event(:characters, _chars, state) do
     {:ok, state}
   end
 
@@ -275,16 +275,14 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp format_cell_data(state) do
     value = convert_current_cell_value(state)
 
-    get_expanded_cell_data = fn ->
-      %{
-        value: value,
-        formula: state.formula,
-        cell_ref: state.cell_ref
-      }
-    end
+    expanded_cell_data = %{
+      value: value,
+      formula: state.formula,
+      cell_ref: state.cell_ref
+    }
 
     case state.expand_cell_data? do
-      true -> get_expanded_cell_data.()
+      true -> expanded_cell_data
       false -> value
     end
   end
