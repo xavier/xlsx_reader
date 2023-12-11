@@ -104,6 +104,16 @@ blob = File.read!("test.xlsx")
 # ]
 ```
 
+### Access cell formulas
+
+```elixir
+{:ok, rows} = XlsxReader.sheet(package, "Sheet 1", cell_data_format: :cell)
+# [
+#   [%Cell{value: 1234.0, formula: "SUM(B1, B10)", ref: "A1"}, ...], 
+#   ...
+# ]
+```
+
 ## Development
 
 ### Benchmarking
