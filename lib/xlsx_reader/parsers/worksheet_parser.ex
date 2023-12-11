@@ -276,18 +276,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     value = convert_current_cell_value(state)
 
     case state.cell_data_format do
-      :cell ->
-        %Cell{
-          value: value,
-          formula: state.formula,
-          ref: state.cell_ref
-        }
-
-      :value ->
-        value
-
-      _ ->
-        value
+      :cell -> %Cell{value: value, formula: state.formula, ref: state.cell_ref}
+      :value -> value
+      _ -> value
     end
   end
 
