@@ -21,11 +21,13 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               cell_type: nil,
               cell_style: nil,
               value: nil,
+              formula: nil,
               type_conversion: nil,
               blank_value: nil,
               empty_rows: nil,
               number_type: nil,
-              skip_row?: nil
+              skip_row?: nil,
+              return_formula?: false
   end
 
   @doc """
@@ -40,6 +42,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     * `skip_row?`: function callback that determines if a row should be skipped or not.
        Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
+    * `return_formula?` - return the formula instead of the value (default: `false`)
 
   """
   def parse(xml, workbook, options \\ []) do
@@ -49,7 +52,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       blank_value: Keyword.get(options, :blank_value, ""),
       empty_rows: Keyword.get(options, :empty_rows, true),
       number_type: Keyword.get(options, :number_type, Float),
-      skip_row?: Keyword.get(options, :skip_row?)
+      skip_row?: Keyword.get(options, :skip_row?),
+      return_formula?: Keyword.get(options, :return_formula?, false)
     })
   end
 
@@ -99,6 +103,10 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     {:ok, expect_value(state)}
   end
 
+  def handle_event(:start_element, {"f", _attributes}, state) do
+    {:ok, expect_formula(state)}
+  end
+
   @impl Saxy.Handler
   def handle_event(:start_element, _element, state) do
     {:ok, state}
@@ -134,7 +142,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, _chars, state) do
+  def handle_event(:characters, chars, %{value: :expect_formula} = state) do
+    {:ok, store_formula(state, chars)}
+  end
+
+  @impl Saxy.Handler
+  def handle_event(:characters, chars, state) do
     {:ok, state}
   end
 
@@ -152,8 +165,16 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | value: :expect_chars}
   end
 
+  defp expect_formula(state) do
+    %{state | value: :expect_formula}
+  end
+
   defp store_value(state, value) do
     %{state | value: value}
+  end
+
+  defp store_formula(state, formula) do
+    %{state | formula: formula}
   end
 
   defp add_cell_to_row(state) do
@@ -162,7 +183,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       | row: [convert_current_cell_value(state) | state.row],
         cell_ref: nil,
         cell_type: nil,
-        value: nil
+        value: nil,
+        formula: nil
     }
   end
 
@@ -266,8 +288,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   # credo:disable-for-lines:54 Credo.Check.Refactor.CyclomaticComplexity
   defp convert_current_cell_value(%State{type_conversion: true} = state) do
     style_type = lookup_current_cell_style_type(state)
+    cell_type = lookup_current_cell_type(state)
 
-    case {state.cell_type, style_type, state.value} do
+    case {cell_type, style_type, state.value} do
       # Blank
 
       {_, _, value} when is_nil(value) or value == "" ->
@@ -312,11 +335,22 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
+      # Formulas
+
+      {"f", _, _} ->
+        %{:formula => state.formula, :value => state.value}
+
       # Fall back
 
       {_, _, value} ->
         value
     end
+  end
+
+  defp lookup_current_cell_type(state) do
+    if state.return_formula? && state.formula,
+      do: "f",
+      else: state.cell_type
   end
 
   defp lookup_current_cell_style_type(state) do

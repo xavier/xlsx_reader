@@ -185,6 +185,7 @@ defmodule XlsxReader do
     * `skip_row?`: function callback that determines if a row should be skipped.
        Takes precedence over `blank_value` and `empty_rows`.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
+    * `return_formula?` - return the formula instead of the value (default: `false`)
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
 
