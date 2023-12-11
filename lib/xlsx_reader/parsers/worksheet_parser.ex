@@ -338,7 +338,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       # Formulas
 
       {"f", _, _} ->
-        %{:formula => state.formula, :value => state.value}
+        %{formula: state.formula, value: state.value}
 
       # Fall back
 
