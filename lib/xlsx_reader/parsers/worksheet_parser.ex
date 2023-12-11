@@ -27,7 +27,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               empty_rows: nil,
               number_type: nil,
               skip_row?: nil,
-              return_formula?: false
+              expand_cell_data?: false
   end
 
   @doc """
@@ -42,7 +42,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     * `skip_row?`: function callback that determines if a row should be skipped or not.
        Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
-    * `return_formula?` - return the formula instead of the value (default: `false`)
+    * `expand_cell_data?` - returns cells as maps containing value, foruma, and cell_ref (default: `false`)
 
   """
   def parse(xml, workbook, options \\ []) do
@@ -53,7 +53,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       empty_rows: Keyword.get(options, :empty_rows, true),
       number_type: Keyword.get(options, :number_type, Float),
       skip_row?: Keyword.get(options, :skip_row?),
-      return_formula?: Keyword.get(options, :return_formula?, false)
+      expand_cell_data?: Keyword.get(options, :expand_cell_data?, false)
     })
   end
 
@@ -180,7 +180,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp add_cell_to_row(state) do
     %{
       state
-      | row: [convert_current_cell_value(state) | state.row],
+      | row: [format_cell_data(state) | state.row],
         cell_ref: nil,
         cell_type: nil,
         value: nil,
@@ -272,6 +272,23 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     Utils.map_attributes(attributes, @cell_attributes_mapping)
   end
 
+  defp format_cell_data(state) do
+    value = convert_current_cell_value(state)
+
+    get_expanded_cell_data = fn ->
+      %{
+        value: value,
+        formula: state.formula,
+        cell_ref: state.cell_ref
+      }
+    end
+
+    case state.expand_cell_data? do
+      true -> get_expanded_cell_data.()
+      false -> value
+    end
+  end
+
   defp convert_current_cell_value(%State{type_conversion: false} = state) do
     case {state.cell_type, state.value} do
       {_, nil} ->
@@ -288,9 +305,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   # credo:disable-for-lines:54 Credo.Check.Refactor.CyclomaticComplexity
   defp convert_current_cell_value(%State{type_conversion: true} = state) do
     style_type = lookup_current_cell_style_type(state)
-    cell_type = lookup_current_cell_type(state)
 
-    case {cell_type, style_type, state.value} do
+    case {state.cell_type, style_type, state.value} do
       # Blank
 
       {_, _, value} when is_nil(value) or value == "" ->
@@ -335,22 +351,11 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
         date_time
 
-      # Formulas
-
-      {"f", _, _} ->
-        %{formula: state.formula, value: state.value}
-
       # Fall back
 
       {_, _, value} ->
         value
     end
-  end
-
-  defp lookup_current_cell_type(state) do
-    if state.return_formula? && state.formula,
-      do: "f",
-      else: state.cell_type
   end
 
   defp lookup_current_cell_style_type(state) do

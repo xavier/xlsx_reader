@@ -110,4 +110,33 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
 
     assert [] == rows
   end
+
+  @tag runnable: true
+  test "should return maps instead of values when expand_cell_data? is true", %{
+    workbook: workbook
+  } do
+    {:ok, package} = XlsxReader.open(TestFixtures.path("has_formulas.xlsx"))
+    {:ok, sheets} = XlsxReader.sheets(package, expand_cell_data?: true)
+
+    expected = [
+      {"sheet_1",
+       [
+         [
+           %{value: "abc", formula: nil, cell_ref: "A1"},
+           %{value: 123.0, formula: nil, cell_ref: "B1"}
+         ]
+       ]},
+      {"sheet_2",
+       [
+         [
+           %{value: "def", formula: nil, cell_ref: "A1"},
+           %{value: 456.0, formula: nil, cell_ref: "B1"},
+           "",
+           %{value: 466.0, formula: "SUM(B1, 10)", cell_ref: "D1"}
+         ]
+       ]}
+    ]
+
+    assert expected == sheets
+  end
 end
