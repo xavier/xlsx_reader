@@ -185,7 +185,7 @@ defmodule XlsxReader do
     * `skip_row?`: function callback that determines if a row should be skipped.
        Takes precedence over `blank_value` and `empty_rows`.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
-    * `expand_cell_data?` - returns cells as maps containing value, foruma, and cell_ref (default: `false`)
+    * `cell_data_format`: Controls the format of the cell data. Can be `:value` (default, returns the cell value only) or `:cell` (returns instances of `XlsxReader.Cell`).
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
 

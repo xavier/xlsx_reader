@@ -1,7 +1,7 @@
 defmodule XlsxReader.Parsers.WorksheetParserTest do
   use ExUnit.Case
 
-  alias XlsxReader.{Conversion, Workbook}
+  alias XlsxReader.{Cell, Conversion, Workbook}
   alias XlsxReader.Parsers.{SharedStringsParser, StylesParser, WorksheetParser}
 
   setup do
@@ -111,25 +111,25 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert [] == rows
   end
 
-  test "should return maps instead of values when expand_cell_data? is true" do
+  test "should return cell structs instead of values when cell_data_format is :cell" do
     {:ok, package} = XlsxReader.open(TestFixtures.path("has_formulas.xlsx"))
-    {:ok, sheets} = XlsxReader.sheets(package, expand_cell_data?: true)
+    {:ok, sheets} = XlsxReader.sheets(package, cell_data_format: :cell)
 
     expected = [
       {"sheet_1",
        [
          [
-           %{value: "abc", formula: nil, cell_ref: "A1"},
-           %{value: 123.0, formula: nil, cell_ref: "B1"}
+           %Cell{value: "abc", formula: nil, ref: "A1"},
+           %Cell{value: 123.0, formula: nil, ref: "B1"}
          ]
        ]},
       {"sheet_2",
        [
          [
-           %{value: "def", formula: nil, cell_ref: "A1"},
-           %{value: 456.0, formula: nil, cell_ref: "B1"},
+           %Cell{value: "def", formula: nil, ref: "A1"},
+           %Cell{value: 456.0, formula: nil, ref: "B1"},
            "",
-           %{value: 466.0, formula: "SUM(B1, 10)", cell_ref: "D1"}
+           %Cell{value: 466.0, formula: "SUM(B1, 10)", ref: "D1"}
          ]
        ]}
     ]

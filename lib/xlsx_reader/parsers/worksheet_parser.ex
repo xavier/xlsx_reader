@@ -5,7 +5,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.{CellReference, Conversion, Number}
+  alias XlsxReader.{Cell, CellReference, Conversion, Number}
   alias XlsxReader.Parsers.Utils
 
   defmodule State do
@@ -27,7 +27,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               empty_rows: nil,
               number_type: nil,
               skip_row?: nil,
-              expand_cell_data?: false
+              cell_data_format: :value
   end
 
   @doc """
@@ -42,7 +42,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     * `skip_row?`: function callback that determines if a row should be skipped or not.
        Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
-    * `expand_cell_data?` - returns cells as maps containing value, foruma, and cell_ref (default: `false`)
+    * `cell_data_format`: Controls the format of the cell data. Can be `:value` (default, returns the cell value only) or `:cell` (returns instances of `XlsxReader.Cell`).
 
   """
   def parse(xml, workbook, options \\ []) do
@@ -53,7 +53,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       empty_rows: Keyword.get(options, :empty_rows, true),
       number_type: Keyword.get(options, :number_type, Float),
       skip_row?: Keyword.get(options, :skip_row?),
-      expand_cell_data?: Keyword.get(options, :expand_cell_data?, false)
+      cell_data_format: Keyword.get(options, :cell_data_format, :value)
     })
   end
 
@@ -275,15 +275,16 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp format_cell_data(state) do
     value = convert_current_cell_value(state)
 
-    expanded_cell_data = %{
+    cell_data = %Cell{
       value: value,
       formula: state.formula,
-      cell_ref: state.cell_ref
+      ref: state.cell_ref
     }
 
-    case state.expand_cell_data? do
-      true -> expanded_cell_data
-      false -> value
+    case state.cell_data_format do
+      :cell -> cell_data
+      :value -> value
+      _ -> value
     end
   end
 
