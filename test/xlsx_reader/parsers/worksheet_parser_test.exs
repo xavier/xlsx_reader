@@ -137,6 +137,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert expected == sheets
   end
 
+  @tag runnable: true
   test "should return shared formulas as part of Cell struct", %{workbook: workbook} do
     sheet_xml =
       TestFixtures.read!("xml/worhseetWithSharedFormulas.xml")

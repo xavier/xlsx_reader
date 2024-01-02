@@ -106,10 +106,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   def handle_event(:start_element, {"f", attributes}, state) do
-    attributes = attributes |> Map.new()
+    type = Utils.get_attribute(attributes, "t")
+    ref = Utils.get_attribute(attributes, "ref")
+    string_index = Utils.get_attribute(attributes, "si")
 
-    case attributes do
-      %{"t" => "shared", "ref" => _, "si" => string_index} ->
+    case {type, ref, string_index} do
+      {"shared", ref, string_index} when is_binary(ref) ->
         state = state |> expect_shared_formula(string_index)
         {:ok, state}
 
