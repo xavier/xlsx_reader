@@ -8,6 +8,10 @@ defmodule XlsxReader.Array do
     :array.from_list(list, nil)
   end
 
+  def insert(array, index, value) do
+    :array.set(index, value, array)
+  end
+
   def lookup(array, index, default \\ nil) do
     case :array.get(index, array) do
       :undefined ->

@@ -22,8 +22,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               cell_style: nil,
               value: nil,
               formula: nil,
-              shared_formula_string_index: nil,
-              shared_formulas: %{},
+              shared_formula_index: nil,
+              shared_formulas: :array.new(),
               type_conversion: nil,
               blank_value: nil,
               empty_rows: nil,
@@ -110,7 +110,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
     case attributes do
       %{"t" => "shared", "ref" => _, "si" => string_index} ->
-        state = state |> store_shared_formula(string_index) |> expect_shared_formula()
+        state = state |> expect_shared_formula(string_index)
         {:ok, state}
 
       _ ->
@@ -130,7 +130,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:end_element, "f", %{formula: nil} = state) do
-    formula = lookup_shared_formula(state, state.shared_formula_string_index)
+    formula = lookup_shared_formula(state, state.shared_formula_index)
     {:ok, store_formula(state, formula)}
   end
 
@@ -165,7 +165,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   @impl Saxy.Handler
   def handle_event(:characters, chars, %{value: :expect_shared_formula} = state) do
-    state = store_shared_formula(state, state.shared_formula_string_index, chars)
+    state = store_shared_formula(state, state.shared_formula_index, chars)
     {:ok, store_formula(state, chars)}
   end
 
@@ -192,8 +192,16 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | value: :expect_formula}
   end
 
-  defp expect_shared_formula(state) do
-    %{state | value: :expect_shared_formula}
+  defp expect_shared_formula(state, string_index) do
+    {:ok, index} = Conversion.to_integer(string_index)
+    shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, nil)
+
+    %{
+      state
+      | value: :expect_shared_formula,
+        shared_formulas: shared_formulas,
+        shared_formula_index: index
+    }
   end
 
   defp store_value(state, value) do
@@ -204,9 +212,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | formula: formula}
   end
 
-  defp store_shared_formula(state, string_index, formula \\ nil) do
-    shared_formulas = state.shared_formulas |> Map.put(string_index, formula)
-    %{state | shared_formulas: shared_formulas, shared_formula_string_index: string_index}
+  defp store_shared_formula(state, index, formula) do
+    shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, formula)
+    %{state | shared_formulas: shared_formulas}
   end
 
   defp add_cell_to_row(state) do
@@ -393,8 +401,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     lookup_index(state.workbook.shared_strings, value)
   end
 
-  defp lookup_shared_formula(state, string_index) do
-    state.shared_formulas |> Map.get(string_index, "")
+  defp lookup_shared_formula(state, index) do
+    state.shared_formulas |> XlsxReader.Array.lookup(index)
   end
 
   defp lookup_index(nil, _string_index), do: nil
