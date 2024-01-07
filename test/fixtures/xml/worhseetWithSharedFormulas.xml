@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+	<sheetData>
+		<row r="1" spans="1:2" x14ac:dyDescent="0.2">
+			<c r="A1">
+				<v>
+					1
+				</v>
+			</c>
+			<c r="B1">
+				<f t="shared" ref="" si="0">
+					SUM(A1:A3)
+				</f>
+				<v>
+					6
+				</v>
+			</c>
+		</row>
+		<row r="2" spans="1:2" x14ac:dyDescent="0.2">
+			<c r="A2">
+				<v>
+					2
+				</v>
+			</c>
+			<c r="B2">
+				<f t="shared" si="0" />
+				<v>
+					6
+				</v>
+			</c>
+		</row>
+		<row r="3" spans="1:2" x14ac:dyDescent="0.2">
+			<c r="A3">
+				<v>
+					3
+				</v>
+			</c>
+			<c r="B3">
+				<f t="shared" si="0" />
+				<v>
+					6
+				</v>
+			</c>
+		</row>
+	</sheetData>
+</worksheet>

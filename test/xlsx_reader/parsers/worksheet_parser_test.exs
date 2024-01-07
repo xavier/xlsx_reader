@@ -136,4 +136,29 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
 
     assert expected == sheets
   end
+
+  @tag runnable: true
+  test "should return shared formulas as part of Cell struct", %{workbook: workbook} do
+    sheet_xml =
+      TestFixtures.read!("xml/worhseetWithSharedFormulas.xml")
+      |> String.replace("\n", "")
+      |> String.replace("\t", "")
+
+    expected = [
+      [
+        %XlsxReader.Cell{value: "1", formula: nil, ref: "A1"},
+        %XlsxReader.Cell{value: "6", formula: "SUM(A1:A3)", ref: "B1"}
+      ],
+      [
+        %XlsxReader.Cell{value: "2", formula: nil, ref: "A2"},
+        %XlsxReader.Cell{value: "6", formula: "SUM(A1:A3)", ref: "B2"}
+      ],
+      [
+        %XlsxReader.Cell{value: "3", formula: nil, ref: "A3"},
+        %XlsxReader.Cell{value: "6", formula: "SUM(A1:A3)", ref: "B3"}
+      ]
+    ]
+
+    assert {:ok, expected} == WorksheetParser.parse(sheet_xml, workbook, cell_data_format: :cell)
+  end
 end

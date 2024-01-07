@@ -22,6 +22,8 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               cell_style: nil,
               value: nil,
               formula: nil,
+              shared_formula_index: nil,
+              shared_formulas: :array.new(),
               type_conversion: nil,
               blank_value: nil,
               empty_rows: nil,
@@ -103,8 +105,19 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     {:ok, expect_value(state)}
   end
 
-  def handle_event(:start_element, {"f", _attributes}, state) do
-    {:ok, expect_formula(state)}
+  def handle_event(:start_element, {"f", attributes}, state) do
+    type = Utils.get_attribute(attributes, "t")
+    ref = Utils.get_attribute(attributes, "ref")
+    string_index = Utils.get_attribute(attributes, "si")
+
+    case {type, ref, string_index} do
+      {"shared", ref, string_index} when is_binary(ref) ->
+        state = state |> expect_shared_formula(string_index)
+        {:ok, state}
+
+      _ ->
+        {:ok, expect_formula(state)}
+    end
   end
 
   @impl Saxy.Handler
@@ -115,6 +128,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   @impl Saxy.Handler
   def handle_event(:end_element, "c", state) do
     {:ok, add_cell_to_row(state)}
+  end
+
+  @impl Saxy.Handler
+  def handle_event(:end_element, "f", %{formula: nil} = state) do
+    formula = lookup_shared_formula(state, state.shared_formula_index)
+    {:ok, store_formula(state, formula)}
   end
 
   @impl Saxy.Handler
@@ -147,6 +166,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
+  def handle_event(:characters, chars, %{value: :expect_shared_formula} = state) do
+    state = store_shared_formula(state, state.shared_formula_index, chars)
+    {:ok, store_formula(state, chars)}
+  end
+
+  @impl Saxy.Handler
   def handle_event(:characters, _chars, state) do
     {:ok, state}
   end
@@ -169,12 +194,29 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | value: :expect_formula}
   end
 
+  defp expect_shared_formula(state, string_index) do
+    {:ok, index} = Conversion.to_integer(string_index)
+    shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, nil)
+
+    %{
+      state
+      | value: :expect_shared_formula,
+        shared_formulas: shared_formulas,
+        shared_formula_index: index
+    }
+  end
+
   defp store_value(state, value) do
     %{state | value: value}
   end
 
   defp store_formula(state, formula) do
     %{state | formula: formula}
+  end
+
+  defp store_shared_formula(state, index, formula) do
+    shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, formula)
+    %{state | shared_formulas: shared_formulas}
   end
 
   defp add_cell_to_row(state) do
@@ -360,6 +402,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp lookup_shared_string(state, value) do
     lookup_index(state.workbook.shared_strings, value)
   end
+
+  defp lookup_shared_formula(state, index) do
+    state.shared_formulas |> XlsxReader.Array.lookup(index)
+  end
+
+  defp lookup_index(nil, _string_index), do: nil
 
   defp lookup_index(table, string_index) do
     {:ok, index} = Conversion.to_integer(string_index)
