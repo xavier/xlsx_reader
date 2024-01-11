@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.1] - 2024-01-11
+
+- Add support for shared formulas
+
 ## [0.8.0] - 2023-12-11
 
 - Add `cell_data_format` option to return data as `Cell` structs instead of values
