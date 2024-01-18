@@ -32,7 +32,7 @@ defmodule XlsxReader.PackageLoader do
           {:ok, XlsxReader.Package.t()} | XlsxReader.error()
   def open(zip_handle, options \\ []) do
     with :ok <- check_contents(zip_handle),
-         {:ok, workbook} <- load_workbook_xml(zip_handle),
+         {:ok, workbook} <- load_workbook_xml(zip_handle, options),
          {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle) do
       package =
         %XlsxReader.Package{
@@ -105,9 +105,11 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
-  defp load_workbook_xml(zip_handle) do
+  defp load_workbook_xml(zip_handle, options) do
+    options = Keyword.take(options, [:exclude_hidden_sheets?])
+
     with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml) do
-      WorkbookParser.parse(xml)
+      WorkbookParser.parse(xml, options)
     end
   end
 
