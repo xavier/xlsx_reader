@@ -137,7 +137,6 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert expected == sheets
   end
 
-  @tag runnable: true
   test "should return shared formulas as part of Cell struct", %{workbook: workbook} do
     sheet_xml =
       TestFixtures.read!("xml/worhseetWithSharedFormulas.xml")
@@ -160,5 +159,17 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     ]
 
     assert {:ok, expected} == WorksheetParser.parse(sheet_xml, workbook, cell_data_format: :cell)
+  end
+
+  test "should include or exclude hidden sheets based on an option" do
+    filepath = TestFixtures.path("hidden_sheets.xlsx")
+
+    {:ok, package} = XlsxReader.open(filepath, exclude_hidden_sheets?: false)
+    all_sheet_names = package |> XlsxReader.sheet_names()
+    assert all_sheet_names == ["Sheet 1", "Sheet 2", "Sheet 3"]
+
+    {:ok, package} = XlsxReader.open(filepath, exclude_hidden_sheets?: true)
+    visible_sheet_names = package |> XlsxReader.sheet_names()
+    assert visible_sheet_names == ["Sheet 1"]
   end
 end

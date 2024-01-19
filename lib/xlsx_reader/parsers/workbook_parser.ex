@@ -12,8 +12,18 @@ defmodule XlsxReader.Parsers.WorkbookParser do
   alias XlsxReader.Conversion
   alias XlsxReader.Parsers.Utils
 
-  def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{})
+  @doc """
+  Parses a workbook XML document.
+
+  ## Options
+    * `:exclude_hidden_sheets?` - Whether to exclude hidden sheets in the workbook
+  """
+  def parse(xml, options \\ []) do
+    exclude_hidden_sheets? = Keyword.get(options, :exclude_hidden_sheets?, false)
+
+    Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{
+      options: %{exclude_hidden_sheets?: exclude_hidden_sheets?}
+    })
   end
 
   @impl Saxy.Handler
@@ -33,7 +43,13 @@ defmodule XlsxReader.Parsers.WorkbookParser do
 
   @impl Saxy.Handler
   def handle_event(:start_element, {"sheet", attributes}, workbook) do
-    {:ok, %{workbook | sheets: [build_sheet(attributes) | workbook.sheets]}}
+    is_hidden? = attributes |> Utils.get_attribute("state") === "hidden"
+    skip_sheet? = workbook.options.exclude_hidden_sheets? && is_hidden?
+
+    case skip_sheet? do
+      true -> {:ok, workbook}
+      false -> {:ok, %{workbook | sheets: [build_sheet(attributes) | workbook.sheets]}}
+    end
   end
 
   @impl Saxy.Handler

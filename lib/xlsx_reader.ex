@@ -152,6 +152,7 @@ defmodule XlsxReader do
 
     * `source`: `:path` (on the file system, default) or `:binary` (in memory)
     * `supported_custom_formats`: a list of `{regex | string, type}` tuples (see "Additional custom formats support")
+    * `exclude_hidden_sheets?`: Whether to exclude hidden sheets in the workbook
 
   """
   @spec open(String.t() | binary(), [source_option]) ::
@@ -159,7 +160,9 @@ defmodule XlsxReader do
   def open(file, options \\ []) do
     file
     |> ZipArchive.handle(Keyword.get(options, :source, :path))
-    |> PackageLoader.open(Keyword.take(options, [:supported_custom_formats]))
+    |> PackageLoader.open(
+      Keyword.take(options, [:supported_custom_formats, :exclude_hidden_sheets?])
+    )
   end
 
   @doc """
