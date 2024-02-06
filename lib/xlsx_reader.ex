@@ -70,6 +70,10 @@ defmodule XlsxReader do
   * `:date_time`
   * `:unsupported` (used for explicitly unsupported styles and formats)
 
+  ### Conversion errors
+
+  Cell data which could not be converted using the detected format is returned as the `"#ERROR"` placeholder.
+
   #### Example
 
   ```elixir

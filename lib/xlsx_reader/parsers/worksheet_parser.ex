@@ -358,32 +358,32 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         value
 
       {"b", _, value} ->
-        {:ok, boolean} = Conversion.to_boolean(value)
-        boolean
+        value |> Conversion.to_boolean() |> handle_conversion_error
 
       # Numbers
 
       {"n", _, value} ->
-        {:ok, number} = Conversion.to_number(value, state.number_type)
-        number
+        value |> Conversion.to_number(state.number_type) |> handle_conversion_error()
 
       {nil, :number, value} ->
-        {:ok, number} = Conversion.to_number(value, state.number_type)
-        number
+        value |> Conversion.to_number(state.number_type) |> handle_conversion_error()
 
       {_, :percentage, value} ->
-        {:ok, number} = Conversion.to_number(value, state.number_type)
-        Number.multiply(number, 100)
+        case Conversion.to_number(value, state.number_type) do
+          {:ok, number} ->
+            Number.multiply(number, 100)
+
+          _ ->
+            "#ERROR"
+        end
 
       # Dates/times
 
       {nil, :date, value} ->
-        {:ok, date} = Conversion.to_date(value, state.workbook.base_date)
-        date
+        value |> Conversion.to_date(state.workbook.base_date) |> handle_conversion_error()
 
       {nil, type, value} when type in [:time, :date_time] ->
-        {:ok, date_time} = Conversion.to_date_time(value, state.workbook.base_date)
-        date_time
+        value |> Conversion.to_date_time(state.workbook.base_date) |> handle_conversion_error()
 
       # Fall back
 
@@ -391,6 +391,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
         value
     end
   end
+
+  defp handle_conversion_error({:ok, value}), do: value
+  defp handle_conversion_error(_error), do: "#ERROR"
 
   defp lookup_current_cell_style_type(state) do
     if state.cell_style,
