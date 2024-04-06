@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.2] - 2024-04-06
+
+- Add `exclude_hidden_sheets?` option
+- Return `#ERROR` value instead of crashing in case of cell conversion
+error
+
 ## [0.8.1] - 2024-01-11
 
 - Add support for shared formulas
