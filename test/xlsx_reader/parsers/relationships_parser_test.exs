@@ -25,4 +25,9 @@ defmodule XlsxReader.Parsers.RelationshipsParserTest do
 
     assert {:ok, expected} == RelationshipsParser.parse(workbook_xml_rels)
   end
+
+  test "parses strings with leading BOM" do
+    workbook_xml_rels = TestFixtures.read!("package/xl/_rels/workbook.xml.rels")
+    assert {:ok, _} = RelationshipsParser.parse("\uFEFF" <> workbook_xml_rels)
+  end
 end

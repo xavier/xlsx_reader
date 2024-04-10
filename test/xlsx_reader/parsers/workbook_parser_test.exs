@@ -20,4 +20,9 @@ defmodule XlsxReader.Parsers.WorkbookParserTest do
 
     assert {:ok, expected} == WorkbookParser.parse(workbook_xml)
   end
+
+  test "parses strings with leading BOM" do
+    workbook_xml = TestFixtures.read!("package/xl/workbook.xml")
+    assert {:ok, _} = WorkbookParser.parse("\uFEFF" <> workbook_xml)
+  end
 end

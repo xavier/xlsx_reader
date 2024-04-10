@@ -23,7 +23,9 @@ defmodule XlsxReader.Parsers.SharedStringsParser do
   end
 
   def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, %State{})
+    xml
+    |> Utils.strip_leading_bom()
+    |> Saxy.parse_string(__MODULE__, %State{})
   end
 
   @impl Saxy.Handler

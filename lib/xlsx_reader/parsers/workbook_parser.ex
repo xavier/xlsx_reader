@@ -21,7 +21,9 @@ defmodule XlsxReader.Parsers.WorkbookParser do
   def parse(xml, options \\ []) do
     exclude_hidden_sheets? = Keyword.get(options, :exclude_hidden_sheets?, false)
 
-    Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{
+    xml
+    |> Utils.strip_leading_bom()
+    |> Saxy.parse_string(__MODULE__, %XlsxReader.Workbook{
       options: %{exclude_hidden_sheets?: exclude_hidden_sheets?}
     })
   end

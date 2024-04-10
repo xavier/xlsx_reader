@@ -21,6 +21,8 @@ defmodule XlsxReader.Parsers.StylesParser do
   end
 
   def parse(xml, supported_custom_formats \\ []) do
+    xml = Utils.strip_leading_bom(xml)
+
     with {:ok, state} <-
            Saxy.parse_string(xml, __MODULE__, %State{
              supported_custom_formats: supported_custom_formats

@@ -101,4 +101,19 @@ defmodule XlsxReader.Parsers.Utils do
         {:error, "incomplete UTF-16 binary"}
     end
   end
+
+  @doc """
+  A valid Excel document could contain a leading BOM (Byte-order marker). Saxy fails to parse
+  xml documents where the leading character is not `<`.
+
+  ## Examples
+
+      iex> XlsxReader.Parsers.Utils.strip_leading_bom("\uFEFF<xml />")
+      "<xml />"
+
+      iex> XlsxReader.Parsers.Utils.strip_leading_bom("<xml />")
+      "<xml />"
+  """
+  @spec strip_leading_bom(String.t()) :: String.t()
+  def strip_leading_bom(xml), do: String.replace_leading(xml, "\uFEFF", "")
 end

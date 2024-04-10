@@ -48,7 +48,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   """
   def parse(xml, workbook, options \\ []) do
-    Saxy.parse_string(xml, __MODULE__, %State{
+    xml
+    |> Utils.strip_leading_bom()
+    |> Saxy.parse_string(__MODULE__, %State{
       workbook: workbook,
       type_conversion: Keyword.get(options, :type_conversion, true),
       blank_value: Keyword.get(options, :blank_value, ""),

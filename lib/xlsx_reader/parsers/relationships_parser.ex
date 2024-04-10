@@ -11,7 +11,9 @@ defmodule XlsxReader.Parsers.RelationshipsParser do
   @behaviour Saxy.Handler
 
   def parse(xml) do
-    Saxy.parse_string(xml, __MODULE__, %{
+    xml
+    |> Utils.strip_leading_bom()
+    |> Saxy.parse_string(__MODULE__, %{
       shared_strings: %{},
       styles: %{},
       themes: %{},

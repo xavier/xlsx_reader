@@ -172,4 +172,9 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     visible_sheet_names = package |> XlsxReader.sheet_names()
     assert visible_sheet_names == ["Sheet 1"]
   end
+
+  test "parses strings with leading BOM", %{workbook: workbook} do
+    sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet1.xml")
+    assert {:ok, _result} = WorksheetParser.parse("\uFEFF" <> sheet_xml, workbook)
+  end
 end

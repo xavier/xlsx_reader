@@ -51,6 +51,11 @@ defmodule XlsxReader.Parsers.SharedStringsParserTest do
     assert {:ok, expected} == SharedStringsParser.parse(shared_strings_xml)
   end
 
+  test "parses strings with leading BOM" do
+    shared_strings_xml = TestFixtures.read!("xml/sharedStringsWithRichText.xml")
+    assert {:ok, _} = SharedStringsParser.parse("\uFEFF" <> shared_strings_xml)
+  end
+
   test "takes xml:space instruction into account" do
     shared_strings_xml = TestFixtures.read!("xml/sharedStringsWithXmlSpacePreserve.xml")
 
