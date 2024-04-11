@@ -70,6 +70,9 @@ defmodule XlsxReader.Parsers.Utils do
       iex> XlsxReader.Parsers.Utils.ensure_utf8("UTF-8")
       {:ok, "UTF-8"}
 
+      iex> XlsxReader.Parsers.Utils.ensure_utf8("\uFEFFUTF-8 with BOM")
+      {:ok, "UTF-8 with BOM"}
+
       iex> XlsxReader.Parsers.Utils.ensure_utf8(<<0xff, 0xfe, 0x55, 0x00, 0x54, 0x00, 0x46, 0x00, 0x2d, 0x00, 0x31, 0x00, 0x36, 0x00, 0x4c, 0x00, 0x45, 0x00>>)
       {:ok, "UTF-16LE"}
 
@@ -77,28 +80,46 @@ defmodule XlsxReader.Parsers.Utils do
       {:ok, "UTF-16BE"}
 
       iex> XlsxReader.Parsers.Utils.ensure_utf8(<<0xff, 0xfe, 0x00>>)
-      {:error, "incomplete UTF-16 binary"}
+      {:error, "incomplete UTF-16LE binary"}
 
   """
   @spec ensure_utf8(binary()) :: {:ok, String.t()} | {:error, String.t()}
-  def ensure_utf8(<<0xFF, 0xFE, rest::binary>>),
-    do: convert_utf16_to_utf8(rest, :little)
+  def ensure_utf8(string) do
+    case :unicode.bom_to_encoding(string) do
+      {:latin1, 0} ->
+        # No BOM found, assumes UTF-8
+        {:ok, string}
 
-  def ensure_utf8(<<0xFE, 0xFF, rest::binary>>),
-    do: convert_utf16_to_utf8(rest, :big)
+      {:utf8, bom_length} ->
+        # BOM found with UTF-8 encoding
+        {:ok, strip_bom(string, bom_length)}
 
-  def ensure_utf8(utf8), do: {:ok, utf8}
+      {encoding, bom_length} ->
+        # BOM found with UTF-16/32 encoding given as an {encoding, endianess} tuple
+        string |> strip_bom(bom_length) |> convert_to_utf8(encoding)
+    end
+  end
 
-  defp convert_utf16_to_utf8(utf16, endianess) do
-    case :unicode.characters_to_binary(utf16, {:utf16, endianess}) do
+  defp strip_bom(string, bom_length) do
+    :binary.part(string, {bom_length, byte_size(string) - bom_length})
+  end
+
+  defp convert_to_utf8(string, encoding) do
+    case :unicode.characters_to_binary(string, encoding) do
       utf8 when is_binary(utf8) ->
         {:ok, utf8}
 
       {:error, _, _} ->
-        {:error, "error converting UTF-16 binary to UTF-8"}
+        {:error, "error converting #{format_encoding(encoding)} binary to UTF-8"}
 
       {:incomplete, _, _} ->
-        {:error, "incomplete UTF-16 binary"}
+        {:error, "incomplete #{format_encoding(encoding)} binary"}
     end
   end
+
+  defp format_encoding({:utf16, endianess}), do: "UTF-16#{format_endianess(endianess)}"
+  defp format_encoding({:utf32, endianess}), do: "UTF-32#{format_endianess(endianess)}"
+
+  def format_endianess(:big), do: "BE"
+  def format_endianess(:little), do: "LE"
 end
