@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.3] - 2024-04-19
+
+- Improve handling of UTF-8/16/32 encoding
+
 ## [0.8.2] - 2024-04-06
 
 - Add `exclude_hidden_sheets?` option
