@@ -133,6 +133,8 @@ In order of appearance:
 - [Paranojik](https://github.com/paranojik)
 - Juan Barrios ([03juan](https://github.com/03juan))
 - Dylan Harness ([dharness](https://github.com/dharness))
+- Victor Rodrigues ([rodrigues](https://github.com/rodrigues))
+- Jose Valim ([josevalim](https://github.com/josevalim))
 
 ## License
 
