@@ -17,7 +17,7 @@ The docs can be found at [https://hexdocs.pm/xlsx_reader](https://hexdocs.pm/xls
 
 ## Installation
 
-Add `xlsx_reader` as a dependency in your  `mix.exs`:
+Add `xlsx_reader` as a dependency in your `mix.exs`:
 
 ```elixir
 def deps do
@@ -27,7 +27,7 @@ def deps do
 end
 ```
 
-Run `mix deps.get` in your shell to fetch and compile XlsxReader. 
+Run `mix deps.get` in your shell to fetch and compile XlsxReader.
 
 ## Examples
 
@@ -42,9 +42,9 @@ XlsxReader.sheet_names(package)
 
 {:ok, rows} = XlsxReader.sheet(package, "Sheet 1")
 # [
-#   ["Date", "Temperature"], 
-#   [~D[2019-11-01], 8.4], 
-#   [~D[2019-11-02], 7.5], 
+#   ["Date", "Temperature"],
+#   [~D[2019-11-01], 8.4],
+#   [~D[2019-11-02], 7.5],
 #   ...
 # ]
 ```
@@ -62,8 +62,8 @@ blob = File.read!("test.xlsx")
 ```elixir
 {:ok, sheets} = XlsxReader.sheets(package)
 # [
-#   {"Sheet 1", [["Date", "Temperature"], ...]}, 
-#   {"Sheet 2", [...]}, 
+#   {"Sheet 1", [["Date", "Temperature"], ...]},
+#   {"Sheet 2", [...]},
 #   ...
 # ]
 ```
@@ -73,10 +73,10 @@ blob = File.read!("test.xlsx")
 ```elixir
 {:ok, sheets} = XlsxReader.sheets(package, only: ["Parameters", ~r/Sheet \d+/], except: ["Sheet 2"])
 # [
-#   {"Parameters", [...]}, 
-#   {"Sheet 1", [...]}, 
-#   {"Sheet 3", [...]}, 
-#   {"Sheet 4", [...]}, 
+#   {"Parameters", [...]},
+#   {"Sheet 1", [...]},
+#   {"Sheet 3", [...]},
+#   {"Sheet 4", [...]},
 #   ...
 # ]
 ```
@@ -86,8 +86,8 @@ blob = File.read!("test.xlsx")
 ```elixir
 {:ok, sheets} = XlsxReader.async_sheets(package)
 # [
-#   {"Sheet 1", [["Date", "Temperature"], ...]}, 
-#   {"Sheet 2", [...]}, 
+#   {"Sheet 1", [["Date", "Temperature"], ...]},
+#   {"Sheet 2", [...]},
 #   ...
 # ]
 ```
@@ -97,9 +97,9 @@ blob = File.read!("test.xlsx")
 ```elixir
 {:ok, rows} = XlsxReader.sheet(package, "Sheet 1", number_type: Decimal)
 # [
-#   ["Date", "Temperature"], 
-#   [~D[2019-11-01], %Decimal{coef: 84, exp: -1, sign: 1}], 
-#   [~D[2019-11-02], %Decimal{coef: 75, exp: -1, sign: 1}], 
+#   ["Date", "Temperature"],
+#   [~D[2019-11-01], %Decimal{coef: 84, exp: -1, sign: 1}],
+#   [~D[2019-11-02], %Decimal{coef: 75, exp: -1, sign: 1}],
 #   ...
 # ]
 ```
@@ -109,7 +109,7 @@ blob = File.read!("test.xlsx")
 ```elixir
 {:ok, rows} = XlsxReader.sheet(package, "Sheet 1", cell_data_format: :cell)
 # [
-#   [%Cell{value: 1234.0, formula: "SUM(B1, B10)", ref: "A1"}, ...], 
+#   [%Cell{value: 1234.0, formula: "SUM(B1, B10)", ref: "A1"}, ...],
 #   ...
 # ]
 ```
@@ -142,7 +142,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
