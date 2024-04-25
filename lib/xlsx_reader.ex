@@ -108,9 +108,25 @@ defmodule XlsxReader do
   @type source :: :path | :binary
 
   @typedoc """
-  Option to specify the XLSX file source
+  String or regex used to match against custom format string
   """
-  @type source_option :: {:source, source()}
+  @type custom_format_matcher :: Regex.t() | String.t()
+
+  @typedoc """
+  Supported custom format types
+  """
+  @type custom_format_type ::
+          :string | :number | :percentage | :date | :time | :date_time | :unsupported
+
+  @typedoc """
+  Options accepted by `XlsxReader.open/2`
+  """
+  @type open_option ::
+          {:source, source()}
+          | {:suported_custom_formats, [{custom_format_matcher(), custom_format_type()}, ...]}
+          | {:exclude_empty_sheets?, boolean()}
+          | {:exclude_hidden_sheets?, boolean()}
+          | {:preload_sheets?, boolean()}
 
   @typedoc """
   List of cell values
@@ -156,16 +172,22 @@ defmodule XlsxReader do
 
     * `source`: `:path` (on the file system, default) or `:binary` (in memory)
     * `supported_custom_formats`: a list of `{regex | string, type}` tuples (see "Additional custom formats support")
+    * `exclude_empty_sheets?`: Whether to exclude sheets without content in the workbook (preloads sheets)
     * `exclude_hidden_sheets?`: Whether to exclude hidden sheets in the workbook
+    * `preload_sheets?`: Whether to extract and preload all sheets on open
 
   """
-  @spec open(String.t() | binary(), [source_option]) ::
+  @spec open(String.t() | binary(), [open_option()]) ::
           {:ok, XlsxReader.Package.t()} | error()
   def open(file, options \\ []) do
     file
     |> ZipArchive.handle(Keyword.get(options, :source, :path))
     |> PackageLoader.open(
-      Keyword.take(options, [:supported_custom_formats, :exclude_hidden_sheets?])
+      Keyword.take(options, [
+        :exclude_empty_sheets?,
+        :exclude_hidden_sheets?,
+        :supported_custom_formats
+      ])
     )
   end
 

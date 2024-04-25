@@ -17,12 +17,20 @@ defmodule XlsxReader.Parsers.WorkbookParser do
 
   ## Options
     * `:exclude_hidden_sheets?` - Whether to exclude hidden sheets in the workbook
+    * `:exclude_empty_sheets?` - Whether to exclude empty sheets in the workbook
+    * `:preload_sheets?` - Whether to preload all workbook sheets on open
   """
   def parse(xml, options \\ []) do
+    exclude_empty_sheets? = Keyword.get(options, :exclude_empty_sheets?, false)
     exclude_hidden_sheets? = Keyword.get(options, :exclude_hidden_sheets?, false)
+    preload_sheets? = exclude_empty_sheets? or Keyword.get(options, :preload_sheets?, false)
 
     Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{
-      options: %{exclude_hidden_sheets?: exclude_hidden_sheets?}
+      options: %{
+        exclude_empty_sheets?: exclude_empty_sheets?,
+        exclude_hidden_sheets?: exclude_hidden_sheets?,
+        preload_sheets?: preload_sheets?
+      }
     })
   end
 

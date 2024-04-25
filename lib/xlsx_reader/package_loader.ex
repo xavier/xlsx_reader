@@ -33,15 +33,16 @@ defmodule XlsxReader.PackageLoader do
   def open(zip_handle, options \\ []) do
     with :ok <- check_contents(zip_handle),
          {:ok, workbook} <- load_workbook_xml(zip_handle, options),
-         {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle) do
-      package =
-        %XlsxReader.Package{
-          zip_handle: zip_handle,
-          workbook: %{workbook | rels: workbook_rels}
-        }
-        |> load_shared_strings
-        |> load_styles(Keyword.get(options, :supported_custom_formats, []))
-
+         {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle),
+         package = %XlsxReader.Package{
+           zip_handle: zip_handle,
+           workbook: %{workbook | rels: workbook_rels}
+         },
+         {:ok, package} <- load_shared_strings(package),
+         {:ok, package} <-
+           load_styles(package, Keyword.get(options, :supported_custom_formats, [])),
+         {:ok, package} <- maybe_preload_sheets(package, options),
+         {:ok, package} <- maybe_exclude_empty_sheets(package, options) do
       {:ok, package}
     end
   end
@@ -55,11 +56,21 @@ defmodule XlsxReader.PackageLoader do
 
   """
   @spec load_sheet_by_rid(XlsxReader.Package.t(), String.t(), Keyword.t()) ::
-          {:ok, XlsxReader.row()} | XlsxReader.error()
+          {:ok, [XlsxReader.row()]} | XlsxReader.error()
   def load_sheet_by_rid(package, rid, options \\ []) do
     case fetch_rel_target(package.workbook.rels, :sheets, rid) do
       {:ok, target} ->
-        load_worksheet_xml(package, xl_path(target), options)
+        if not options[:skip_preload?] and package.workbook.options.preload_sheets? do
+          case Enum.find(package.workbook.sheets, &(&1.rid == rid)) do
+            nil ->
+              {:error, "sheet not found"}
+
+            sheet ->
+              {:ok, sheet.data}
+          end
+        else
+          load_worksheet_xml(package, xl_path(target), options)
+        end
 
       :error ->
         {:error, "sheet relationship not found"}
@@ -75,7 +86,7 @@ defmodule XlsxReader.PackageLoader do
 
   """
   @spec load_sheet_by_name(XlsxReader.Package.t(), String.t(), Keyword.t()) ::
-          {:ok, XlsxReader.row()} | XlsxReader.error()
+          {:ok, [XlsxReader.row()]} | XlsxReader.error()
   def load_sheet_by_name(package, name, options \\ []) do
     case find_sheet_by_name(package, name) do
       %{rid: rid} ->
@@ -106,10 +117,16 @@ defmodule XlsxReader.PackageLoader do
   end
 
   defp load_workbook_xml(zip_handle, options) do
-    options = Keyword.take(options, [:exclude_hidden_sheets?])
+    options =
+      Keyword.take(options, [
+        :exclude_empty_sheets?,
+        :exclude_hidden_sheets?,
+        :preload_sheets?
+      ])
 
-    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml) do
-      WorkbookParser.parse(xml, options)
+    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml),
+         {:ok, workbook} <- WorkbookParser.parse(xml, options) do
+      {:ok, workbook}
     end
   end
 
@@ -123,7 +140,7 @@ defmodule XlsxReader.PackageLoader do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
-      %{package | workbook: %{package.workbook | shared_strings: shared_strings}}
+      {:ok, %{package | workbook: %{package.workbook | shared_strings: shared_strings}}}
     end
   end
 
@@ -131,10 +148,15 @@ defmodule XlsxReader.PackageLoader do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, style_types, custom_formats} <- StylesParser.parse(xml, supported_custom_formats) do
-      %{
-        package
-        | workbook: %{package.workbook | style_types: style_types, custom_formats: custom_formats}
-      }
+      {:ok,
+       %{
+         package
+         | workbook: %{
+             package.workbook
+             | style_types: style_types,
+               custom_formats: custom_formats
+           }
+       }}
     end
   end
 
@@ -169,6 +191,41 @@ defmodule XlsxReader.PackageLoader do
   defp fetch_rel_target(rels, type, rid) do
     with {:ok, paths} <- Map.fetch(rels, type) do
       Map.fetch(paths, rid)
+    end
+  end
+
+  defp maybe_preload_sheets(package, options) do
+    if package.workbook.options.preload_sheets? do
+      Enum.reduce_while(
+        package.workbook.sheets,
+        {:ok, package},
+        fn %{rid: rid}, {:ok, acc} ->
+          case load_sheet_by_rid(acc, rid, skip_preload?: true) do
+            {:ok, rows} ->
+              {:cont,
+               {:ok,
+                update_in(acc.workbook.sheets, fn sheets ->
+                  Enum.map(sheets, fn
+                    %{rid: ^rid} = sheet -> %{sheet | data: rows}
+                    sheet -> sheet
+                  end)
+                end)}}
+
+            {:error, _} = err ->
+              {:halt, err}
+          end
+        end
+      )
+    else
+      {:ok, package}
+    end
+  end
+
+  defp maybe_exclude_empty_sheets(package, options) do
+    if package.workbook.options.exclude_empty_sheets? do
+      {:ok, update_in(package.workbook.sheets, &Enum.reject(&1, fn s -> s.data == [] end))}
+    else
+      {:ok, package}
     end
   end
 end

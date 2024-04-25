@@ -73,7 +73,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   def handle_event(:start_element, {"row", attributes}, state) do
     # Some XLSX writers (Excel, Elixlsx, …) completely omit `<row>` or `<c>` elements when empty.
     # As we build the sheet, we'll keep track of the expected row and column number and
-    # fill the blanks as needed usingthe coordinates indicated in the row or cell reference.
+    # fill the blanks as needed using the coordinates indicated in the row or cell reference.
 
     current_row =
       case Utils.get_attribute(attributes, "r") do
