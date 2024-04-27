@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheetPr>
+    <pageSetUpPr fitToPage="1"/>
+  </sheetPr>
+  <dimension ref="A1:E1"/>
+  <sheetViews>
+    <sheetView defaultGridColor="1" showGridLines="0" workbookViewId="0"/>
+  </sheetViews>
+  <sheetFormatPr customHeight="1" defaultColWidth="16.3333" defaultRowHeight="19.9" outlineLevelCol="0" outlineLevelRow="0"/>
+  <cols>
+    <col customWidth="1" max="1" min="1" style="17" width="16.3516"/>
+    <col customWidth="1" max="2" min="2" style="17" width="22.7734"/>
+    <col customWidth="1" max="256" min="3" style="17" width="16.3516"/>
+  </cols>
+  <sheetData>
+    <row customHeight="1" ht="20.25" r="1">
+      <c r="A1" s="10"/>
+      <c r="B1" t="inlineStr"><is><t></t></is></c>
+      <c r="C1" t="inlineStr"><is><t>Hello</t></is></c>
+      <c r="D1"></c>
+      <c r="E1" t="n"><v>0.0</v></c>
+    </row>
+  </sheetData>
+  <pageMargins bottom="1" footer="0.25" header="0.25" left="1" right="1" top="1"/>
+  <pageSetup firstPageNumber="1" fitToHeight="1" fitToWidth="1" orientation="portrait" pageOrder="downThenOver" scale="100" useFirstPageNumber="0"/>
+  <headerFooter>
+    <oddFooter>&amp;C&amp;&quot;Helvetica Neue,Regular&quot;&amp;12&amp;K000000&amp;P</oddFooter>
+  </headerFooter>
+</worksheet>

@@ -83,6 +83,13 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert expected == rows
   end
 
+  test "handles correctly empty values", %{workbook: workbook} do
+    sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet5.xml")
+
+    assert {:ok, [["", "", "Hello", "", "0.0"]]} =
+             WorksheetParser.parse(sheet_xml, workbook, type_conversion: false)
+  end
+
   test "handles inline strings", %{workbook: workbook} do
     sheet_xml = TestFixtures.read!("xml/worksheetWithInlineStr.xml")
 

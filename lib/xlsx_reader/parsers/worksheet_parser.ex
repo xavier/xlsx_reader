@@ -259,7 +259,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defp sanitize_row(row) do
     Enum.map(row, fn
-      :expect_chars -> nil
+      :expect_chars -> ""
       value -> value
     end)
   end
