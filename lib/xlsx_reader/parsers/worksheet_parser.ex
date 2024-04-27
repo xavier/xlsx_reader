@@ -247,13 +247,21 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defp emit_row(state) do
     state = handle_omitted_rows(state)
+    row = state.row |> sanitize_row() |> Enum.reverse()
 
     %{
       state
       | row: nil,
-        rows: [Enum.reverse(state.row) | state.rows],
+        rows: [row | state.rows],
         expected_row: state.current_row + 1
     }
+  end
+
+  defp sanitize_row(row) do
+    Enum.map(row, fn
+      :expect_chars -> nil
+      value -> value
+    end)
   end
 
   defp restore_rows_order(state) do
