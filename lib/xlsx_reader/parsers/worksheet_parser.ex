@@ -259,7 +259,10 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defp sanitize_row(row) do
     Enum.map(row, fn
+      # If the <c> element has no text child node, we didn't receive any :characters event
+      # and the current value still contains the placeholder used by the parser
       :expect_chars -> ""
+      # Otherwise assume that the row contains an actual value
       value -> value
     end)
   end
