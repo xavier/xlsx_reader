@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.4] - 2024-04-28
+
+- Upgrade ex_doc
+- Fix issue with some empty cell elements being returned as `:expect_chars`, they are now returned as empty strings.
+
 ## [0.8.3] - 2024-04-19
 
 - Improve handling of UTF-8/16/32 encoding
