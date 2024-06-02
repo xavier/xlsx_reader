@@ -124,6 +124,9 @@ defmodule XlsxReader.PackageLoader do
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
       %{package | workbook: %{package.workbook | shared_strings: shared_strings}}
+    else
+      {:error, :no_rel_target} ->
+        package
     end
   end
 
@@ -135,6 +138,9 @@ defmodule XlsxReader.PackageLoader do
         package
         | workbook: %{package.workbook | style_types: style_types, custom_formats: custom_formats}
       }
+    else
+      {:error, :no_rel_target} ->
+        package
     end
   end
 
@@ -143,8 +149,11 @@ defmodule XlsxReader.PackageLoader do
       [target] ->
         {:ok, xl_path(target)}
 
+      [] ->
+        {:error, :no_rel_target}
+
       targets ->
-        {:error, "expected a single target in #{inspect(targets)}"}
+        {:error, "expected a single rel target, got #{inspect(targets)}"}
     end
   end
 
