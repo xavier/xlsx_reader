@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.5] - 2024-06-02
+
+- Handle files without shared strings or styles relationships.
+
 ## [0.8.4] - 2024-04-28
 
 - Upgrade ex_doc
