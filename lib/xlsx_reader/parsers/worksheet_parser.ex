@@ -373,6 +373,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
       # Numbers
 
+      {"n", :date, value} ->
+        value |> Conversion.to_date(state.workbook.base_date) |> handle_conversion_error()
+
+      {"n", type, value} when type in [:time, :date_time] ->
+        value |> Conversion.to_date_time(state.workbook.base_date) |> handle_conversion_error()
+
       {"n", _, value} ->
         value |> Conversion.to_number(state.number_type) |> handle_conversion_error()
 
