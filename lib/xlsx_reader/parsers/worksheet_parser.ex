@@ -314,14 +314,19 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   ## Cell format handling
 
-  @cell_attributes_mapping %{
-    "r" => :cell_ref,
-    "s" => :cell_style,
-    "t" => :cell_type
-  }
-
   defp extract_cell_attributes(attributes) do
-    Utils.map_attributes(attributes, @cell_attributes_mapping)
+    # Initialize current cell attributes
+    Utils.map_attributes(
+      attributes,
+      %{
+        "r" => :cell_ref,
+        "s" => :cell_style,
+        "t" => :cell_type
+      },
+      # Make we start from a blank slate to prevent reusing the previous cell data
+      # if one of the attribute is missing
+      %{cell_ref: nil, cell_style: nil, cell_type: nil}
+    )
   end
 
   defp format_cell_data(state) do

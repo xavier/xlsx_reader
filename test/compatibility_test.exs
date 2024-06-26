@@ -112,4 +112,43 @@ defmodule CompatibilityTest do
     assert {:ok, [["", ""], ["", "b2"]]} = XlsxReader.sheet(package, "Sheet1", empty_rows: true)
     assert {:ok, [["", "b2"]]} = XlsxReader.sheet(package, "Sheet1", empty_rows: false)
   end
+
+  test "cells with missing attributes" do
+    # The worksheet has a mix of "s", "t" and no attributes
+    assert {:ok, package} = XlsxReader.open(TestFixtures.path("cells_missing_attributes.xlsx"))
+
+    assert {
+             :ok,
+             [
+               [
+                 "Number",
+                 "Name",
+                 "Effective Date",
+                 "ID Number",
+                 "Operator",
+                 "County",
+                 "State",
+                 "Product",
+                 "Description",
+                 "Acres"
+               ],
+               [
+                 "Number",
+                 "Name",
+                 # Date with s="5" is converted
+                 ~D[2024-07-01],
+                 # This cell has no attributes at all, it's treated as a string
+                 # and not converted to a date because all cell attributes are
+                 # properly reset
+                 "5575789630",
+                 "Operator",
+                 "County",
+                 "State",
+                 "Product",
+                 "Description",
+                 "Acres"
+               ]
+             ]
+           } = XlsxReader.sheet(package, "Sheet 1")
+  end
 end
