@@ -110,7 +110,10 @@ defmodule XlsxReader do
   @typedoc """
   Option to specify the XLSX file source
   """
-  @type source_option :: {:source, source()}
+  @type open_option ::
+          {:exclude_hidden_sheets?, boolean()}
+          | {:source, source()}
+          | {:supported_custom_formats, XlsxReader.Styles.supported_custom_formats()}
 
   @typedoc """
   List of cell values
@@ -159,7 +162,7 @@ defmodule XlsxReader do
     * `exclude_hidden_sheets?`: Whether to exclude hidden sheets in the workbook
 
   """
-  @spec open(String.t() | binary(), [source_option]) ::
+  @spec open(String.t() | binary(), [open_option()]) ::
           {:ok, XlsxReader.Package.t()} | error()
   def open(file, options \\ []) do
     file

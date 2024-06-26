@@ -1,11 +1,22 @@
 defmodule XlsxReader.Styles do
-  @moduledoc false
+  @moduledoc """
+  Utility functions and types to deal with cell styles
+  """
 
+  @typedoc """
+  Knwon cell styles for which type conversion is supported
+  """
   @type known_style_type ::
           :string | :number | :percentage | :date | :time | :date_time | :unsupported
+  @typedoc """
+  Cell styles for which type conversion is supported
+  """
   @type style_type :: known_style_type() | String.t()
   @type style_types :: XlsxReader.Array.t(style_type())
   @type custom_formats :: %{optional(String.t()) => String.t()}
+  @typedoc """
+  Matches the text representation of a cell value
+  """
   @type custom_format_matcher :: String.t() | Regex.t()
   @type supported_custom_formats :: [{custom_format_matcher(), known_style_type()}]
 

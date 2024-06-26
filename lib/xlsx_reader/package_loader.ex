@@ -17,6 +17,19 @@ defmodule XlsxReader.PackageLoader do
 
   alias XlsxReader.ZipArchive
 
+  @typedoc """
+  Source for the XLSX file: file system (`:path`) or in-memory (`:binary`)
+  """
+  @type source :: :path | :binary
+
+  @typedoc """
+  Option to specify the XLSX file source
+  """
+  @type open_option ::
+          {:exclude_hidden_sheets?, boolean()}
+          | {:source, source()}
+          | {:supported_custom_formats, [{String.t() | Regex.t(), atom()}]}
+
   @doc """
 
   Opens an XLSX package.
