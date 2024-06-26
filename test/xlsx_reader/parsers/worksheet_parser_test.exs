@@ -146,7 +146,7 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
 
   test "should return shared formulas as part of Cell struct", %{workbook: workbook} do
     sheet_xml =
-      TestFixtures.read!("xml/worhseetWithSharedFormulas.xml")
+      TestFixtures.read!("xml/worksheetWithSharedFormulas.xml")
       |> String.replace("\n", "")
       |> String.replace("\t", "")
 
