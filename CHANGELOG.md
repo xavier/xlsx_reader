@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.6] - 2024-06-28
+
+- Fix handling of cell type/style when some cell elements were missing attributes
+- Handle date and datetime values encoded as numeric cell types
+
 ## [0.8.5] - 2024-06-02
 
 - Handle files without shared strings or styles relationships.
