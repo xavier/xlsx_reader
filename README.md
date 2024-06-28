@@ -135,6 +135,7 @@ In order of appearance:
 - Dylan Harness ([dharness](https://github.com/dharness))
 - Victor Rodrigues ([rodrigues](https://github.com/rodrigues))
 - Jose Valim ([josevalim](https://github.com/josevalim))
+- Vinicius Moraes ([ding-an-sich](https://github.com/ding-an-sich))
 
 ## License
 
