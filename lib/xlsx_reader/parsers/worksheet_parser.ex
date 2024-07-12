@@ -262,6 +262,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       # If the <c> element has no text child node, we didn't receive any :characters event
       # and the current value still contains the placeholder used by the parser
       :expect_chars -> ""
+      :expect_formula -> ""
       # Otherwise assume that the row contains an actual value
       value -> value
     end)
