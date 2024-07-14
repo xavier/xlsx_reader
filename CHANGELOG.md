@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.7] - 2024-07-14
+
+- Fix issue with some empty cell elements being returned as `:expect_formula`, they are now returned as empty strings
+
 ## [0.8.6] - 2024-06-28
 
 - Fix handling of cell type/style when some cell elements were missing attributes
