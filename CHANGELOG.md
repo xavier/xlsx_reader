@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.8] - 2025-03-01
+
+- Relax `:saxy` dependency
+
 ## [0.8.7] - 2024-07-14
 
 - Fix issue with some empty cell elements being returned as `:expect_formula`, they are now returned as empty strings
