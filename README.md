@@ -136,7 +136,7 @@ In order of appearance:
 - Victor Rodrigues ([rodrigues](https://github.com/rodrigues))
 - Jose Valim ([josevalim](https://github.com/josevalim))
 - Vinicius Moraes ([ding-an-sich](https://github.com/ding-an-sich))
-- [Gladear](https://github.com/ding-an-sich)
+- [Gladear](https://github.com/gladear)
 
 ## License
 
