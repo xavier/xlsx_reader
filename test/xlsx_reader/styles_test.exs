@@ -26,6 +26,11 @@ defmodule XlsxReader.StylesTest do
       assert :date = Styles.get_style_type("123", %{"123" => "m/d/yyyy"})
       assert :date_time = Styles.get_style_type("123", %{"123" => "m/d/yyyy h:mm"})
 
+      # Alternative date formats
+      assert :date = Styles.get_style_type("123", %{"123" => "yyyy\\/mm\\/dd"})
+      assert :date = Styles.get_style_type("123", %{"123" => "yy\\/m\\/d"})
+      assert :date = Styles.get_style_type("123", %{"123" => "yy-m-d"})
+
       # Plain time
       assert :time = Styles.get_style_type("123", %{"123" => "hh:mm"})
     end
