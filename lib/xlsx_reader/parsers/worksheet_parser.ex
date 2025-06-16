@@ -210,7 +210,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   defp store_formula(state, formula) do
-    %{state | formula: formula}
+    %{state | formula: formula, value: nil}
   end
 
   defp store_shared_formula(state, index, formula) do
@@ -262,7 +262,6 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       # If the <c> element has no text child node, we didn't receive any :characters event
       # and the current value still contains the placeholder used by the parser
       :expect_chars -> ""
-      :expect_formula -> ""
       # Otherwise assume that the row contains an actual value
       value -> value
     end)
