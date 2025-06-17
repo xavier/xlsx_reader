@@ -87,17 +87,6 @@ defmodule XlsxReader.Styles do
     "49" => :unsupported
   }
 
-  @default_supported_custom_formats [
-    {"0.0%", :percentage},
-    {~r/\Add?\/mm?\/yy(?:yy)\z/, :date},
-    {~r/\Add?\/mm?\/yy(?:yy) hh?:mm?\z/, :date_time},
-    {"yyyy-mm-dd", :date},
-    {~r/\Ayyyy-mm-dd[T\s]hh?:mm:ssZ?\z/, :date_time},
-    {"m/d/yyyy", :date},
-    {"m/d/yyyy h:mm", :date_time},
-    {"hh:mm", :time}
-  ]
-
   @doc """
   Guesses the type of a cell based on its style.
 
@@ -120,11 +109,23 @@ defmodule XlsxReader.Styles do
   defp get_known_style(num_fmt_id),
     do: Map.get(@known_styles, num_fmt_id)
 
+  defp default_supported_custom_formats(),
+    do: [
+    {"0.0%", :percentage},
+    {~r/\Add?\/mm?\/yy(?:yy)\z/, :date},
+    {~r/\Add?\/mm?\/yy(?:yy) hh?:mm?\z/, :date_time},
+    {"yyyy-mm-dd", :date},
+    {~r/\Ayyyy-mm-dd[T\s]hh?:mm:ssZ?\z/, :date_time},
+    {"m/d/yyyy", :date},
+    {"m/d/yyyy h:mm", :date_time},
+    {"hh:mm", :time}
+  ]
+
   defp get_custom_style(num_fmt_id, custom_formats, supported_custom_formats) do
     get_style_type_from_custom_format(
       num_fmt_id,
       custom_formats,
-      @default_supported_custom_formats
+      default_supported_custom_formats()
     ) ||
       get_style_type_from_custom_format(
         num_fmt_id,
