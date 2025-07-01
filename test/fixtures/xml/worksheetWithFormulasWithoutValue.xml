@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+	<sheetData>
+		<row r="1" spans="1:2" x14ac:dyDescent="0.2">
+			<c r="A1">
+				<v>
+					1
+				</v>
+			</c>
+			<c r="B1">
+				<f>
+					SUM(A1:A3)
+				</f>
+			</c>
+		</row>
+	</sheetData>
+</worksheet>

@@ -144,6 +144,22 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert expected == sheets
   end
 
+  test "should return empty value when result of formulas is not set", %{workbook: workbook} do
+    sheet_xml =
+      TestFixtures.read!("xml/worksheetWithFormulasWithoutValue.xml")
+      |> String.replace("\n", "")
+      |> String.replace("\t", "")
+
+    expected = [
+      [
+        %Cell{value: "1", formula: nil, ref: "A1"},
+        %Cell{value: "", formula: "SUM(A1:A3)", ref: "B1"}
+      ]
+    ]
+
+    assert {:ok, expected} == WorksheetParser.parse(sheet_xml, workbook, cell_data_format: :cell)
+  end
+
   test "should return shared formulas as part of Cell struct", %{workbook: workbook} do
     sheet_xml =
       TestFixtures.read!("xml/worksheetWithSharedFormulas.xml")
@@ -166,6 +182,36 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     ]
 
     assert {:ok, expected} == WorksheetParser.parse(sheet_xml, workbook, cell_data_format: :cell)
+  end
+
+  test "should return empty value when result of shared formulas is not set", %{
+    workbook: workbook
+  } do
+    sheet_xml =
+      TestFixtures.read!("xml/worksheetWithSharedFormulasWithoutValue.xml")
+      |> String.replace("\n", "")
+      |> String.replace("\t", "")
+
+    expected = [
+      [
+        %XlsxReader.Cell{value: "1", formula: nil, ref: "A1"},
+        %XlsxReader.Cell{value: "", formula: "SUM(A1:A3)", ref: "B1"}
+      ],
+      [
+        %XlsxReader.Cell{value: "2", formula: nil, ref: "A2"},
+        %XlsxReader.Cell{value: "", formula: "SUM(A1:A3)", ref: "B2"}
+      ],
+      [
+        %XlsxReader.Cell{value: "3", formula: nil, ref: "A3"},
+        %XlsxReader.Cell{value: "", formula: "SUM(A1:A3)", ref: "B3"}
+      ]
+    ]
+
+    assert {:ok, expected} ==
+             WorksheetParser.parse(sheet_xml, workbook,
+               cell_data_format: :cell,
+               type_conversion: true
+             )
   end
 
   test "should include or exclude hidden sheets based on an option" do
