@@ -137,6 +137,8 @@ In order of appearance:
 - Jose Valim ([josevalim](https://github.com/josevalim))
 - Vinicius Moraes ([ding-an-sich](https://github.com/ding-an-sich))
 - [Gladear](https://github.com/gladear)
+- [Alessandro Agnelli](https://github.com/aleagnelli)
+- [Wei Huang](https://github.com/weih-kahoot)
 
 ## License
 
