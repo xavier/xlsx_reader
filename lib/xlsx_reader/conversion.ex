@@ -75,24 +75,29 @@ defmodule XlsxReader.Conversion do
       iex> XlsxReader.Conversion.to_number("123.0", Integer)
       :error
 
+      iex> XlsxReader.Conversion.to_number(:not_a_string, Integer)
+      :error
+
   """
   @spec to_number(String.t(), number_type()) :: {:ok, number_value()} | :error
 
-  def to_number(string, Integer) do
+  def to_number(string, Integer) when is_binary(string) do
     to_integer(string)
   end
 
-  def to_number(string, Float) do
+  def to_number(string, Float) when is_binary(string) do
     to_float(string)
   end
 
-  def to_number(string, Decimal) do
+  def to_number(string, Decimal) when is_binary(string) do
     to_decimal(string)
   end
 
-  def to_number(string, String) do
+  def to_number(string, String) when is_binary(string) do
     {:ok, string}
   end
+
+  def to_number(_, _), do: :error
 
   @doc """
 
