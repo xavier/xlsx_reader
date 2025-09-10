@@ -151,4 +151,53 @@ defmodule CompatibilityTest do
              ]
            } = XlsxReader.sheet(package, "Sheet 1")
   end
+
+  test "cells with empty <v/> element" do
+    # The worksheet has some formula cells with empty <v/> elements
+    #  Example:
+    # <c r="O5259" s="7" t="str">
+    #   <f>IF(ISNUMBER(N5259),_xll.BDP($C5259, "OPT_UNDL_TICKER"),"")</f>
+    #   <v/>
+    # </c>
+    {:ok, package} = XlsxReader.open(TestFixtures.path("empty_v_elements.xlsx"))
+    {:ok, rows} = XlsxReader.sheet(package, "Simplify Portfolio Tracker")
+
+    assert [_, _, sample_row | _] = rows
+
+    assert [
+             "AGGH",
+             "ISHARES CORE US AGGREGATE BOND ETF",
+             "AGG",
+             "2897404",
+             "US4642872265",
+             "464287226",
+             3_005_147.0,
+             99.4,
+             298_711_611.8,
+             92.83633300000001,
+             321_761_537.77,
+             15_525_001.0,
+             "20.725379520000001",
+             "#ERROR",
+             "",
+             " ",
+             "#ERROR",
+             " ",
+             "#ERROR",
+             "464287226",
+             "Fund",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "",
+             "2.5300000000000001E-3"
+           ] = sample_row
+  end
 end
