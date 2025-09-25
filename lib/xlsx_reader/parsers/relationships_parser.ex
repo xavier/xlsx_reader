@@ -42,7 +42,8 @@ defmodule XlsxReader.Parsers.RelationshipsParser do
   def handle_event(:start_element, {"Relationship", attributes}, state) do
     with %{id: id, target: target, type: type} <- extract_relationship_attributes(attributes),
          {:ok, key} <- Map.fetch(@types, type) do
-      {:ok, Map.update!(state, key, fn rels -> Map.put_new(rels, id, target) end)}
+      {:ok,
+       Map.update!(state, key, fn rels -> Map.put_new(rels, id, sanitize_target(target)) end)}
     else
       _ ->
         {:ok, state}
@@ -75,4 +76,8 @@ defmodule XlsxReader.Parsers.RelationshipsParser do
   defp extract_relationship_attributes(attributes) do
     Utils.map_attributes(attributes, @relationship_attributes_mapping)
   end
+
+  # Remove leading "/" to deal with file containing absolute paths
+  defp sanitize_target("/" <> target), do: target
+  defp sanitize_target(target), do: target
 end
