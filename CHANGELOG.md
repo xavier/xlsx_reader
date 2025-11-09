@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.9] - 2025-11-09
+
+- OTP 28 compatibility
+- Handle formulas with cached results
+- Handle cells with empty `<v>` elements
+- Handle relationships with targets given as absolute path
+
 ## [0.8.8] - 2025-03-01
 
 - Relax `:saxy` dependency
