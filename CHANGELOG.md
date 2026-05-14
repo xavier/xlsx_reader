@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.10] - 2026-05-14
+
+- Allow `:decimal ~> 3.0`
+
 ## [0.8.9] - 2025-11-09
 
 - OTP 28 compatibility
