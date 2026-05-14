@@ -351,7 +351,7 @@ defmodule XlsxReader do
 
   ## Sheet filter
 
-  def sheet_filter_option(options, key),
+  defp sheet_filter_option(options, key),
     do: options |> Keyword.get(key, []) |> List.wrap()
 
   defp filter_sheets_by_name(sheets, [], []), do: sheets
