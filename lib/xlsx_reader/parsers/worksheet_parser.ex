@@ -199,7 +199,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   defp expect_shared_formula(state, string_index) do
-    {:ok, index} = Conversion.to_integer(string_index)
+    index = String.to_integer(string_index)
     shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, nil)
 
     %{
@@ -439,7 +439,6 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp lookup_index(nil, _string_index), do: nil
 
   defp lookup_index(table, string_index) do
-    {:ok, index} = Conversion.to_integer(string_index)
-    XlsxReader.Array.lookup(table, index)
+    XlsxReader.Array.lookup(table, String.to_integer(string_index))
   end
 end
