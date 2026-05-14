@@ -94,7 +94,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   def handle_event(:start_element, {"c", attributes}, state) do
-    {:ok, new_cell(state, extract_cell_attributes(attributes))}
+    {:ok, new_cell(state, attributes)}
   end
 
   def handle_event(:start_element, {"v", _attributes}, state) do
@@ -184,11 +184,25 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   ## State machine
 
-  defp new_cell(state, cell_attributes) do
+  defp new_cell(state, attributes) do
     state
-    |> Map.merge(cell_attributes)
+    |> apply_cell_attributes(attributes)
     |> handle_omitted_cells()
   end
+
+  defp apply_cell_attributes(state, []), do: state
+
+  defp apply_cell_attributes(state, [{"r", value} | rest]),
+    do: apply_cell_attributes(%{state | cell_ref: value}, rest)
+
+  defp apply_cell_attributes(state, [{"s", value} | rest]),
+    do: apply_cell_attributes(%{state | cell_style: value}, rest)
+
+  defp apply_cell_attributes(state, [{"t", value} | rest]),
+    do: apply_cell_attributes(%{state | cell_type: value}, rest)
+
+  defp apply_cell_attributes(state, [_ | rest]),
+    do: apply_cell_attributes(state, rest)
 
   defp expect_value(state) do
     %{state | value: :expect_chars}
@@ -228,6 +242,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       state
       | row: [format_cell_data(state) | state.row],
         cell_ref: nil,
+        cell_style: nil,
         cell_type: nil,
         value: nil,
         formula: nil
@@ -318,21 +333,6 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     do: prepend_n_times([value | list], value, n - 1)
 
   ## Cell format handling
-
-  defp extract_cell_attributes(attributes) do
-    # Initialize current cell attributes
-    Utils.map_attributes(
-      attributes,
-      %{
-        "r" => :cell_ref,
-        "s" => :cell_style,
-        "t" => :cell_type
-      },
-      # Make we start from a blank slate to prevent reusing the previous cell data
-      # if one of the attribute is missing
-      %{cell_ref: nil, cell_style: nil, cell_type: nil}
-    )
-  end
 
   defp format_cell_data(state) do
     value = convert_current_cell_value(state)
