@@ -22,11 +22,30 @@ defmodule XlsxReader.CellReferenceTest do
     end
 
     test "returns error if the reference is invalid" do
+      assert :error == CellReference.parse("")
       assert :error == CellReference.parse("1A")
       assert :error == CellReference.parse("$A1")
       assert :error == CellReference.parse("A$1")
       assert :error == CellReference.parse("$A$1")
       assert :error == CellReference.parse("bogus")
+      assert :error == CellReference.parse("A")
+      assert :error == CellReference.parse("ZZZ")
+      assert :error == CellReference.parse("1")
+      assert :error == CellReference.parse("123")
+      assert :error == CellReference.parse("A0")
+      assert :error == CellReference.parse("AA00")
+      assert :error == CellReference.parse("a1")
+      assert :error == CellReference.parse("Aa1")
+      assert :error == CellReference.parse("A1A")
+      assert :error == CellReference.parse("A1.5")
+      assert :error == CellReference.parse(" A1")
+      assert :error == CellReference.parse("A1 ")
+      assert :error == CellReference.parse("A 1")
+      assert :error == CellReference.parse("Ω1")
+      assert :error == CellReference.parse(<<0xFF, ?1>>)
+      assert :error == CellReference.parse(nil)
+      assert :error == CellReference.parse(:A1)
+      assert :error == CellReference.parse(42)
     end
   end
 end
