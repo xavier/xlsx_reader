@@ -90,6 +90,26 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
              WorksheetParser.parse(sheet_xml, workbook, type_conversion: false)
   end
 
+  test "returns custom blank_value for empty <v/> cells when type_conversion is disabled",
+       %{workbook: workbook} do
+    sheet_xml = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+      <sheetData>
+        <row r="1">
+          <c r="A1" t="n"><v></v></c>
+        </row>
+      </sheetData>
+    </worksheet>
+    """
+
+    assert {:ok, [[:custom_blank]]} =
+             WorksheetParser.parse(sheet_xml, workbook,
+               type_conversion: false,
+               blank_value: :custom_blank
+             )
+  end
+
   test "handles inline strings", %{workbook: workbook} do
     sheet_xml = TestFixtures.read!("xml/worksheetWithInlineStr.xml")
 

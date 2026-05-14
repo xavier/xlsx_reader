@@ -346,7 +346,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defp convert_current_cell_value(%State{type_conversion: false} = state) do
     case {state.cell_type, state.value} do
-      {_, nil} ->
+      {_, value} when is_nil(value) or value == "" ->
         state.blank_value
 
       {"s", value} ->
