@@ -64,7 +64,7 @@ defmodule XlsxReader.PackageLoader do
 
   ## Options
 
-  See `XlsxReader.sheet/2`.
+  See `XlsxReader.sheet/3`.
 
   """
   @spec load_sheet_by_rid(XlsxReader.Package.t(), String.t(), Keyword.t()) ::
@@ -84,7 +84,7 @@ defmodule XlsxReader.PackageLoader do
 
   ## Options
 
-  See `XlsxReader.sheet/2`.
+  See `XlsxReader.sheet/3`.
 
   """
   @spec load_sheet_by_name(XlsxReader.Package.t(), String.t(), Keyword.t()) ::

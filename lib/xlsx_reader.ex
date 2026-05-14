@@ -242,7 +242,7 @@ defmodule XlsxReader do
 
   ## Sheet options
 
-  See `sheet/2`.
+  See `sheet/3`.
 
   """
   @spec sheets(XlsxReader.Package.t(), Keyword.t()) ::
@@ -291,7 +291,7 @@ defmodule XlsxReader do
 
   ## Sheet options
 
-  See `sheet/2`.
+  See `sheet/3`.
 
   ## Concurrency options
 
