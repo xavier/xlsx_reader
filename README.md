@@ -139,6 +139,7 @@ In order of appearance:
 - [Gladear](https://github.com/gladear)
 - [Alessandro Agnelli](https://github.com/aleagnelli)
 - [Wei Huang](https://github.com/weih-kahoot)
+- Eric Saxby ([sax](https://github.com/sax))
 
 ## License
 
