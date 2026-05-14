@@ -329,14 +329,14 @@ defmodule XlsxReader do
       {:ok, {:ok, entry}}, {:ok, acc} ->
         {:cont, {:ok, [entry | acc]}}
 
-      {:ok, error}, _acc ->
-        {:halt, {:error, error}}
+      {:ok, {:error, _} = error}, _acc ->
+        {:halt, error}
 
       {:exit, :timeout}, _acc ->
         {:halt, {:error, "timeout exceeded"}}
 
       {:exit, reason}, _acc ->
-        {:halt, {:error, reason}}
+        {:halt, {:error, "task failed: #{inspect(reason)}"}}
     end)
     |> case do
       {:ok, list} ->

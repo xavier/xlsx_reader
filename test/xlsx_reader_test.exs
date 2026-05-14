@@ -231,5 +231,12 @@ defmodule XlsxReaderTest do
                 {"Sheet 3", _}
               ]} = XlsxReader.async_sheets(package, only: ~r/Sheet \d+/, except: ["Sheet 2"])
     end
+
+    test "returns the underlying error tuple when a sheet fails to load", %{package: package} do
+      bogus_sheet = %XlsxReader.Sheet{name: "Bogus", rid: "rIdMissing"}
+      bogus_package = %{package | workbook: %{package.workbook | sheets: [bogus_sheet]}}
+
+      assert {:error, "sheet relationship not found"} = XlsxReader.async_sheets(bogus_package)
+    end
   end
 end
