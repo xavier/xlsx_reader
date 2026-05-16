@@ -12,10 +12,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - elixir: 1.15.6
-            otp: 25.3.2.6
-          - elixir: 1.15.6
-            otp: 24.3.4.13
+          - elixir: "1.18"
+            otp: "28"
+          - elixir: "1.18"
+            otp: "27"
+          - elixir: "1.17"
+            otp: "27"
+          - elixir: "1.16"
+            otp: "26"
+          - elixir: "1.15.6"
+            otp: "25.3.2.6"
+          - elixir: "1.15.6"
+            otp: "24.3.4.13"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +33,7 @@ jobs:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
       - name: Restore deps and _build cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             deps
