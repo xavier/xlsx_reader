@@ -140,6 +140,7 @@ In order of appearance:
 - [Alessandro Agnelli](https://github.com/aleagnelli)
 - [Wei Huang](https://github.com/weih-kahoot)
 - Eric Saxby ([sax](https://github.com/sax))
+- Aleksei Matiushkin ([am-kantox](https://github.com/am-kantox))
 
 ## License
 

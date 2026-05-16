@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.11] - 2026-05-16
+
+- Fix typing warning on modern Elixir versions
+- Unwrap error tuple returned by `async_sheets/3` on sheet load failure
+- Return `blank_value` for empty `<v/>` cells when `type_conversion: false`
+- Up to ~30% sheet parsing speed boost thanks to some hot path micro-optimizations
+
 ## [0.8.10] - 2026-05-14
 
 - Allow `:decimal ~> 3.0`
