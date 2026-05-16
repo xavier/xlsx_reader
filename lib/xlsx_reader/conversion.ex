@@ -20,6 +20,8 @@ defmodule XlsxReader.Conversion do
   """
   @type number_value :: integer() | float() | Decimal.t() | String.t()
 
+  @decimal_version to_string(Application.spec(:decimal, :vsn) || ~c"0.0.1")
+
   @doc """
 
   Converts the string representation of a truth value into to a boolean.
@@ -150,17 +152,18 @@ defmodule XlsxReader.Conversion do
 
   """
   @spec to_decimal(String.t()) :: {:ok, Decimal.t()} | :error
-  def to_decimal(string) do
-    case Decimal.parse(string) do
-      {:ok, decimal} ->
-        {:ok, decimal}
+  if Version.compare(@decimal_version, "1.9.0") == :gt do
+    def to_decimal(string) do
+      case Decimal.parse(string) do
+        {decimal, ""} ->
+          {:ok, decimal}
 
-      {decimal, ""} ->
-        {:ok, decimal}
-
-      _ ->
-        :error
+        _ ->
+          :error
+      end
     end
+  else
+    defdelegate to_decimal(string), to: Decimal, as: :parse
   end
 
   @doc """
