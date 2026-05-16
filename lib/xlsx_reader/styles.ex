@@ -109,7 +109,7 @@ defmodule XlsxReader.Styles do
   defp get_known_style(num_fmt_id),
     do: Map.get(@known_styles, num_fmt_id)
 
-  defp default_supported_custom_formats(),
+  defp default_supported_custom_formats,
     do: [
       {"0.0%", :percentage},
       {~r/\Add?\/mm?\/yy(?:yy)\z/, :date},
