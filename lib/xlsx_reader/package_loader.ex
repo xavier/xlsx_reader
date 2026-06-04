@@ -15,7 +15,7 @@ defmodule XlsxReader.PackageLoader do
     WorksheetParser
   }
 
-  alias XlsxReader.ZipArchive
+  alias XlsxReader.{Package, ZipArchive}
 
   @typedoc """
   Source for the XLSX file: file system (`:path`) or in-memory (`:binary`)
@@ -48,7 +48,7 @@ defmodule XlsxReader.PackageLoader do
          {:ok, workbook} <- load_workbook_xml(zip_handle, options),
          {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle) do
       package =
-        %XlsxReader.Package{
+        %Package{
           zip_handle: zip_handle,
           workbook: %{workbook | rels: workbook_rels}
         }
@@ -69,7 +69,7 @@ defmodule XlsxReader.PackageLoader do
   """
   @spec load_sheet_by_rid(XlsxReader.Package.t(), String.t(), Keyword.t()) ::
           {:ok, XlsxReader.row()} | XlsxReader.error()
-  def load_sheet_by_rid(package, rid, options \\ []) do
+  def load_sheet_by_rid(%Package{} = package, rid, options \\ []) do
     case fetch_rel_target(package.workbook.rels, :sheets, rid) do
       {:ok, target} ->
         load_worksheet_xml(package, xl_path(target), options)
@@ -89,7 +89,7 @@ defmodule XlsxReader.PackageLoader do
   """
   @spec load_sheet_by_name(XlsxReader.Package.t(), String.t(), Keyword.t()) ::
           {:ok, XlsxReader.row()} | XlsxReader.error()
-  def load_sheet_by_name(package, name, options \\ []) do
+  def load_sheet_by_name(%Package{} = package, name, options \\ []) do
     case find_sheet_by_name(package, name) do
       %{rid: rid} ->
         load_sheet_by_rid(package, rid, options)
@@ -132,7 +132,7 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
-  defp load_shared_strings(package) do
+  defp load_shared_strings(%Package{} = package) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
@@ -143,7 +143,7 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
-  defp load_styles(package, supported_custom_formats) do
+  defp load_styles(%Package{} = package, supported_custom_formats) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, style_types, custom_formats} <- StylesParser.parse(xml, supported_custom_formats) do
@@ -170,7 +170,7 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
-  defp load_worksheet_xml(package, file, options) do
+  defp load_worksheet_xml(%Package{} = package, file, options) do
     with {:ok, xml} <- extract_xml(package.zip_handle, file) do
       WorksheetParser.parse(xml, package.workbook, options)
     end
@@ -184,7 +184,7 @@ defmodule XlsxReader.PackageLoader do
 
   defp xl_path(relative_path), do: Path.join("xl", relative_path)
 
-  defp find_sheet_by_name(package, name) do
+  defp find_sheet_by_name(%Package{} = package, name) do
     Enum.find(package.workbook.sheets, fn %{name: n} -> name == n end)
   end
 

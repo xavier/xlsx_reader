@@ -60,17 +60,17 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_document, _prolog, state) do
+  def handle_event(:start_document, _prolog, %State{} = state) do
     {:ok, state}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_document, _data, state) do
+  def handle_event(:end_document, _data, %State{} = state) do
     {:ok, state.rows}
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, {"row", attributes}, state) do
+  def handle_event(:start_element, {"row", attributes}, %State{} = state) do
     # Some XLSX writers (Excel, Elixlsx, …) completely omit `<row>` or `<c>` elements when empty.
     # As we build the sheet, we'll keep track of the expected row and column number and
     # fill the blanks as needed usingthe coordinates indicated in the row or cell reference.
@@ -93,24 +93,24 @@ defmodule XlsxReader.Parsers.WorksheetParser do
      }}
   end
 
-  def handle_event(:start_element, {"c", attributes}, state) do
+  def handle_event(:start_element, {"c", attributes}, %State{} = state) do
     {:ok, new_cell(state, attributes)}
   end
 
-  def handle_event(:start_element, {"v", _attributes}, state) do
+  def handle_event(:start_element, {"v", _attributes}, %State{} = state) do
     {:ok, expect_value(state)}
   end
 
-  def handle_event(:start_element, {"t", _attributes}, state) do
+  def handle_event(:start_element, {"t", _attributes}, %State{} = state) do
     {:ok, expect_value(state)}
   end
 
-  def handle_event(:end_element, "v", %{value: :expect_chars} = state) do
+  def handle_event(:end_element, "v", %State{value: :expect_chars} = state) do
     # Value element was empty, i.e. the sentinel value wasn't overridden by the :characters handler
     {:ok, store_value(state, "")}
   end
 
-  def handle_event(:start_element, {"f", attributes}, state) do
+  def handle_event(:start_element, {"f", attributes}, %State{} = state) do
     type = Utils.get_attribute(attributes, "t")
     ref = Utils.get_attribute(attributes, "ref")
 
@@ -125,23 +125,23 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, _element, state) do
+  def handle_event(:start_element, _element, %State{} = state) do
     {:ok, state}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, "c", state) do
+  def handle_event(:end_element, "c", %State{} = state) do
     {:ok, add_cell_to_row(state)}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, "f", %{formula: nil} = state) do
+  def handle_event(:end_element, "f", %State{formula: nil} = state) do
     formula = lookup_shared_formula(state, state.shared_formula_index)
     {:ok, store_formula(state, formula)}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, "row", state) do
+  def handle_event(:end_element, "row", %State{} = state) do
     if skip_row?(state) do
       {:ok, skip_row(state)}
     else
@@ -150,33 +150,33 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, "sheetData", state) do
+  def handle_event(:end_element, "sheetData", %State{} = state) do
     {:ok, restore_rows_order(state)}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, _name, state) do
+  def handle_event(:end_element, _name, %State{} = state) do
     {:ok, state}
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, chars, %{value: :expect_chars} = state) do
+  def handle_event(:characters, chars, %State{value: :expect_chars} = state) do
     {:ok, store_value(state, chars)}
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, chars, %{value: :expect_formula} = state) do
+  def handle_event(:characters, chars, %State{value: :expect_formula} = state) do
     {:ok, store_formula(state, chars)}
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, chars, %{value: :expect_shared_formula} = state) do
+  def handle_event(:characters, chars, %State{value: :expect_shared_formula} = state) do
     state = store_shared_formula(state, state.shared_formula_index, chars)
     {:ok, store_formula(state, chars)}
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, _chars, state) do
+  def handle_event(:characters, _chars, %State{} = state) do
     {:ok, state}
   end
 
@@ -184,35 +184,35 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   ## State machine
 
-  defp new_cell(state, attributes) do
+  defp new_cell(%State{} = state, attributes) do
     state
     |> apply_cell_attributes(attributes)
     |> handle_omitted_cells()
   end
 
-  defp apply_cell_attributes(state, []), do: state
+  defp apply_cell_attributes(%State{} = state, []), do: state
 
-  defp apply_cell_attributes(state, [{"r", value} | rest]),
+  defp apply_cell_attributes(%State{} = state, [{"r", value} | rest]),
     do: apply_cell_attributes(%{state | cell_ref: value}, rest)
 
-  defp apply_cell_attributes(state, [{"s", value} | rest]),
+  defp apply_cell_attributes(%State{} = state, [{"s", value} | rest]),
     do: apply_cell_attributes(%{state | cell_style: value}, rest)
 
-  defp apply_cell_attributes(state, [{"t", value} | rest]),
+  defp apply_cell_attributes(%State{} = state, [{"t", value} | rest]),
     do: apply_cell_attributes(%{state | cell_type: value}, rest)
 
-  defp apply_cell_attributes(state, [_ | rest]),
+  defp apply_cell_attributes(%State{} = state, [_ | rest]),
     do: apply_cell_attributes(state, rest)
 
-  defp expect_value(state) do
+  defp expect_value(%State{} = state) do
     %{state | value: :expect_chars}
   end
 
-  defp expect_formula(state) do
+  defp expect_formula(%State{} = state) do
     %{state | value: :expect_formula}
   end
 
-  defp expect_shared_formula(state, string_index) do
+  defp expect_shared_formula(%State{} = state, string_index) do
     index = String.to_integer(string_index)
     shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, nil)
 
@@ -224,20 +224,20 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     }
   end
 
-  defp store_value(state, value) do
+  defp store_value(%State{} = state, value) do
     %{state | value: value}
   end
 
-  defp store_formula(state, formula) do
+  defp store_formula(%State{} = state, formula) do
     %{state | formula: formula, value: nil}
   end
 
-  defp store_shared_formula(state, index, formula) do
+  defp store_shared_formula(%State{} = state, index, formula) do
     shared_formulas = state.shared_formulas |> XlsxReader.Array.insert(index, formula)
     %{state | shared_formulas: shared_formulas}
   end
 
-  defp add_cell_to_row(state) do
+  defp add_cell_to_row(%State{} = state) do
     %{
       state
       | row: [format_cell_data(state) | state.row],
@@ -249,23 +249,23 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     }
   end
 
-  defp skip_row?(%{skip_row?: skip_row?, row: row}) when is_function(skip_row?) do
+  defp skip_row?(%State{skip_row?: skip_row?, row: row}) when is_function(skip_row?) do
     skip_row?.(row)
   end
 
-  defp skip_row?(%{empty_rows: false} = state), do: empty_row?(state)
+  defp skip_row?(%State{empty_rows: false} = state), do: empty_row?(state)
 
   defp skip_row?(_state), do: false
 
-  defp empty_row?(state) do
+  defp empty_row?(%State{} = state) do
     Enum.all?(state.row, fn value -> value == state.blank_value end)
   end
 
-  defp skip_row(state) do
+  defp skip_row(%State{} = state) do
     %{state | row: nil, expected_row: state.current_row + 1}
   end
 
-  defp emit_row(state) do
+  defp emit_row(%State{} = state) do
     state = handle_omitted_rows(state)
     row = state.row |> sanitize_row() |> Enum.reverse()
 
@@ -287,13 +287,13 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     end)
   end
 
-  defp restore_rows_order(state) do
+  defp restore_rows_order(%State{} = state) do
     %{state | rows: Enum.reverse(state.rows)}
   end
 
   ## Omitted rows / cells
 
-  defp handle_omitted_rows(%{empty_rows: true} = state) do
+  defp handle_omitted_rows(%State{empty_rows: true} = state) do
     omitted_rows = state.current_row - state.expected_row
 
     if omitted_rows > 0 do
@@ -304,13 +304,13 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     end
   end
 
-  defp handle_omitted_rows(state), do: state
+  defp handle_omitted_rows(%State{} = state), do: state
 
-  defp handle_omitted_cells(state) do
+  defp handle_omitted_cells(%State{} = state) do
     # Using the current cell reference and the expected column:
     # 1. fill any missing cell
     # 2. determine the next expected column
-    with %{cell_ref: cell_ref} when not is_nil(cell_ref) <- state,
+    with %State{cell_ref: cell_ref} when not is_nil(cell_ref) <- state,
          {column, _row} <- CellReference.parse(cell_ref) do
       omitted_cells = column - state.expected_column
 
@@ -323,7 +323,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     end
   end
 
-  defp add_omitted_cells_to_row(state, n) do
+  defp add_omitted_cells_to_row(%State{} = state, n) do
     %{state | row: prepend_n_times(state.row, state.blank_value, n)}
   end
 
@@ -334,7 +334,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   ## Cell format handling
 
-  defp format_cell_data(state) do
+  defp format_cell_data(%State{} = state) do
     value = convert_current_cell_value(state)
 
     case state.cell_data_format do
@@ -422,17 +422,17 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp handle_conversion_error({:ok, value}), do: value
   defp handle_conversion_error(_error), do: "#ERROR"
 
-  defp lookup_current_cell_style_type(state) do
+  defp lookup_current_cell_style_type(%State{} = state) do
     if state.cell_style,
       do: lookup_index(state.workbook.style_types, state.cell_style),
       else: nil
   end
 
-  defp lookup_shared_string(state, value) do
+  defp lookup_shared_string(%State{} = state, value) do
     lookup_index(state.workbook.shared_strings, value)
   end
 
-  defp lookup_shared_formula(state, index) do
+  defp lookup_shared_formula(%State{} = state, index) do
     state.shared_formulas |> XlsxReader.Array.lookup(index)
   end
 

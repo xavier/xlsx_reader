@@ -9,7 +9,7 @@ defmodule XlsxReader.Parsers.WorkbookParser do
 
   @behaviour Saxy.Handler
 
-  alias XlsxReader.Conversion
+  alias XlsxReader.{Conversion, Workbook}
   alias XlsxReader.Parsers.Utils
 
   @doc """
@@ -21,28 +21,28 @@ defmodule XlsxReader.Parsers.WorkbookParser do
   def parse(xml, options \\ []) do
     exclude_hidden_sheets? = Keyword.get(options, :exclude_hidden_sheets?, false)
 
-    Saxy.parse_string(xml, __MODULE__, %XlsxReader.Workbook{
+    Saxy.parse_string(xml, __MODULE__, %Workbook{
       options: %{exclude_hidden_sheets?: exclude_hidden_sheets?}
     })
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_document, _prolog, workbook) do
+  def handle_event(:start_document, _prolog, %Workbook{} = workbook) do
     {:ok, workbook}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_document, _data, workbook) do
+  def handle_event(:end_document, _data, %Workbook{} = workbook) do
     {:ok, %{workbook | base_date: workbook.base_date || Conversion.base_date(1900)}}
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, {"workbookPr", attributes}, workbook) do
+  def handle_event(:start_element, {"workbookPr", attributes}, %Workbook{} = workbook) do
     {:ok, %{workbook | base_date: attributes |> date_system() |> Conversion.base_date()}}
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, {"sheet", attributes}, workbook) do
+  def handle_event(:start_element, {"sheet", attributes}, %Workbook{} = workbook) do
     is_hidden? = attributes |> Utils.get_attribute("state") === "hidden"
     skip_sheet? = workbook.options.exclude_hidden_sheets? && is_hidden?
 
@@ -53,22 +53,22 @@ defmodule XlsxReader.Parsers.WorkbookParser do
   end
 
   @impl Saxy.Handler
-  def handle_event(:start_element, _element, workbook) do
+  def handle_event(:start_element, _element, %Workbook{} = workbook) do
     {:ok, workbook}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, "sheets", workbook) do
+  def handle_event(:end_element, "sheets", %Workbook{} = workbook) do
     {:ok, %{workbook | sheets: Enum.reverse(workbook.sheets)}}
   end
 
   @impl Saxy.Handler
-  def handle_event(:end_element, _name, workbook) do
+  def handle_event(:end_element, _name, %Workbook{} = workbook) do
     {:ok, workbook}
   end
 
   @impl Saxy.Handler
-  def handle_event(:characters, _chars, workbook) do
+  def handle_event(:characters, _chars, %Workbook{} = workbook) do
     {:ok, workbook}
   end
 
