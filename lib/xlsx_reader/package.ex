@@ -17,7 +17,7 @@ defmodule XlsxReader.Package do
   XLSX package
   """
   @type t :: %__MODULE__{
-          zip_handle: XlsxReader.ZipArchive.zip_handle(),
+          zip_handle: {:path, String.t()} | {:binary, binary()},
           workbook: XlsxReader.Workbook.t()
         }
 end

@@ -19,7 +19,7 @@ defmodule XlsxReader.Styles do
   - `bg_color` - background color of the cell as an ARGB string, if any
   """
   @type style :: %{num_fmt: style_type() | nil, bg_color: String.t() | nil}
-  @type style_types :: XlsxReader.Array.t(style())
+  @type style_types :: :array.array(style())
   @type custom_formats :: %{optional(String.t()) => String.t()}
   @typedoc """
   Matches the text representation of a cell value
