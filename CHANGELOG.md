@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.12] - 2026-06-17
+
+- Fix double-prefixing of relationship targets that already include the `xl/` segment (e.g. `/xl/styles.xml`), which resolved to a non-existent `xl/xl/...` path
+- Return `{:error, reason}` instead of raising `WithClauseError` when a styles or shared strings part is referenced but missing or unreadable
+- Elixir 1.20 compatibility
+
 ## [0.8.11] - 2026-05-16
 
 - Fix typing warning on modern Elixir versions
