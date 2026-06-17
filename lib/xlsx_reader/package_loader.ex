@@ -182,6 +182,10 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
+  # Idempotent with respect to the "xl/" prefix so that absolute targets which
+  # already include the directory segment (e.g. "/xl/styles.xml") are not
+  # double-prefixed into "xl/xl/styles.xml".
+  defp xl_path("xl/" <> _ = path), do: path
   defp xl_path(relative_path), do: Path.join("xl", relative_path)
 
   defp find_sheet_by_name(%Package{} = package, name) do

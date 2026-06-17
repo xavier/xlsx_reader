@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Target="sharedStrings.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings"/>
-  <Relationship Id="rId2" Target="styles.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"/>
+  <!-- Package-root-absolute target including the "xl/" segment (see issue #46) -->
+  <Relationship Id="rId2" Target="/xl/styles.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"/>
   <Relationship Id="rId3" Target="theme/theme1.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme"/>
   <Relationship Id="rId4" Target="worksheets/sheet1.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
-  <Relationship Id="rId5" Target="worksheets/sheet2.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
-  <!-- Leading / added to test sanitization of absolute path -->
-  <Relationship Id="rId6" Target="/worksheets/sheet3.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
+  <!-- Package-root-absolute target without the "xl/" segment -->
+  <Relationship Id="rId5" Target="/worksheets/sheet2.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
+  <!-- Package-root-absolute target including the "xl/" segment -->
+  <Relationship Id="rId6" Target="/xl/worksheets/sheet3.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
 </Relationships>

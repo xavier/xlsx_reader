@@ -11,7 +11,7 @@ defmodule XlsxReader.Parsers.RelationshipsParserTest do
         "rId1" => "sharedStrings.xml"
       },
       styles: %{
-        "rId2" => "styles.xml"
+        "rId2" => "xl/styles.xml"
       },
       themes: %{
         "rId3" => "theme/theme1.xml"
@@ -19,7 +19,7 @@ defmodule XlsxReader.Parsers.RelationshipsParserTest do
       sheets: %{
         "rId4" => "worksheets/sheet1.xml",
         "rId5" => "worksheets/sheet2.xml",
-        "rId6" => "worksheets/sheet3.xml"
+        "rId6" => "xl/worksheets/sheet3.xml"
       }
     }
 

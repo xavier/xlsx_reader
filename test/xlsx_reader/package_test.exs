@@ -23,6 +23,19 @@ defmodule XlsxReader.PackageLoaderTest do
 
       assert {:error, "invalid zip file"} = PackageLoader.open(zip_handle)
     end
+
+    # https://github.com/xavier/xlsx_reader/issues/46
+    test "resolves package-root-absolute relationship targets" do
+      # The `package` fixture uses targets such as "/xl/styles.xml" and
+      # "/xl/worksheets/sheet3.xml", i.e. absolute paths that already include
+      # the "xl/" segment. These must not be double-prefixed into "xl/xl/...".
+      zip_handle = ZipArchive.handle(build_package_zip(), :binary)
+
+      assert {:ok, %XlsxReader.Package{} = package} = PackageLoader.open(zip_handle)
+
+      # "Sheet 3" relates to "/xl/worksheets/sheet3.xml"
+      assert {:ok, [_ | _]} = PackageLoader.load_sheet_by_name(package, "Sheet 3")
+    end
   end
 
   describe "load_sheet_by_name/2" do
@@ -49,5 +62,26 @@ defmodule XlsxReader.PackageLoaderTest do
                 | _
               ]} = PackageLoader.load_sheet_by_name(package, "Sheet 2")
     end
+  end
+
+  # Builds an in-memory .xlsx archive from the unpacked `package` fixture so the
+  # relationship targets defined in its workbook.xml.rels are exercised end-to-end.
+  defp build_package_zip do
+    root = TestFixtures.path("package")
+
+    files =
+      root
+      |> Path.join("**")
+      |> Path.wildcard()
+      |> Enum.reject(&File.dir?/1)
+      |> Enum.map(fn path ->
+        {
+          path |> Path.relative_to(root) |> String.to_charlist(),
+          File.read!(path)
+        }
+      end)
+
+    {:ok, {_name, zip}} = :zip.create(~c"package.xlsx", files, [:memory])
+    zip
   end
 end
