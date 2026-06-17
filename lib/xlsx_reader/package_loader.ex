@@ -147,7 +147,11 @@ defmodule XlsxReader.PackageLoader do
       {:ok,
        %{
          package
-         | workbook: %{package.workbook | style_types: style_types, custom_formats: custom_formats}
+         | workbook: %{
+             package.workbook
+             | style_types: style_types,
+               custom_formats: custom_formats
+           }
        }}
     else
       {:error, :no_rel_target} ->

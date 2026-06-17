@@ -47,7 +47,8 @@ defmodule XlsxReader.PackageLoaderTest do
 
     # https://github.com/xavier/xlsx_reader/issues/50
     test "returns an error when the shared strings part is referenced but missing" do
-      zip_handle = ZipArchive.handle(build_package_zip(exclude: ["xl/sharedStrings.xml"]), :binary)
+      zip_handle =
+        ZipArchive.handle(build_package_zip(exclude: ["xl/sharedStrings.xml"]), :binary)
 
       assert {:error, "file \"xl/sharedStrings.xml\" not found in archive"} =
                PackageLoader.open(zip_handle)
@@ -93,7 +94,9 @@ defmodule XlsxReader.PackageLoaderTest do
       |> Enum.reject(&File.dir?/1)
       |> Enum.map(fn path -> {Path.relative_to(path, root), File.read!(path)} end)
       |> Enum.reject(fn {relative_path, _} -> relative_path in exclude end)
-      |> Enum.map(fn {relative_path, contents} -> {String.to_charlist(relative_path), contents} end)
+      |> Enum.map(fn {relative_path, contents} ->
+        {String.to_charlist(relative_path), contents}
+      end)
 
     {:ok, {_name, zip}} = :zip.create(~c"package.xlsx", files, [:memory])
     zip
