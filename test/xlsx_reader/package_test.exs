@@ -36,6 +36,22 @@ defmodule XlsxReader.PackageLoaderTest do
       # "Sheet 3" relates to "/xl/worksheets/sheet3.xml"
       assert {:ok, [_ | _]} = PackageLoader.load_sheet_by_name(package, "Sheet 3")
     end
+
+    # https://github.com/xavier/xlsx_reader/issues/50
+    test "returns an error when the styles part is referenced but missing" do
+      zip_handle = ZipArchive.handle(build_package_zip(exclude: ["xl/styles.xml"]), :binary)
+
+      assert {:error, "file \"xl/styles.xml\" not found in archive"} =
+               PackageLoader.open(zip_handle)
+    end
+
+    # https://github.com/xavier/xlsx_reader/issues/50
+    test "returns an error when the shared strings part is referenced but missing" do
+      zip_handle = ZipArchive.handle(build_package_zip(exclude: ["xl/sharedStrings.xml"]), :binary)
+
+      assert {:error, "file \"xl/sharedStrings.xml\" not found in archive"} =
+               PackageLoader.open(zip_handle)
+    end
   end
 
   describe "load_sheet_by_name/2" do
@@ -66,20 +82,18 @@ defmodule XlsxReader.PackageLoaderTest do
 
   # Builds an in-memory .xlsx archive from the unpacked `package` fixture so the
   # relationship targets defined in its workbook.xml.rels are exercised end-to-end.
-  defp build_package_zip do
+  defp build_package_zip(opts \\ []) do
     root = TestFixtures.path("package")
+    exclude = Keyword.get(opts, :exclude, [])
 
     files =
       root
       |> Path.join("**")
       |> Path.wildcard()
       |> Enum.reject(&File.dir?/1)
-      |> Enum.map(fn path ->
-        {
-          path |> Path.relative_to(root) |> String.to_charlist(),
-          File.read!(path)
-        }
-      end)
+      |> Enum.map(fn path -> {Path.relative_to(path, root), File.read!(path)} end)
+      |> Enum.reject(fn {relative_path, _} -> relative_path in exclude end)
+      |> Enum.map(fn {relative_path, contents} -> {String.to_charlist(relative_path), contents} end)
 
     {:ok, {_name, zip}} = :zip.create(~c"package.xlsx", files, [:memory])
     zip

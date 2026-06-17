@@ -46,16 +46,10 @@ defmodule XlsxReader.PackageLoader do
   def open(zip_handle, options \\ []) do
     with :ok <- check_contents(zip_handle),
          {:ok, workbook} <- load_workbook_xml(zip_handle, options),
-         {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle) do
-      package =
-        %Package{
-          zip_handle: zip_handle,
-          workbook: %{workbook | rels: workbook_rels}
-        }
-        |> load_shared_strings
-        |> load_styles(Keyword.get(options, :supported_custom_formats, []))
-
-      {:ok, package}
+         {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle),
+         package = %Package{zip_handle: zip_handle, workbook: %{workbook | rels: workbook_rels}},
+         {:ok, package} <- load_shared_strings(package) do
+      load_styles(package, Keyword.get(options, :supported_custom_formats, []))
     end
   end
 
@@ -136,10 +130,13 @@ defmodule XlsxReader.PackageLoader do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
-      %{package | workbook: %{package.workbook | shared_strings: shared_strings}}
+      {:ok, %{package | workbook: %{package.workbook | shared_strings: shared_strings}}}
     else
       {:error, :no_rel_target} ->
-        package
+        {:ok, package}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -147,13 +144,17 @@ defmodule XlsxReader.PackageLoader do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
          {:ok, xml} <- extract_xml(package.zip_handle, file),
          {:ok, style_types, custom_formats} <- StylesParser.parse(xml, supported_custom_formats) do
-      %{
-        package
-        | workbook: %{package.workbook | style_types: style_types, custom_formats: custom_formats}
-      }
+      {:ok,
+       %{
+         package
+         | workbook: %{package.workbook | style_types: style_types, custom_formats: custom_formats}
+       }}
     else
       {:error, :no_rel_target} ->
-        package
+        {:ok, package}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
