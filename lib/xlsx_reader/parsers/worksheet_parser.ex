@@ -338,9 +338,21 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     value = convert_current_cell_value(state)
 
     case state.cell_data_format do
-      :cell -> %Cell{value: value, formula: state.formula, ref: state.cell_ref}
-      :value -> value
-      _ -> value
+      :cell ->
+        style_type = lookup_current_cell_style_type(state)
+
+        %Cell{
+          value: value,
+          formula: state.formula,
+          ref: state.cell_ref,
+          bg_color: get_in(style_type, [:fill, :bg_color])
+        }
+
+      :value ->
+        value
+
+      _ ->
+        value
     end
   end
 
@@ -361,7 +373,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   defp convert_current_cell_value(%State{type_conversion: true} = state) do
     style_type = lookup_current_cell_style_type(state)
 
-    case {state.cell_type, style_type, state.value} do
+    case {state.cell_type, style_type && style_type.num_fmt, state.value} do
       # Blank
 
       {_, _, value} when is_nil(value) or value == "" ->
