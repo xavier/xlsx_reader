@@ -7,7 +7,7 @@ defmodule XlsxReader.Cell do
   - `value` - The value of the cell
   - `formula` - The formula used in the cell, if any
   - `ref` - The cell reference, like 'A1', 'B2', etc.
-  - `bg_color` - The cell background color.
+  - `bg_color` - The background color of the cell as an ARGB string (e.g. `"FFFF0000"`), if any
 
   This structure is used when the `cell_data_format` option is set to `:cell`.
   """
@@ -21,6 +21,6 @@ defmodule XlsxReader.Cell do
           value: term(),
           formula: String.t() | nil,
           ref: String.t(),
-          bg_color: String.t()
+          bg_color: String.t() | nil
         }
 end

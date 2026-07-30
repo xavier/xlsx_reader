@@ -345,7 +345,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
           value: value,
           formula: state.formula,
           ref: state.cell_ref,
-          bg_color: get_in(style_type, [:fill, :bg_color])
+          bg_color: style_type && style_type.bg_color
         }
 
       :value ->

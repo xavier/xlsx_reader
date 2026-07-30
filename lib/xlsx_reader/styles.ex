@@ -12,7 +12,14 @@ defmodule XlsxReader.Styles do
   Cell styles for which type conversion is supported
   """
   @type style_type :: known_style_type() | String.t()
-  @type style_types :: XlsxReader.Array.t(style_type())
+  @typedoc """
+  Subset of the style definitions extracted for a cell format:
+
+  - `num_fmt` - number format used for type conversion
+  - `bg_color` - background color of the cell as an ARGB string, if any
+  """
+  @type style :: %{num_fmt: style_type() | nil, bg_color: String.t() | nil}
+  @type style_types :: XlsxReader.Array.t(style())
   @type custom_formats :: %{optional(String.t()) => String.t()}
   @typedoc """
   Matches the text representation of a cell value
