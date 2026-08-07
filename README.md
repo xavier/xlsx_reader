@@ -135,6 +135,7 @@ In order of appearance:
 - Darragh Enright ([darraghenright](https://github.com/darraghenright))
 - Patryk Woziński ([patrykwozinski](https://github.com/patrykwozinski))
 - Evaldo Bratti ([evaldobratti](https://github.com/evaldobratti))
+- Kian-Meng Ang ([kianmeng](https://github.com/kianmeng))
 - Zach Liss ([ZachLiss](https://github.com/ZachLiss))
 - [Paranojik](https://github.com/paranojik)
 - Juan Barrios ([03juan](https://github.com/03juan))
@@ -147,6 +148,7 @@ In order of appearance:
 - [Wei Huang](https://github.com/weih-kahoot)
 - Eric Saxby ([sax](https://github.com/sax))
 - Aleksei Matiushkin ([am-kantox](https://github.com/am-kantox))
+- [rigzad](https://github.com/rigzad)
 
 ## License
 
