@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.0] - 2026-08-07
+
+- Add `bg_color` to `XlsxReader.Cell`, the background color of the cell as an ARGB string, available with the `cell_data_format: :cell` option
+- **Breaking**: `XlsxReader.Workbook`'s `style_types` now holds `%{num_fmt: style_type, bg_color: String.t() | nil}` entries instead of bare style types
+
 ## [0.8.12] - 2026-06-17
 
 - Fix double-prefixing of relationship targets that already include the `xl/` segment (e.g. `/xl/styles.xml`), which resolved to a non-existent `xl/xl/...` path

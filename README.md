@@ -22,7 +22,7 @@ Add `xlsx_reader` as a dependency in your `mix.exs`:
 ```elixir
 def deps do
   [
-    {:xlsx_reader, "~> 0.8.0"}
+    {:xlsx_reader, "~> 0.9.0"}
   ]
 end
 ```
