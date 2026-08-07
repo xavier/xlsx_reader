@@ -104,15 +104,21 @@ blob = File.read!("test.xlsx")
 # ]
 ```
 
-### Access cell formulas
+### Access cell formulas and background color
 
 ```elixir
 {:ok, rows} = XlsxReader.sheet(package, "Sheet 1", cell_data_format: :cell)
 # [
-#   [%Cell{value: 1234.0, formula: "SUM(B1, B10)", ref: "A1"}, ...],
+#   [%Cell{value: 1234.0, formula: "SUM(B1, B10)", ref: "A1", bg_color: "FFFF0000"}, ...],
 #   ...
 # ]
 ```
+
+The background color is given as an ARGB string. It is `nil` for cells without
+fill as well as for gradient fills and for colors which cannot be resolved from
+the stylesheet alone (theme and automatic colors). For cells filled with a
+pattern rather than a solid color, it is an approximation of the color a
+spreadsheet application displays.
 
 ## Development
 

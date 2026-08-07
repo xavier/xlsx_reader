@@ -6,7 +6,7 @@ defmodule XlsxReader.Workbook do
   - `sheets` - list of sheet metadata
   - `rels` - workbook relationships
   - `shared_strings` - list of shared strings
-  - `style_types` - List of types indexed by style
+  - `style_types` - List of number formats and background colors indexed by style
   - `custom_formats` - Map of custom formats declared for this document
   - `base_date` - base date for all serial dates in the workbook
   - `options` - Map of options for the workbook. Currently includes:
