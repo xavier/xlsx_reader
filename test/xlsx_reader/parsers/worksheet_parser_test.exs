@@ -234,6 +234,105 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
              )
   end
 
+  describe "limits" do
+    defp sheet_xml(cell_refs_by_row) do
+      rows =
+        for {row, refs} <- cell_refs_by_row do
+          cells = for ref <- refs, do: ~s(<c r="#{ref}" t="n"><v>1</v></c>)
+          ~s(<row r="#{row}">#{cells}</row>)
+        end
+
+      ~s(<worksheet><sheetData>#{rows}</sheetData></worksheet>)
+    end
+
+    defp full_sheet do
+      sheet_xml([{1, ~w(A1 B1 C1)}, {2, ~w(A2 B2 C2)}, {3, ~w(A3 B3 C3)}])
+    end
+
+    test "accepts sheets within the limits", %{workbook: workbook} do
+      assert {:ok, [[_, _, _], [_, _, _], [_, _, _]]} =
+               WorksheetParser.parse(full_sheet(), workbook,
+                 max_rows: 3,
+                 max_columns: 3,
+                 max_cells: 9
+               )
+    end
+
+    test "rejects sheets exceeding max_rows", %{workbook: workbook} do
+      assert WorksheetParser.parse(full_sheet(), workbook, max_rows: 2) ==
+               {:error, "row limit exceeded"}
+    end
+
+    test "rejects sheets exceeding max_columns", %{workbook: workbook} do
+      assert WorksheetParser.parse(full_sheet(), workbook, max_columns: 2) ==
+               {:error, "column limit exceeded"}
+    end
+
+    test "rejects sheets exceeding max_cells", %{workbook: workbook} do
+      assert WorksheetParser.parse(full_sheet(), workbook, max_cells: 8) ==
+               {:error, "cell limit exceeded"}
+    end
+
+    test "the lowest limit wins", %{workbook: workbook} do
+      assert WorksheetParser.parse(full_sheet(), workbook,
+               max_rows: 100,
+               max_columns: 100,
+               max_cells: 8
+             ) == {:error, "cell limit exceeded"}
+
+      assert WorksheetParser.parse(full_sheet(), workbook,
+               max_rows: 2,
+               max_columns: 100,
+               max_cells: 100
+             ) == {:error, "row limit exceeded"}
+
+      assert WorksheetParser.parse(full_sheet(), workbook,
+               max_rows: 100,
+               max_columns: 2,
+               max_cells: 100
+             ) == {:error, "column limit exceeded"}
+    end
+
+    test "rejects sparse sheets without expanding them", %{workbook: workbook} do
+      sparse = sheet_xml([{1_048_576, ["XFD1048576"]}])
+
+      assert WorksheetParser.parse(sparse, workbook, max_rows: 1000) ==
+               {:error, "row limit exceeded"}
+
+      assert WorksheetParser.parse(sparse, workbook, max_columns: 1000) ==
+               {:error, "column limit exceeded"}
+
+      assert WorksheetParser.parse(sparse, workbook, max_cells: 1_000_000) ==
+               {:error, "cell limit exceeded"}
+    end
+
+    test "counts blank cells created for omitted cells", %{workbook: workbook} do
+      xml = sheet_xml([{1, ["C1"]}])
+
+      assert {:ok, [["", "", _]]} = WorksheetParser.parse(xml, workbook, max_cells: 3)
+
+      assert WorksheetParser.parse(xml, workbook, max_cells: 2) == {:error, "cell limit exceeded"}
+    end
+
+    test "counts blank rows created for omitted rows", %{workbook: workbook} do
+      xml = sheet_xml([{1, ["A1"]}, {3, ["A3"]}])
+
+      assert {:ok, [[_], [""], [_]]} = WorksheetParser.parse(xml, workbook, max_cells: 3)
+
+      assert WorksheetParser.parse(xml, workbook, max_cells: 2) == {:error, "cell limit exceeded"}
+    end
+
+    test "does not count omitted rows that are not included", %{workbook: workbook} do
+      xml = sheet_xml([{1, ["A1"]}, {3, ["A3"]}])
+
+      assert {:ok, [[_], [_]]} =
+               WorksheetParser.parse(xml, workbook, empty_rows: false, max_cells: 2)
+
+      assert WorksheetParser.parse(xml, workbook, empty_rows: false, max_rows: 2) ==
+               {:error, "row limit exceeded"}
+    end
+  end
+
   test "should include or exclude hidden sheets based on an option" do
     filepath = TestFixtures.path("hidden_sheets.xlsx")
 
