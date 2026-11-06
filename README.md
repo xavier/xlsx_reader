@@ -120,6 +120,19 @@ the stylesheet alone (theme and automatic colors). For cells filled with a
 pattern rather than a solid color, it is an approximation of the color a
 spreadsheet application displays.
 
+### Limit the uncompressed size
+
+An XLSX file is a ZIP archive, and a small archive can inflate to a much larger XML.
+Use `max_uncompressed_size` (in bytes, applied to each file of the archive) when
+opening untrusted files:
+
+```elixir
+XlsxReader.open(blob, source: :binary, max_uncompressed_size: 50_000_000)
+# {:error, "uncompressed size limit exceeded"}
+```
+
+It is unlimited by default.
+
 ## Development
 
 ### Benchmarking

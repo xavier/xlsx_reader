@@ -11,13 +11,14 @@ defmodule XlsxReader.Package do
   """
 
   @enforce_keys [:zip_handle, :workbook]
-  defstruct zip_handle: nil, workbook: nil
+  defstruct zip_handle: nil, workbook: nil, max_uncompressed_size: :infinity
 
   @typedoc """
   XLSX package
   """
   @type t :: %__MODULE__{
           zip_handle: {:path, String.t()} | {:binary, binary()},
-          workbook: XlsxReader.Workbook.t()
+          workbook: XlsxReader.Workbook.t(),
+          max_uncompressed_size: non_neg_integer() | :infinity
         }
 end

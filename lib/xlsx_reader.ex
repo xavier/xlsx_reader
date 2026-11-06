@@ -112,6 +112,7 @@ defmodule XlsxReader do
   """
   @type open_option ::
           {:exclude_hidden_sheets?, boolean()}
+          | {:max_uncompressed_size, non_neg_integer() | :infinity}
           | {:source, source()}
           | {:supported_custom_formats, XlsxReader.Styles.supported_custom_formats()}
 
@@ -160,6 +161,9 @@ defmodule XlsxReader do
     * `source`: `:path` (on the file system, default) or `:binary` (in memory)
     * `supported_custom_formats`: a list of `{regex | string, type}` tuples (see "Additional custom formats support")
     * `exclude_hidden_sheets?`: Whether to exclude hidden sheets in the workbook
+    * `max_uncompressed_size`: **experimental**, maximum size in bytes of any file extracted from the archive
+       (default: `:infinity`). Protects against "zip bombs". When set, files are extracted by custom
+       code instead of `:zip.extract/2`, which may reject unusual archives (e.g. zip64).
 
   """
   @spec open(String.t() | binary(), [open_option()]) ::
@@ -168,7 +172,11 @@ defmodule XlsxReader do
     file
     |> ZipArchive.handle(Keyword.get(options, :source, :path))
     |> PackageLoader.open(
-      Keyword.take(options, [:supported_custom_formats, :exclude_hidden_sheets?])
+      Keyword.take(options, [
+        :supported_custom_formats,
+        :exclude_hidden_sheets?,
+        :max_uncompressed_size
+      ])
     )
   end
 
