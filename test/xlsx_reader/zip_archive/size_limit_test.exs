@@ -121,5 +121,22 @@ defmodule XlsxReader.ZipArchive.SizeLimitTest do
       assert ZipArchive.extract(ZipArchive.handle("__does_not_exist__", :path), "a", 100) ==
                {:error, "file not found"}
     end
+
+    test "supports zip64 archives" do
+      contents = String.duplicate("<c/>", 1000)
+
+      for fixture <- ["zip64_deflated.zip", "zip64_stored.zip"] do
+        zip_handle = ZipArchive.handle(TestFixtures.path(fixture), :path)
+
+        assert ZipArchive.extract(zip_handle, "file.xml", 4000) == {:ok, contents}
+        assert ZipArchive.extract(zip_handle, "file.xml", 3999) == @limit_error
+      end
+    end
+
+    test "rejects encrypted files" do
+      zip_handle = ZipArchive.handle(TestFixtures.path("encrypted.zip"), :path)
+
+      assert ZipArchive.extract(zip_handle, "file.xml", 100_000) == {:error, "invalid zip file"}
+    end
   end
 end

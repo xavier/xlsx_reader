@@ -115,4 +115,9 @@ defmodule XlsxReader.ZipArchive do
   defp translate_zip_error({:error, {:bad_crc, _file}}) do
     {:error, "invalid zip file"}
   end
+
+  # e.g. encrypted files, which `:zip` doesn't support
+  defp translate_zip_error({:error, {:EXIT, {:data_error, _stacktrace}}}) do
+    {:error, "invalid zip file"}
+  end
 end

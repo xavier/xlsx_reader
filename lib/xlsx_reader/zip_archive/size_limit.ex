@@ -7,7 +7,7 @@ defmodule XlsxReader.ZipArchive.SizeLimit do
   # declared in the archive can be forged. Before extracting, this inflates the
   # file once, counting and discarding the output, and stops at the limit.
   #
-  # Stored and deflated files only (as `:zip`); zip64 is untested.
+  # Stored and deflated files only (as `:zip`).
 
   @local_file_header_size 30
   @local_file_magic 0x04034B50
