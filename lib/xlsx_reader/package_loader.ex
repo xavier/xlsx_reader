@@ -27,6 +27,7 @@ defmodule XlsxReader.PackageLoader do
   """
   @type open_option ::
           {:exclude_hidden_sheets?, boolean()}
+          | {:max_uncompressed_size, non_neg_integer() | :infinity}
           | {:source, source()}
           | {:supported_custom_formats, [{String.t() | Regex.t(), atom()}]}
 
@@ -44,10 +45,16 @@ defmodule XlsxReader.PackageLoader do
   @spec open(XlsxReader.ZipArchive.zip_handle()) ::
           {:ok, XlsxReader.Package.t()} | XlsxReader.error()
   def open(zip_handle, options \\ []) do
+    max_size = Keyword.get(options, :max_uncompressed_size, :infinity)
+
     with :ok <- check_contents(zip_handle),
-         {:ok, workbook} <- load_workbook_xml(zip_handle, options),
-         {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle),
-         package = %Package{zip_handle: zip_handle, workbook: %{workbook | rels: workbook_rels}},
+         {:ok, workbook} <- load_workbook_xml(zip_handle, max_size, options),
+         {:ok, workbook_rels} <- load_workbook_xml_rels(zip_handle, max_size),
+         package = %Package{
+           zip_handle: zip_handle,
+           workbook: %{workbook | rels: workbook_rels},
+           max_uncompressed_size: max_size
+         },
          {:ok, package} <- load_shared_strings(package) do
       load_styles(package, Keyword.get(options, :supported_custom_formats, []))
     end
@@ -112,23 +119,23 @@ defmodule XlsxReader.PackageLoader do
     end
   end
 
-  defp load_workbook_xml(zip_handle, options) do
+  defp load_workbook_xml(zip_handle, max_size, options) do
     options = Keyword.take(options, [:exclude_hidden_sheets?])
 
-    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml) do
+    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml, max_size) do
       WorkbookParser.parse(xml, options)
     end
   end
 
-  defp load_workbook_xml_rels(zip_handle) do
-    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml_rels) do
+  defp load_workbook_xml_rels(zip_handle, max_size) do
+    with {:ok, xml} <- extract_xml(zip_handle, @workbook_xml_rels, max_size) do
       RelationshipsParser.parse(xml)
     end
   end
 
   defp load_shared_strings(%Package{} = package) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.shared_strings),
-         {:ok, xml} <- extract_xml(package.zip_handle, file),
+         {:ok, xml} <- extract_xml(package.zip_handle, file, package.max_uncompressed_size),
          {:ok, shared_strings} <- SharedStringsParser.parse(xml) do
       {:ok, %{package | workbook: %{package.workbook | shared_strings: shared_strings}}}
     else
@@ -142,7 +149,7 @@ defmodule XlsxReader.PackageLoader do
 
   defp load_styles(%Package{} = package, supported_custom_formats) do
     with {:ok, file} <- single_rel_target(package.workbook.rels.styles),
-         {:ok, xml} <- extract_xml(package.zip_handle, file),
+         {:ok, xml} <- extract_xml(package.zip_handle, file, package.max_uncompressed_size),
          {:ok, style_types, custom_formats} <- StylesParser.parse(xml, supported_custom_formats) do
       {:ok,
        %{
@@ -176,13 +183,13 @@ defmodule XlsxReader.PackageLoader do
   end
 
   defp load_worksheet_xml(%Package{} = package, file, options) do
-    with {:ok, xml} <- extract_xml(package.zip_handle, file) do
+    with {:ok, xml} <- extract_xml(package.zip_handle, file, package.max_uncompressed_size) do
       WorksheetParser.parse(xml, package.workbook, options)
     end
   end
 
-  defp extract_xml(zip_handle, file) do
-    with {:ok, xml} <- ZipArchive.extract(zip_handle, file) do
+  defp extract_xml(zip_handle, file, max_size) do
+    with {:ok, xml} <- ZipArchive.extract(zip_handle, file, max_size) do
       Utils.ensure_utf8(xml)
     end
   end

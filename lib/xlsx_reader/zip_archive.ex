@@ -7,9 +7,16 @@ defmodule XlsxReader.ZipArchive do
   # you must first obtain a handle with `handle/2` which can then be used to
   # access the contents of the archive.
 
+  alias XlsxReader.ZipArchive.SizeLimit
+
   @type source :: String.t() | binary()
   @type source_type :: :path | :binary
   @type zip_handle :: {:path, String.t()} | {:binary, binary()}
+
+  @typedoc """
+  Maximum size, in bytes, of an extracted file (`:infinity` for no limit)
+  """
+  @type max_size :: non_neg_integer() | :infinity
 
   @doc """
 
@@ -38,11 +45,16 @@ defmodule XlsxReader.ZipArchive do
 
   @doc """
 
-  Extracts a file from the archive
+  Extracts a file from the archive.
+
+  When `max_size` is given, extracting a file whose uncompressed size exceeds it
+  returns `{:error, "uncompressed size limit exceeded"}` (see `XlsxReader.ZipArchive.SizeLimit`).
 
   """
-  @spec extract(zip_handle(), String.t()) :: {:ok, binary()} | XlsxReader.error()
-  def extract(zip_handle, file) do
+  @spec extract(zip_handle(), String.t(), max_size()) :: {:ok, binary()} | XlsxReader.error()
+  def extract(zip_handle, file, max_size \\ :infinity)
+
+  def extract(zip_handle, file, :infinity) do
     with {:ok, zip} <- source(zip_handle),
          {:ok, [{_, contents}]} <- :zip.extract(zip, extract_options(file)) do
       {:ok, contents}
@@ -52,6 +64,14 @@ defmodule XlsxReader.ZipArchive do
 
       error ->
         translate_zip_error(error)
+    end
+  end
+
+  def extract(zip_handle, file, max_size) when is_integer(max_size) and max_size >= 0 do
+    case SizeLimit.check(zip_handle, file, max_size) do
+      :ok -> extract(zip_handle, file, :infinity)
+      {:error, message} = error when is_binary(message) -> error
+      error -> translate_zip_error(error)
     end
   end
 
@@ -89,6 +109,15 @@ defmodule XlsxReader.ZipArchive do
 
   defp translate_zip_error({:error, code})
        when code in [:einval, :bad_eocd, :bad_central_directory, :eisdir] do
+    {:error, "invalid zip file"}
+  end
+
+  defp translate_zip_error({:error, {:bad_crc, _file}}) do
+    {:error, "invalid zip file"}
+  end
+
+  # e.g. encrypted files, which `:zip` doesn't support
+  defp translate_zip_error({:error, {:EXIT, {:data_error, _stacktrace}}}) do
     {:error, "invalid zip file"}
   end
 end

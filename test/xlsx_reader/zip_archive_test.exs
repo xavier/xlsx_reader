@@ -65,5 +65,17 @@ defmodule XlsxReader.ZipArchiveTest do
 
       assert {:error, "file not found"} = ZipArchive.extract(zip_handle, "file1.txt")
     end
+
+    test "encrypted file" do
+      zip_handle = ZipArchive.handle(TestFixtures.path("encrypted.zip"), :path)
+
+      assert ZipArchive.extract(zip_handle, "file.xml") == {:error, "invalid zip file"}
+    end
+
+    test "zip64 archive" do
+      zip_handle = ZipArchive.handle(TestFixtures.path("zip64_deflated.zip"), :path)
+
+      assert ZipArchive.extract(zip_handle, "file.xml") == {:ok, String.duplicate("<c/>", 1000)}
+    end
   end
 end

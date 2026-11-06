@@ -239,4 +239,71 @@ defmodule XlsxReaderTest do
       assert {:error, "sheet relationship not found"} = XlsxReader.async_sheets(bogus_package)
     end
   end
+
+  describe "max_uncompressed_size" do
+    @content_types ~s(<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>)
+    @workbook ~s(<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Bomb" r:id="rId1" sheetId="1"/></sheets></workbook>)
+    @relationship_type "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+
+    defp xlsx(sheet, shared_strings \\ nil) do
+      shared_strings_rel =
+        if shared_strings,
+          do:
+            ~s(<Relationship Id="rId2" Target="sharedStrings.xml" Type="#{@relationship_type}/sharedStrings"/>),
+          else: ""
+
+      files =
+        [
+          {~c"[Content_Types].xml", @content_types},
+          {~c"xl/workbook.xml", @workbook},
+          {~c"xl/_rels/workbook.xml.rels",
+           ~s(<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Target="worksheets/sheet1.xml" Type="#{@relationship_type}/worksheet"/>#{shared_strings_rel}</Relationships>)},
+          {~c"xl/worksheets/sheet1.xml", sheet}
+        ] ++ if(shared_strings, do: [{~c"xl/sharedStrings.xml", shared_strings}], else: [])
+
+      {:ok, {_, binary}} = :zip.create(~c"bomb.xlsx", files, [:memory, {:compress, :all}])
+      binary
+    end
+
+    # ~25MB of XML, compressed to a few hundred KB
+    defp bomb_sheet do
+      cells = String.duplicate(~s(<c t="n"><v>1</v></c>), 1_000_000)
+      ~s(<worksheet><sheetData><row r="1">#{cells}</row></sheetData></worksheet>)
+    end
+
+    test "rejects sheets inflating over the limit" do
+      binary = xlsx(bomb_sheet())
+
+      assert byte_size(binary) < 500_000
+
+      {:ok, package} = XlsxReader.open(binary, source: :binary, max_uncompressed_size: 1_000_000)
+
+      assert XlsxReader.sheet(package, "Bomb") == {:error, "uncompressed size limit exceeded"}
+      assert XlsxReader.sheets(package) == {:error, "uncompressed size limit exceeded"}
+      assert XlsxReader.async_sheets(package) == {:error, "uncompressed size limit exceeded"}
+    end
+
+    test "rejects shared strings inflating over the limit when opening" do
+      shared_strings =
+        ~s(<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">#{String.duplicate("<si><t>a</t></si>", 1_000_000)}</sst>)
+
+      binary = xlsx(~s(<worksheet><sheetData/></worksheet>), shared_strings)
+
+      assert XlsxReader.open(binary, source: :binary, max_uncompressed_size: 1_000_000) ==
+               {:error, "uncompressed size limit exceeded"}
+    end
+
+    test "does not limit sheets by default and within the limit" do
+      sheet =
+        ~s(<worksheet><sheetData><row r="1"><c r="A1" t="n"><v>1</v></c></row></sheetData></worksheet>)
+
+      binary = xlsx(sheet)
+
+      for options <- [[], [max_uncompressed_size: 1_000_000]] do
+        {:ok, package} = XlsxReader.open(binary, [source: :binary] ++ options)
+
+        assert XlsxReader.sheet(package, "Bomb") == {:ok, [[1.0]]}
+      end
+    end
+  end
 end

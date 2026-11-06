@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add `max_uncompressed_size` option to `XlsxReader.open/2` to protect against "zip bombs": files inflating over the limit are rejected with `{:error, "uncompressed size limit exceeded"}` without being fully inflated in memory
+
 ## [0.9.0] - 2026-08-07
 
 - Add `bg_color` to `XlsxReader.Cell`, the background color of the cell as an ARGB string, available with the `cell_data_format: :cell` option
