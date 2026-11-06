@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Add experimental `max_uncompressed_size` option to `XlsxReader.open/2` to protect against "zip bombs": files inflating over the limit are rejected with `{:error, "uncompressed size limit exceeded"}` without being fully inflated in memory
+- Add `max_uncompressed_size` option to `XlsxReader.open/2` to protect against "zip bombs": files inflating over the limit are rejected with `{:error, "uncompressed size limit exceeded"}` without being fully inflated in memory
 
 ## [0.9.0] - 2026-08-07
 

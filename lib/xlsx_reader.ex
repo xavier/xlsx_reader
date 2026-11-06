@@ -161,9 +161,9 @@ defmodule XlsxReader do
     * `source`: `:path` (on the file system, default) or `:binary` (in memory)
     * `supported_custom_formats`: a list of `{regex | string, type}` tuples (see "Additional custom formats support")
     * `exclude_hidden_sheets?`: Whether to exclude hidden sheets in the workbook
-    * `max_uncompressed_size`: **experimental**, maximum size in bytes of any file extracted from the archive
-       (default: `:infinity`). Protects against "zip bombs". When set, files are extracted by custom
-       code instead of `:zip.extract/2`, which may reject unusual archives (e.g. zip64).
+    * `max_uncompressed_size`: maximum size in bytes of any file extracted from the archive
+       (default: `:infinity`). Protects against "zip bombs". When set, each file is inflated once
+       to check its size before being extracted.
 
   """
   @spec open(String.t() | binary(), [open_option()]) ::

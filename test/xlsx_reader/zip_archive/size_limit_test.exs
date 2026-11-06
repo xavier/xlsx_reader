@@ -1,16 +1,16 @@
-defmodule XlsxReader.ZipArchive.LimitedExtractorTest do
+defmodule XlsxReader.ZipArchive.SizeLimitTest do
   use ExUnit.Case
 
   alias XlsxReader.ZipArchive
 
-  # `ZipArchive.extract/3` delegates to the limited extractor when given a limit
+  # `ZipArchive.extract/3` checks the size with `SizeLimit` when given a limit
 
   describe "extract/3 with a size limit" do
     @limit_error {:error, "uncompressed size limit exceeded"}
 
     @central_directory_magic <<0x02014B50::32-little>>
 
-    defp zip(contents, options \\ []) do
+    defp zip(contents, options) do
       {:ok, {_, binary}} =
         :zip.create(~c"test.zip", [{~c"file.xml", contents}], [:memory | options])
 
