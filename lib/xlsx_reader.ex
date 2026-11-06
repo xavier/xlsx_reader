@@ -196,10 +196,12 @@ defmodule XlsxReader do
        Takes precedence over `blank_value` and `empty_rows`.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
     * `cell_data_format`: Controls the format of the cell data. Can be `:value` (default, returns the cell value only) or `:cell` (returns instances of `XlsxReader.Cell`).
-    * `max_rows` - maximum row number allowed in the sheet (default: `:infinity`)
-    * `max_columns` - maximum column number allowed in the sheet (default: `:infinity`)
+    * `max_rows` - maximum row number allowed in the sheet (default: `1_048_576`)
+    * `max_columns` - maximum column number allowed in the sheet (default: `16_384`)
     * `max_cells` - maximum number of cells in the parsed sheet, including the blank cells
-       created to fill omitted rows and cells (default: `:infinity`)
+       created to fill omitted rows and cells (default: `17_179_869_184`)
+
+  Set a limit to `:infinity` to disable it.
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
 

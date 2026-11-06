@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Add `max_rows`, `max_columns` and `max_cells` sheet options to reject oversized (e.g. sparse) sheets with `{:error, reason}` instead of exhausting memory (#53)
+- Add `max_rows`, `max_columns` and `max_cells` sheet options to reject oversized (e.g. sparse) sheets with `{:error, reason}` instead of exhausting memory.
 
 ## [0.9.0] - 2026-08-07
 

@@ -10,6 +10,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defmodule State do
     @moduledoc false
+    # Excel worksheet dimensions:
+    # https://support.microsoft.com/en-us/excel/excel-specifications-and-limits
+    @excel_max_rows 1_048_576
+    @excel_max_columns 16_384
+    @excel_max_cells @excel_max_rows * @excel_max_columns
+
     @enforce_keys [:workbook, :type_conversion, :blank_value]
     defstruct workbook: nil,
               rows: [],
@@ -30,9 +36,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               number_type: nil,
               skip_row?: nil,
               cell_data_format: :value,
-              max_rows: :infinity,
-              max_columns: :infinity,
-              max_cells: :infinity,
+              max_rows: @excel_max_rows,
+              max_columns: @excel_max_columns,
+              max_cells: @excel_max_cells,
               cell_count: 0
   end
 
@@ -49,25 +55,33 @@ defmodule XlsxReader.Parsers.WorksheetParser do
        Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
     * `cell_data_format`: Controls the format of the cell data. Can be `:value` (default, returns the cell value only) or `:cell` (returns instances of `XlsxReader.Cell`).
-    * `max_rows`: maximum row number allowed in the sheet (default: `:infinity`)
-    * `max_columns`: maximum column number allowed in the sheet (default: `:infinity`)
+    * `max_rows`: maximum row number allowed in the sheet (default: `1_048_576`)
+    * `max_columns`: maximum column number allowed in the sheet (default: `16_384`)
     * `max_cells`: maximum number of cells in the parsed sheet, including blank cells
-       created to fill omitted rows and cells (default: `:infinity`)
+       created to fill omitted rows and cells (default: `17_179_869_184`)
+
+  Set a limit to `:infinity` to disable it.
   """
   def parse(xml, workbook, options \\ []) do
-    xml
-    |> Saxy.parse_string(__MODULE__, %State{
+    state = %State{
       workbook: workbook,
       type_conversion: Keyword.get(options, :type_conversion, true),
       blank_value: Keyword.get(options, :blank_value, ""),
       empty_rows: Keyword.get(options, :empty_rows, true),
       number_type: Keyword.get(options, :number_type, Float),
       skip_row?: Keyword.get(options, :skip_row?),
-      cell_data_format: Keyword.get(options, :cell_data_format, :value),
-      max_rows: Keyword.get(options, :max_rows, :infinity),
-      max_columns: Keyword.get(options, :max_columns, :infinity),
-      max_cells: Keyword.get(options, :max_cells, :infinity)
-    })
+      cell_data_format: Keyword.get(options, :cell_data_format, :value)
+    }
+
+    state = %{
+      state
+      | max_rows: Keyword.get(options, :max_rows, state.max_rows),
+        max_columns: Keyword.get(options, :max_columns, state.max_columns),
+        max_cells: Keyword.get(options, :max_cells, state.max_cells)
+    }
+
+    xml
+    |> Saxy.parse_string(__MODULE__, state)
     |> case do
       {:ok, {:limit_exceeded, reason}} -> {:error, reason}
       result -> result
