@@ -191,7 +191,7 @@ defmodule XlsxReader do
     * `type_conversion` - boolean (default: `true`)
     * `blank_value` - placeholder value for empty cells (default: `""`)
     * `empty_rows` - include empty rows (default: `true`)
-    * `number_type` - type used for numeric conversion :`Integer`, `Decimal` or `Float` (default: `Float`)
+    * `number_type` - type used for numeric conversion : `String` (no conversion), `Integer`, `Decimal` or `Float` (default: `Float`)
     * `skip_row?`: function callback that determines if a row should be skipped.
        Takes precedence over `blank_value` and `empty_rows`.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
