@@ -130,6 +130,12 @@ defmodule XlsxReaderTest do
               ]} = XlsxReader.sheet(package, "Sheet 1", number_type: Decimal)
     end
 
+    test "number type String leaves percentages unconverted", %{package: package} do
+      assert {:ok, sheet} = XlsxReader.sheet(package, "Sheet 3", number_type: String)
+
+      assert ["percentage", "0.125"] in sheet
+    end
+
     test "custom blank value", %{package: package} do
       assert {:ok,
               [
