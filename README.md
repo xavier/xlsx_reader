@@ -120,6 +120,22 @@ the stylesheet alone (theme and automatic colors). For cells filled with a
 pattern rather than a solid color, it is an approximation of the color a
 spreadsheet application displays.
 
+### Limit the size of sheets
+
+A tiny file can describe a very large sparse sheet. This might lead to huge memory usage
+from xlsx_reader, eventually even OOM-ing your machine. As a countermeasure to that, you can
+set limits on rows, columns and cells, based on your expected use case:
+
+```elixir
+XlsxReader.sheet(package, "Sheet 1", max_rows: 10_000, max_columns: 100, max_cells: 500_000)
+# {:error, "cell limit exceeded"}
+```
+
+The limits are independent, exceeding any of them returns an error. They are
+set to Excel worksheet dimensions by default: 1,048,576 rows, 16,384 columns and
+17,179,869,184 cells (rows × columns). Set an option to `:infinity`
+to disable that limit.
+
 ## Development
 
 ### Benchmarking

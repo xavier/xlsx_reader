@@ -10,6 +10,12 @@ defmodule XlsxReader.Parsers.WorksheetParser do
 
   defmodule State do
     @moduledoc false
+    # Excel worksheet dimensions:
+    # https://support.microsoft.com/en-us/excel/excel-specifications-and-limits
+    @excel_max_rows 1_048_576
+    @excel_max_columns 16_384
+    @excel_max_cells @excel_max_rows * @excel_max_columns
+
     @enforce_keys [:workbook, :type_conversion, :blank_value]
     defstruct workbook: nil,
               rows: [],
@@ -29,7 +35,11 @@ defmodule XlsxReader.Parsers.WorksheetParser do
               empty_rows: nil,
               number_type: nil,
               skip_row?: nil,
-              cell_data_format: :value
+              cell_data_format: :value,
+              max_rows: @excel_max_rows,
+              max_columns: @excel_max_columns,
+              max_cells: @excel_max_cells,
+              cell_count: 0
   end
 
   @doc """
@@ -45,10 +55,15 @@ defmodule XlsxReader.Parsers.WorksheetParser do
        Overwrites `blank_value` and `empty_rows` on the matter of skipping rows.
        Defaults to `nil` (keeping the behaviour of `blank_value` and `empty_rows`).
     * `cell_data_format`: Controls the format of the cell data. Can be `:value` (default, returns the cell value only) or `:cell` (returns instances of `XlsxReader.Cell`).
+    * `max_rows`: maximum row number allowed in the sheet (default: `1_048_576`)
+    * `max_columns`: maximum column number allowed in the sheet (default: `16_384`)
+    * `max_cells`: maximum number of cells in the parsed sheet, including blank cells
+       created to fill omitted rows and cells (default: `17_179_869_184`)
 
+  Set a limit to `:infinity` to disable it.
   """
   def parse(xml, workbook, options \\ []) do
-    Saxy.parse_string(xml, __MODULE__, %State{
+    state = %State{
       workbook: workbook,
       type_conversion: Keyword.get(options, :type_conversion, true),
       blank_value: Keyword.get(options, :blank_value, ""),
@@ -56,7 +71,21 @@ defmodule XlsxReader.Parsers.WorksheetParser do
       number_type: Keyword.get(options, :number_type, Float),
       skip_row?: Keyword.get(options, :skip_row?),
       cell_data_format: Keyword.get(options, :cell_data_format, :value)
-    })
+    }
+
+    state = %{
+      state
+      | max_rows: Keyword.get(options, :max_rows, state.max_rows),
+        max_columns: Keyword.get(options, :max_columns, state.max_columns),
+        max_cells: Keyword.get(options, :max_cells, state.max_cells)
+    }
+
+    xml
+    |> Saxy.parse_string(__MODULE__, state)
+    |> case do
+      {:ok, {:limit_exceeded, reason}} -> {:error, reason}
+      result -> result
+    end
   end
 
   @impl Saxy.Handler
@@ -84,17 +113,21 @@ defmodule XlsxReader.Parsers.WorksheetParser do
           String.to_integer(value)
       end
 
-    {:ok,
-     %{
-       state
-       | row: [],
-         current_row: current_row,
-         expected_column: 1
-     }}
+    if exceeds?(current_row, state.max_rows) do
+      limit_exceeded("row")
+    else
+      {:ok,
+       %{
+         state
+         | row: [],
+           current_row: current_row,
+           expected_column: 1
+       }}
+    end
   end
 
   def handle_event(:start_element, {"c", attributes}, %State{} = state) do
-    {:ok, new_cell(state, attributes)}
+    new_cell(state, attributes)
   end
 
   def handle_event(:start_element, {"v", _attributes}, %State{} = state) do
@@ -145,7 +178,7 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     if skip_row?(state) do
       {:ok, skip_row(state)}
     else
-      {:ok, emit_row(state)}
+      emit_row(state)
     end
   end
 
@@ -266,15 +299,24 @@ defmodule XlsxReader.Parsers.WorksheetParser do
   end
 
   defp emit_row(%State{} = state) do
-    state = handle_omitted_rows(state)
-    row = state.row |> sanitize_row() |> Enum.reverse()
+    width = length(state.row)
+    cell_count = state.cell_count + width * (omitted_rows(state) + 1)
 
-    %{
-      state
-      | row: nil,
-        rows: [row | state.rows],
-        expected_row: state.current_row + 1
-    }
+    if exceeds?(cell_count, state.max_cells) do
+      limit_exceeded("cell")
+    else
+      state = handle_omitted_rows(state)
+      row = state.row |> sanitize_row() |> Enum.reverse()
+
+      {:ok,
+       %{
+         state
+         | row: nil,
+           rows: [row | state.rows],
+           expected_row: state.current_row + 1,
+           cell_count: cell_count
+       }}
+    end
   end
 
   defp sanitize_row(row) do
@@ -291,20 +333,36 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     %{state | rows: Enum.reverse(state.rows)}
   end
 
-  ## Omitted rows / cells
+  ## Limits
+  #
+  # Limits apply to the sheet as it gets materialized (including the blank cells
+  # and rows added to fill omitted ones), not to the number of XML elements:
+  # a tiny sparse file can otherwise expand into billions of cells.
 
-  defp handle_omitted_rows(%State{empty_rows: true} = state) do
-    omitted_rows = state.current_row - state.expected_row
+  defp exceeds?(_value, :infinity), do: false
+  defp exceeds?(value, limit), do: value > limit
 
-    if omitted_rows > 0 do
-      blank_row = List.duplicate(state.blank_value, length(state.row))
-      %{state | rows: prepend_n_times(state.rows, blank_row, omitted_rows)}
-    else
-      state
-    end
+  defp limit_exceeded(kind) do
+    {:stop, {:limit_exceeded, "#{kind} limit exceeded"}}
   end
 
-  defp handle_omitted_rows(%State{} = state), do: state
+  ## Omitted rows / cells
+
+  defp omitted_rows(%State{empty_rows: true} = state),
+    do: max(state.current_row - state.expected_row, 0)
+
+  defp omitted_rows(%State{}), do: 0
+
+  defp handle_omitted_rows(%State{} = state) do
+    case omitted_rows(state) do
+      0 ->
+        state
+
+      omitted_rows ->
+        blank_row = List.duplicate(state.blank_value, length(state.row))
+        %{state | rows: prepend_n_times(state.rows, blank_row, omitted_rows)}
+    end
+  end
 
   defp handle_omitted_cells(%State{} = state) do
     # Using the current cell reference and the expected column:
@@ -312,14 +370,24 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     # 2. determine the next expected column
     with %State{cell_ref: cell_ref} when not is_nil(cell_ref) <- state,
          {column, _row} <- CellReference.parse(cell_ref) do
-      omitted_cells = column - state.expected_column
+      cond do
+        exceeds?(column, state.max_columns) ->
+          limit_exceeded("column")
 
-      state
-      |> add_omitted_cells_to_row(omitted_cells)
-      |> Map.put(:expected_column, column + 1)
+        exceeds?(state.cell_count + column, state.max_cells) ->
+          limit_exceeded("cell")
+
+        true ->
+          omitted_cells = column - state.expected_column
+
+          {:ok,
+           state
+           |> add_omitted_cells_to_row(omitted_cells)
+           |> Map.put(:expected_column, column + 1)}
+      end
     else
       _ ->
-        state
+        {:ok, state}
     end
   end
 

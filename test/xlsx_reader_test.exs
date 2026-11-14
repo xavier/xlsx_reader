@@ -245,4 +245,43 @@ defmodule XlsxReaderTest do
       assert {:error, "sheet relationship not found"} = XlsxReader.async_sheets(bogus_package)
     end
   end
+
+  describe "limits" do
+    @sparse_sheet ~s(<worksheet><sheetData><row r="1048576"><c r="XFD1048576" t="n"><v>1</v></c></row></sheetData></worksheet>)
+
+    setup do
+      files = [
+        {~c"[Content_Types].xml",
+         ~s(<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>)},
+        {~c"xl/workbook.xml",
+         ~s(<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Sparse" r:id="rId1" sheetId="1"/></sheets></workbook>)},
+        {~c"xl/_rels/workbook.xml.rels",
+         ~s(<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Target="worksheets/sheet1.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/></Relationships>)},
+        {~c"xl/worksheets/sheet1.xml", @sparse_sheet}
+      ]
+
+      {:ok, {_, binary}} = :zip.create(~c"sparse.xlsx", files, [:memory])
+      {:ok, package} = XlsxReader.open(binary, source: :binary)
+
+      {:ok, %{package: package}}
+    end
+
+    test "sheet/3 rejects sheet exceeding limits", %{package: package} do
+      assert XlsxReader.sheet(package, "Sparse", max_rows: 100) == {:error, "row limit exceeded"}
+
+      assert XlsxReader.sheet(package, "Sparse", max_columns: 100) ==
+               {:error, "column limit exceeded"}
+
+      assert XlsxReader.sheet(package, "Sparse", max_cells: 1000) ==
+               {:error, "cell limit exceeded"}
+    end
+
+    test "sheets/2 rejects sheet exceeding limit", %{package: package} do
+      assert XlsxReader.sheets(package, max_cells: 1000) == {:error, "cell limit exceeded"}
+    end
+
+    test "async_sheets/3 rejects sheet exceeding limit", %{package: package} do
+      assert XlsxReader.async_sheets(package, max_cells: 1000) == {:error, "cell limit exceeded"}
+    end
+  end
 end
