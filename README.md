@@ -166,6 +166,8 @@ In order of appearance:
 - Eric Saxby ([sax](https://github.com/sax))
 - Aleksei Matiushkin ([am-kantox](https://github.com/am-kantox))
 - [rigzad](https://github.com/rigzad)
+- Emad Shaaban ([emadshaaban92](https://github.com/emadshaaban92))
+- Paweł Świątkowski ([katafrakt](https://github.com/katafrakt))
 
 ## License
 
