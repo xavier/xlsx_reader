@@ -201,6 +201,7 @@ defmodule XlsxReader do
     * `max_cells` - maximum number of cells in the parsed sheet, including the blank cells
        created to fill omitted rows and cells (default: `17_179_869_184`)
 
+  The limits default to the [Excel worksheet dimensions](https://support.microsoft.com/en-us/excel/excel-specifications-and-limits).
   Set a limit to `:infinity` to disable it.
 
   The `Decimal` type requires the [decimal](https://github.com/ericmj/decimal) library.
