@@ -4,7 +4,7 @@ on: push
 
 jobs:
   unit-test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     env:
       MIX_ENV: test
@@ -22,13 +22,15 @@ jobs:
             otp: "26"
           - elixir: "1.15.6"
             otp: "25.3.2.6"
+            os: ubuntu-24.04  # no OTP 25 builds for ubuntu-26.04
           - elixir: "1.15.6"
             otp: "24.3.4.13"
+            os: ubuntu-24.04  # no OTP 24 builds for ubuntu-26.04
           - elixir: "1.20.0"
             otp: "27.3.4.11"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install Elixir and Erlang
         uses: erlef/setup-beam@v1
         with:
