@@ -120,6 +120,63 @@ defmodule XlsxReader.Parsers.WorksheetParserTest do
     assert expected == rows
   end
 
+  for empty_text <- ["<t/>", "<t></t>"], type_conversion <- [true, false] do
+    describe "empty inline strings #{empty_text}, type_conversion: #{type_conversion}" do
+      setup do
+        xml = """
+        <worksheet><sheetData>
+          <row r="1"><c r="A1" t="inlineStr"><is>#{unquote(empty_text)}</is></c></row>
+          <row r="2"><c r="A2" t="inlineStr"><is><t>Hello</t></is></c></row>
+        </sheetData></worksheet>
+        """
+
+        {:ok, xml: xml, options: [type_conversion: unquote(type_conversion)]}
+      end
+
+      test "allows a callback to exclude the blank row", context do
+        for blank_value <- ["", :custom_blank] do
+          options =
+            context.options ++
+              [
+                blank_value: blank_value,
+                skip_row?: fn row -> Enum.all?(row, &(&1 == blank_value)) end
+              ]
+
+          assert {:ok, [["Hello"]]} =
+                   WorksheetParser.parse(context.xml, context.workbook, options)
+        end
+      end
+
+      test "excludes the blank row with empty_rows: false", context do
+        for blank_value <- ["", :custom_blank] do
+          options = context.options ++ [blank_value: blank_value, empty_rows: false]
+
+          assert {:ok, [["Hello"]]} =
+                   WorksheetParser.parse(context.xml, context.workbook, options)
+        end
+      end
+
+      test "uses blank_value when keeping the blank row", context do
+        for blank_value <- ["", :custom_blank] do
+          options = context.options ++ [blank_value: blank_value]
+
+          assert {:ok, [[^blank_value], ["Hello"]]} =
+                   WorksheetParser.parse(context.xml, context.workbook, options)
+        end
+      end
+    end
+  end
+
+  test "uses custom blanks in the mixed empty-values fixture", %{workbook: workbook} do
+    sheet_xml = TestFixtures.read!("package/xl/worksheets/sheet5.xml")
+
+    assert {:ok, [[:custom_blank, :custom_blank, "Hello", :custom_blank, "0.0"]]} =
+             WorksheetParser.parse(sheet_xml, workbook,
+               type_conversion: false,
+               blank_value: :custom_blank
+             )
+  end
+
   test "should ignore rows based on skip_row?", %{
     workbook: workbook
   } do
