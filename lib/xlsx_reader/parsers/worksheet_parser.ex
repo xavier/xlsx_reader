@@ -138,8 +138,9 @@ defmodule XlsxReader.Parsers.WorksheetParser do
     {:ok, expect_value(state)}
   end
 
-  def handle_event(:end_element, "v", %State{value: :expect_chars} = state) do
-    # Value element was empty, i.e. the sentinel value wasn't overridden by the :characters handler
+  def handle_event(:end_element, name, %State{value: :expect_chars} = state)
+      when name in ["v", "t"] do
+    # Value/text element was empty: the :characters handler didn't override the sentinel.
     {:ok, store_value(state, "")}
   end
 
